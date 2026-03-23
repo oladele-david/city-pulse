@@ -1,16 +1,17 @@
 import { cn } from "@/lib/utils";
 import { mockRecentActivity } from "@/data/mockRecentActivity";
+import { Link } from "react-router-dom";
 
 export const RecentActivityCard = ({ className }: { className?: string }) => {
     return (
         <div className={cn("rounded-xl border bg-card text-card-foreground shadow-sm flex flex-col overflow-hidden", className)}>
             <div className="p-6 pb-4 flex justify-between items-center">
                 <h3 className="font-semibold text-lg">Recent Activity</h3>
-                <a href="/dashboard/issues">
+                <Link to="/dashboard/issues">
                     <button className="text-xs font-medium text-primary hover:text-primary/80 transition-colors">
                         View All Issues
                     </button>
-                </a>
+                </Link>
             </div>
             {/* Separator Line */}
             <div className="h-px w-full bg-border shrink-0" />

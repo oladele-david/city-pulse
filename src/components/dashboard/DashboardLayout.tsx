@@ -33,22 +33,20 @@ export const DashboardLayout = ({ children }: DashboardLayoutProps) => {
                 />
             )}
 
-            {/* Sidebar Container - Adjust z-index and position for floating effect if needed, though Sidebar component handles its own fixed positioning on mobile. 
-                For Map page, we want it to float OVER the map if it opens.
-                The existing Sidebar is relative in flow (lg:static).
-                We might need to wrap it or adjust classes based on isMapPage.
-            */}
-            <div className={cn(
-                "transition-all duration-300 ease-in-out z-40",
-                isMapPage ? "fixed left-0 top-0 h-full" : "relative"
-            )}>
-                <Sidebar isOpen={isSidebarOpen} onClose={() => setIsSidebarOpen(false)} />
-            </div>
+            {/* Sidebar - Always fixed */}
+            <Sidebar
+                isOpen={isSidebarOpen}
+                onClose={() => setIsSidebarOpen(false)}
+            />
 
-
+            {/* Main Content */}
             <main className={cn(
-                "flex-1 flex flex-col h-full relative overflow-hidden transition-all duration-300",
-                isMapPage && "w-full h-screen" // detailed styling for map mode
+                "flex-1 transition-all duration-300 ease-in-out",
+                isMapPage
+                    ? "p-0 overflow-hidden h-screen"
+                    : "p-8 overflow-y-auto min-h-screen",
+                // Add left margin when sidebar is open on non-map pages
+                !isMapPage && isSidebarOpen ? "ml-[296px]" : "ml-0"
             )}>
                 {!isSidebarOpen && (
                     <div className="absolute top-6 left-6 z-30">
@@ -64,21 +62,12 @@ export const DashboardLayout = ({ children }: DashboardLayoutProps) => {
                     </div>
                 )}
 
+                {/* Content wrapper with centering */}
                 <div className={cn(
-                    "flex-1 w-full h-full overflow-hidden",
-                    isMapPage ? "bg-slate-100" : "bg-transparent"
+                    "w-full h-full",
+                    isMapPage ? "" : "max-w-6xl mx-auto"
                 )}>
-                    <div className={cn(
-                        "h-full w-full overflow-y-auto",
-                        !isMapPage && "p-6 md:p-8"
-                    )}>
-                        <div className={cn(
-                            "w-full h-full",
-                            !isMapPage && "max-w-7xl mx-auto"
-                        )}>
-                            {children}
-                        </div>
-                    </div>
+                    {children}
                 </div>
             </main>
         </div>

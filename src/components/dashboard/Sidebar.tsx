@@ -50,8 +50,8 @@ export const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
     return (
         <aside
             className={cn(
-                "fixed lg:static z-40 bg-primary rounded-2xl flex flex-col shrink-0 shadow-xl text-primary-foreground transition-all duration-300 ease-in-out overflow-hidden border-none",
-                isOpen ? "w-[280px] m-4 translate-x-0 opacity-100 h-[calc(100vh-2rem)]" : "w-0 m-0 -translate-x-full opacity-0 pointer-events-none lg:translate-x-0 lg:w-0"
+                "fixed z-40 bg-primary rounded-2xl flex flex-col shrink-0 shadow-xl text-primary-foreground transition-all duration-300 ease-in-out overflow-hidden border-none",
+                isOpen ? "w-[280px] m-4 translate-x-0 opacity-100 h-[calc(100vh-2rem)]" : "w-0 m-0 -translate-x-full opacity-0 pointer-events-none"
             )}
         >
             <div className="w-[280px] flex flex-col h-full">
