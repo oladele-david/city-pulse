@@ -16,6 +16,7 @@ export const StatsCards = () => {
                 trend="+12%"
                 trendUp={false}
                 description="from last week"
+                iconClassName="bg-blue-500/10 text-blue-600"
             />
             <KPICard
                 title="High Severity"
@@ -24,7 +25,7 @@ export const StatsCards = () => {
                 trend="+2"
                 trendUp={false}
                 description="new alerts"
-                className="border-l-4 border-l-orange-500"
+                iconClassName="bg-red-500/10 text-red-600"
             />
             <KPICard
                 title="Resolved"
@@ -33,6 +34,7 @@ export const StatsCards = () => {
                 trend="+8%"
                 trendUp={true}
                 description="last 7 days"
+                iconClassName="bg-green-500/10 text-green-600"
             />
             <KPICard
                 title="Avg. Resolution"
@@ -41,6 +43,7 @@ export const StatsCards = () => {
                 trend="-2h"
                 trendUp={true}
                 description="improvement"
+                iconClassName="bg-purple-500/10 text-purple-600"
             />
         </div>
     );
