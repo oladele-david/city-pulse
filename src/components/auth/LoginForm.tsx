@@ -106,7 +106,7 @@ export const LoginForm = () => {
                                         <HugeiconsIcon icon={LockIcon} className="absolute left-3 top-2.5 h-5 w-5 text-muted-foreground" />
                                         <Input
                                             type={showPassword ? "text" : "password"}
-                                            placeholder="••••••••"
+                                            placeholder="test1234"
                                             className="pl-10 pr-10 h-11 focus-visible:ring-1 focus-visible:ring-accent focus-visible:ring-offset-0 focus-visible:border-accent"
                                             {...field}
                                         />

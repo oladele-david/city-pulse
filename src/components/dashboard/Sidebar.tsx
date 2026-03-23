@@ -51,10 +51,10 @@ export const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
         <aside
             className={cn(
                 "fixed z-40 bg-primary rounded-2xl flex flex-col shrink-0 shadow-xl text-primary-foreground transition-all duration-300 ease-in-out overflow-hidden border-none",
-                isOpen ? "w-[280px] m-4 translate-x-0 opacity-100 h-[calc(100vh-2rem)]" : "w-0 m-0 -translate-x-full opacity-0 pointer-events-none"
+                isOpen ? "w-[250px] m-2 translate-x-0 opacity-100 h-[calc(100vh-1rem)]" : "w-0 m-0 -translate-x-full opacity-0 pointer-events-none"
             )}
         >
-            <div className="w-[280px] flex flex-col h-full">
+            <div className="w-[250px] flex flex-col h-full">
                 {/* Header */}
                 <div className="h-20 flex items-center justify-between px-6 border-b border-primary-foreground/10 shrink-0">
                     <div className="h-10 w-24">
