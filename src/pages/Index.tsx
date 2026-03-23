@@ -1,4 +1,4 @@
-// Update this page (the content is just a fallback if you fail to update the page)
+import { StatsCards } from "../features/dashboard/components/StatsCards";
 
 const Index = () => {
   return (
@@ -10,15 +10,29 @@ const Index = () => {
         </p>
       </div>
 
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        {/* Placeholder cards for verification */}
-        {Array.from({ length: 4 }).map((_, i) => (
-          <div key={i} className="p-6 rounded-xl border bg-card text-card-foreground shadow-sm">
-            <div className="h-4 w-4 rounded-full bg-primary/20 mb-4" />
-            <div className="h-4 w-24 bg-muted rounded mb-2" />
-            <div className="h-8 w-16 bg-muted rounded" />
+      <StatsCards />
+
+      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-7">
+        <div className="col-span-4 rounded-xl border bg-card text-card-foreground shadow-sm p-6 min-h-[400px]">
+          <h3 className="font-semibold mb-4">Issue Density Heatmap</h3>
+          <div className="h-full w-full bg-muted/30 rounded-lg flex items-center justify-center text-muted-foreground">
+            Map Preview Placeholder
           </div>
-        ))}
+        </div>
+        <div className="col-span-3 rounded-xl border bg-card text-card-foreground shadow-sm p-6">
+          <h3 className="font-semibold mb-4">Recent Activity</h3>
+          <div className="space-y-4">
+            {[1, 2, 3, 4].map((i) => (
+              <div key={i} className="flex items-start gap-4 pb-4 border-b last:border-0 last:pb-0">
+                <div className="h-2 w-2 mt-2 rounded-full bg-blue-500 shrink-0" />
+                <div>
+                  <p className="text-sm font-medium">New road issue detected in Al Quoz</p>
+                  <p className="text-xs text-muted-foreground">10 minutes ago</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
       </div>
     </div>
   );

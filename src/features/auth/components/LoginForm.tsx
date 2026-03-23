@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -29,6 +30,7 @@ export const LoginForm = () => {
     const [isLoading, setIsLoading] = useState(false);
     const [showPassword, setShowPassword] = useState(false);
     const { toast } = useToast();
+    const navigate = useNavigate();
 
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
@@ -49,6 +51,7 @@ export const LoginForm = () => {
                     title: "Welcome back",
                     description: "Successfully authenticated as Operator.",
                 });
+                navigate("/dashboard");
             } else {
                 toast({
                     title: "Authentication Failed",
