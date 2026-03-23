@@ -11,6 +11,7 @@ import Analytics from "./pages/dashboard/Analytics";
 import NotFound from "./pages/NotFound";
 import LoginPage from "./pages/auth/LoginPage";
 import { DashboardLayout } from "./components/dashboard/DashboardLayout";
+import { MobileBlocker } from "./components/MobileBlocker";
 
 const queryClient = new QueryClient();
 
@@ -19,26 +20,33 @@ const App = () => (
     <TooltipProvider>
       <Toaster />
       <Sonner />
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Navigate to="/login" replace />} />
-          <Route path="/login" element={<LoginPage />} />
-          <Route path="/dashboard" element={<DashboardLayout><Dashboard /></DashboardLayout>} />
-          <Route path="/dashboard/map" element={<DashboardLayout><LiveMap /></DashboardLayout>} />
-          <Route path="/dashboard/issues" element={<DashboardLayout><Issues /></DashboardLayout>} />
-          <Route path="/dashboard/analytics" element={<DashboardLayout><Analytics /></DashboardLayout>} />
-          <Route path="/dashboard/*" element={
-            <DashboardLayout>
-              <Routes>
-                <Route index element={<Index />} />
-                {/* Add sub-routes here later */}
-              </Routes>
-            </DashboardLayout>
-          } />
-          {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-      </BrowserRouter>
+      {/* Mobile Blocker - Hidden on desktop (lg and above) */}
+      <div className="lg:hidden">
+        <MobileBlocker />
+      </div>
+      {/* Main App - Hidden on mobile, shown on desktop */}
+      <div className="hidden lg:block">
+        <BrowserRouter>
+          <Routes>
+            <Route path="/" element={<Navigate to="/login" replace />} />
+            <Route path="/login" element={<LoginPage />} />
+            <Route path="/dashboard" element={<DashboardLayout><Dashboard /></DashboardLayout>} />
+            <Route path="/dashboard/map" element={<DashboardLayout><LiveMap /></DashboardLayout>} />
+            <Route path="/dashboard/issues" element={<DashboardLayout><Issues /></DashboardLayout>} />
+            <Route path="/dashboard/analytics" element={<DashboardLayout><Analytics /></DashboardLayout>} />
+            <Route path="/dashboard/*" element={
+              <DashboardLayout>
+                <Routes>
+                  <Route index element={<Index />} />
+                  {/* Add sub-routes here later */}
+                </Routes>
+              </DashboardLayout>
+            } />
+            {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </BrowserRouter>
+      </div>
     </TooltipProvider>
   </QueryClientProvider>
 );
