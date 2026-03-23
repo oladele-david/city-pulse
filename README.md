@@ -1,173 +1,222 @@
-# React Starter
+# CityPulse GovOps
 
-A modern, full-stack React application built with TypeScript and a comprehensive UI component library. This project provides a solid foundation for building sophisticated web applications with a focus on accessibility, performance, and developer experience.
+**Enterprise Civic Infrastructure Intelligence Platform**
 
-## 🚀 Tech Stack
+CityPulse is a real-time civic infrastructure monitoring and management platform designed for government agencies to detect, prioritize, and resolve urban issues using trusted community signals and AI-powered analytics.
 
-### Frontend
-- **React 18.3.1** - Modern React with hooks and concurrent features
-- **TypeScript 5.8.3** - Type-safe JavaScript for better development experience
-- **Vite 5.4.19** - Lightning-fast build tool and development server
-- **React Router DOM 6.30.1** - Declarative routing for React applications
+---
 
-### UI & Styling
-- **Tailwind CSS 3.4.17** - Utility-first CSS framework
-- **shadcn/ui** - Beautiful, accessible component library
-- **Radix UI** - Unstyled, accessible UI primitives
-- **Lucide React** - Beautiful & consistent icon toolkit
-- **next-themes** - Theme switching with system preference support
+## 🏛️ Overview
 
-### State Management & Data
-- **TanStack React Query 5.83.0** - Powerful data synchronization for React
-- **React Hook Form 7.61.1** - Performant, flexible forms with easy validation
-- **Zod 3.25.76** - TypeScript-first schema validation
+CityPulse GovOps provides municipal authorities with comprehensive tools to monitor and manage civic infrastructure health across their jurisdiction. The platform aggregates community reports, applies AI-driven confidence scoring, and presents actionable intelligence through an intuitive dashboard interface.
 
-### Development Tools
-- **ESLint** - Code linting with TypeScript support
-- **PostCSS** - CSS processing with Autoprefixer
+### Key Capabilities
 
-## ✨ Features
+- **Real-Time Issue Monitoring** - Live map visualization of civic infrastructure issues across the city
+- **AI-Powered Confidence Scoring** - Machine learning algorithms validate and prioritize community reports
+- **Advanced Analytics** - Comprehensive insights into issue trends, resolution times, and heat zones
+- **Multi-Channel Reporting** - Aggregate issues from social media, mobile apps, and direct submissions
+- **Role-Based Access Control** - Secure, permission-based access for different agency roles
+- **Desktop-Optimized Experience** - Professional interface designed for government workstations
 
-- 🎨 **Comprehensive UI Library** - 40+ pre-built, accessible components
-- 🌙 **Dark/Light Mode** - Built-in theme switching with system preference detection
-- 📱 **Responsive Design** - Mobile-first approach with Tailwind CSS
-- 🎯 **Type Safety** - Full TypeScript support throughout the application
-- ⚡ **Performance Optimized** - Vite for fast builds and hot module replacement
-- 🧪 **Form Handling** - Advanced form management with validation
-- 🔔 **Toast Notifications** - User feedback with Sonner and shadcn/ui toasts
-- 📊 **Data Visualization** - Recharts integration for charts and graphs
-- 🎛️ **State Management** - React Query for server state synchronization
+---
 
-## 🏗️ Project Structure
+## 🚀 Technology Stack
 
-```
-src/
-├── components/
-│   └── ui/              # shadcn/ui component library
-│       ├── button.tsx
-│       ├── card.tsx
-│       ├── dialog.tsx
-│       └── ... (40+ components)
-├── hooks/               # Custom React hooks
-│   ├── use-mobile.tsx
-│   └── use-toast.ts
-├── lib/                 # Utility functions
-│   └── utils.ts
-├── pages/               # Route components
-│   ├── Index.tsx        # Home page
-│   └── NotFound.tsx     # 404 page
-├── App.tsx              # Main application component
-├── main.tsx             # Application entry point
-└── index.css            # Global styles and design system
-```
+### Frontend Framework
+- **React 18.3** - Modern component-based UI library
+- **TypeScript 5.8** - Type-safe development
+- **Vite 5.4** - Lightning-fast build tooling
+- **React Router 6.30** - Client-side routing
 
-## 🚀 Getting Started
+### UI & Visualization
+- **Tailwind CSS 3.4** - Utility-first styling framework
+- **Shadcn/UI** - Accessible component library
+- **Radix UI** - Unstyled, accessible primitives
+- **Recharts 2.15** - Data visualization and charting
+- **Mapbox GL** - Interactive mapping
+
+### State & Data Management
+- **TanStack Query 5.83** - Server state synchronization
+- **React Hook Form 7.61** - Performant form handling
+- **Zod 3.25** - Schema validation
+
+### Icons & Assets
+- **Hugeicons** - Comprehensive icon library
+- **Lucide React** - Additional icon set
+
+---
+
+## 📋 Features
+
+### Dashboard Overview
+- Active issues summary with severity breakdown
+- Real-time metrics and trend indicators
+- Issue density heatmap visualization
+- Recent activity feed
+
+### Live Map
+- Interactive city-wide issue mapping
+- Severity-based marker clustering
+- Real-time filtering by status and severity
+- Issue detail drawer with AI analysis
+- Light/Dark map theme toggle
+
+### Issues Management
+- Comprehensive issue table with pagination
+- Advanced search and filtering
+- Bulk status updates
+- Inline status editing
+- CSV/PDF export capabilities
+- Confidence score visualization
+
+### Analytics
+- Issues distribution by type and area (pie charts)
+- Heat zone analysis with trend indicators
+- Resolution time trends across severity levels
+- Scrollable data tables
+
+### Settings
+- Profile management
+- Notification preferences
+- Role and permission configuration
+
+---
+
+## 🛠️ Installation & Setup
 
 ### Prerequisites
-- Node.js 18+ 
-- npm, yarn, or bun
+- **Node.js** 18.x or higher
+- **npm** 9.x or higher
+- **Mapbox Access Token** (for map functionality)
 
-### Installation
+### Environment Configuration
 
 1. **Clone the repository**
    ```bash
-   git clone https://github.com/Psybah/react-vite-starter-template
-   cd react-vite-starter-template
+   git clone https://github.com/Psybah/citypulse-govops.git
+   cd citypulse-govops
    ```
 
 2. **Install dependencies**
    ```bash
    npm install
-   # or
-   yarn install
-   # or
-   bun install
    ```
 
-3. **Start the development server**
+3. **Configure environment variables**
+   
+   Create a `.env` file in the root directory:
+   ```env
+   VITE_MAPBOX_TOKEN=your_mapbox_token_here
+   ```
+
+4. **Start development server**
    ```bash
    npm run dev
-   # or
-   yarn dev
-   # or
-   bun dev
    ```
 
-4. **Open your browser**
-   Navigate to `http://localhost:8080` to view the application.
+   The application will be available at `http://localhost:8080`
 
-### Available Scripts
+### Production Build
 
-- `npm run dev` - Start development server
-- `npm run build` - Build for production
-- `npm run build:dev` - Build for development
-- `npm run preview` - Preview production build
-- `npm run lint` - Run ESLint
-
-## 🎨 UI Components
-
-This project includes a comprehensive set of accessible UI components built with shadcn/ui and Radix UI:
-
-### Layout & Navigation
-- Sidebar, Navigation Menu, Breadcrumb, Tabs, Accordion
-
-### Forms & Input
-- Input, Textarea, Select, Checkbox, Radio Group, Switch, Slider, Date Picker
-
-### Data Display
-- Table, Card, Badge, Avatar, Progress, Charts (Recharts)
-
-### Feedback & Overlays
-- Alert, Toast, Dialog, Sheet, Drawer, Popover, Tooltip, Hover Card
-
-### Interactive Elements
-- Button, Toggle, Command Palette, Calendar, Carousel, Pagination
-
-## 🎯 Development Guidelines
-
-### Component Development
-- Use TypeScript for all components
-- Follow the established component patterns
-- Leverage the design system defined in `src/index.css`
-- Use Tailwind CSS for styling
-
-### State Management
-- Use React Query for server state
-- Use React Hook Form for form state
-- Use React's built-in state for local component state
-
-### Styling
-- Follow the HSL color system defined in CSS variables
-- Use Tailwind utility classes
-- Maintain consistency with the design system
-
-## 🔧 Configuration
-
-### Tailwind CSS
-The project uses a custom Tailwind configuration with:
-- CSS variables for theming
-- Custom color palette
-- Responsive breakpoints
-- Animation utilities
-
-### TypeScript
-- Strict type checking enabled
-- Path aliases configured (`@/*` maps to `src/*`)
-- Optimized for development experience
-
-
-## 🤝 Contributing
-
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add some amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
-
-## 📞 Support
-
-If you have any questions or need help getting started, please open an issue or reach out to me abiodunoluwamurewa@gmail.com
+```bash
+npm run build
+npm run preview
+```
 
 ---
 
-Built with by me out of boredom.
+## 📁 Project Structure
+
+```
+citypulse-govops/
+├── src/
+│   ├── components/
+│   │   ├── dashboard/
+│   │   │   ├── analytics/          # Analytics chart components
+│   │   │   ├── cards/              # Dashboard card components
+│   │   │   ├── map/                # Map-related components
+│   │   │   ├── DashboardLayout.tsx # Main layout wrapper
+│   │   │   └── Sidebar.tsx         # Navigation sidebar
+│   │   ├── ui/                     # Shadcn/UI components
+│   │   └── MobileBlocker.tsx       # Mobile device blocker
+│   ├── data/                       # Mock data and types
+│   ├── lib/                        # Utility functions
+│   ├── pages/
+│   │   ├── auth/                   # Authentication pages
+│   │   └── dashboard/              # Dashboard pages
+│   ├── App.tsx                     # Root component
+│   └── main.tsx                    # Application entry point
+├── public/                         # Static assets
+└── prd.md                          # Product requirements document
+```
+
+---
+
+## 🎨 Design System
+
+### Color Palette
+- **Primary** - `#1e40af` (Blue) - Main brand color
+- **Accent** - `#f59e0b` (Amber) - Highlights and CTAs
+- **Destructive** - `#ef4444` (Red) - Errors and high severity
+- **Muted** - Neutral grays for secondary content
+
+### Typography
+- **Font Family** - System font stack for optimal performance
+- **Headings** - Bold, tracking-tight
+- **Body** - Regular weight, comfortable line height
+
+### Components
+All components follow accessibility best practices (WCAG 2.1 AA) and support keyboard navigation.
+
+---
+
+## 📊 Data Flow
+
+1. **Issue Ingestion** - Community reports aggregated from multiple channels
+2. **AI Processing** - Confidence scoring and validation
+3. **Dashboard Display** - Real-time visualization and analytics
+4. **Agency Action** - Status updates and resolution tracking
+5. **Analytics** - Historical trend analysis and insights
+
+---
+
+## 🧪 Development Guidelines
+
+### Code Standards
+- TypeScript strict mode enabled
+- ESLint configuration enforced
+- Component-driven architecture
+- Functional components with hooks
+
+### Naming Conventions
+- **Components** - PascalCase (e.g., `DashboardLayout`)
+- **Files** - PascalCase for components, camelCase for utilities
+- **CSS Classes** - Tailwind utilities, no custom CSS unless necessary
+
+### State Management
+- Server state via TanStack Query
+- Form state via React Hook Form
+- Local state via React hooks
+- No global state management library (intentional simplicity)
+
+---
+
+## 📈 Performance Optimization
+
+- Code splitting via React Router
+- Lazy loading for heavy components
+- Optimized bundle size with Vite
+- Efficient re-rendering with React.memo where appropriate
+- Virtualized lists for large datasets (planned)
+
+---
+
+## 🤝 Contributing
+
+I'm not accepting contributions yet... reach me at abiodunoluwamurewa@gmail.com
+
+## 🙏 Acknowledgments
+
+**Version** - 1.0.0  
+**Last Updated** - December 2025

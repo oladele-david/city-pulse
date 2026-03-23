@@ -8,6 +8,7 @@ import Dashboard from "./pages/dashboard/Dashboard";
 import LiveMap from "./pages/dashboard/LiveMap";
 import Issues from "./pages/dashboard/Issues";
 import Analytics from "./pages/dashboard/Analytics";
+import Settings from "./pages/dashboard/Settings";
 import NotFound from "./pages/NotFound";
 import LoginPage from "./pages/auth/LoginPage";
 import { DashboardLayout } from "./components/dashboard/DashboardLayout";
@@ -34,6 +35,7 @@ const App = () => (
             <Route path="/dashboard/map" element={<DashboardLayout><LiveMap /></DashboardLayout>} />
             <Route path="/dashboard/issues" element={<DashboardLayout><Issues /></DashboardLayout>} />
             <Route path="/dashboard/analytics" element={<DashboardLayout><Analytics /></DashboardLayout>} />
+            <Route path="/dashboard/settings" element={<DashboardLayout><Settings /></DashboardLayout>} />
             <Route path="/dashboard/*" element={
               <DashboardLayout>
                 <Routes>

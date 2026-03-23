@@ -29,7 +29,7 @@ import { HugeiconsIcon } from "@hugeicons/react";
 import { StatusUpdateModal } from "@/components/dashboard/StatusUpdateModal";
 import { toast } from "sonner";
 
-const ITEMS_PER_PAGE = 15;
+const ITEMS_PER_PAGE = 10;
 
 const Issues = () => {
     const [currentPage, setCurrentPage] = useState(1);

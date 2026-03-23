@@ -30,12 +30,14 @@ interface IssueDrawerProps {
 export const IssueDrawer = ({ isOpen, onClose, issue }: IssueDrawerProps) => {
     const [isLoading, setIsLoading] = useState(false);
     const [currentStatus, setCurrentStatus] = useState<string>("");
+    const [isAiExpanded, setIsAiExpanded] = useState(false);
 
     // Simulate loading and state sync when issue changes
     useEffect(() => {
         if (issue) {
             setIsLoading(true);
             setCurrentStatus(issue.status);
+            setIsAiExpanded(false); // Collapse AI section when new issue loads
             // Simulate network delay for "loading" fresh data
             const timer = setTimeout(() => {
                 setIsLoading(false);
@@ -150,34 +152,52 @@ export const IssueDrawer = ({ isOpen, onClose, issue }: IssueDrawerProps) => {
                                 </div>
                             </div>
 
-                            {/* AI Analysis Section */}
+                            {/* AI Analysis Section - Collapsible */}
                             <div className="space-y-2">
-                                <div className="flex items-center gap-2">
-                                    <HugeiconsIcon icon={AiBrain01Icon} className="w-4 h-4 text-accent" />
-                                    <h4 className="text-sm font-medium text-foreground">AI Analysis</h4>
-                                </div>
-
-                                <div className="bg-accent/5 border border-accent/50 rounded-lg p-3 space-y-3">
-                                    <div>
-                                        <div className="flex items-center gap-1.5 mb-1">
-                                            <HugeiconsIcon icon={SparklesIcon} className="w-3 h-3 text-accent" />
-                                            <h5 className="text-xs font-semibold text-accent">Root Cause Prediction</h5>
-                                        </div>
-                                        <p className="text-xs text-accent leading-relaxed">
-                                            Pattern analysis suggests 85% probability of {issue.type === 'road' ? 'sub-surface soil erosion due to recent heavy rains' : 'aging infrastructure affecting successful resource distribution'}.
-                                        </p>
+                                <button
+                                    onClick={() => setIsAiExpanded(!isAiExpanded)}
+                                    className="flex items-center justify-between w-full group hover:bg-muted/30 p-2 rounded-lg transition-colors"
+                                >
+                                    <div className="flex items-center gap-2">
+                                        <HugeiconsIcon icon={AiBrain01Icon} className="w-4 h-4 text-accent" />
+                                        <h4 className="text-sm font-medium text-foreground">AI Analysis</h4>
                                     </div>
+                                    <svg
+                                        className={cn(
+                                            "w-4 h-4 text-muted-foreground transition-transform duration-200",
+                                            isAiExpanded && "rotate-180"
+                                        )}
+                                        fill="none"
+                                        viewBox="0 0 24 24"
+                                        stroke="currentColor"
+                                    >
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                                    </svg>
+                                </button>
 
-                                    <div>
-                                        <div className="flex items-center gap-1.5 mb-1">
-                                            <HugeiconsIcon icon={CheckmarkCircle02Icon} className="w-3 h-3 text-accent" />
-                                            <h5 className="text-xs font-semibold text-accent">Recommended Action</h5>
+                                {isAiExpanded && (
+                                    <div className="bg-accent/5 border border-accent/50 rounded-lg p-3 space-y-3 animate-in slide-in-from-top-2 duration-200">
+                                        <div>
+                                            <div className="flex items-center gap-1.5 mb-1">
+                                                <HugeiconsIcon icon={SparklesIcon} className="w-3 h-3 text-accent" />
+                                                <h5 className="text-xs font-semibold text-accent">Root Cause Prediction</h5>
+                                            </div>
+                                            <p className="text-xs text-accent leading-relaxed">
+                                                Pattern analysis suggests 85% probability of {issue.type === 'road' ? 'sub-surface soil erosion due to recent heavy rains' : 'aging infrastructure affecting successful resource distribution'}.
+                                            </p>
                                         </div>
-                                        <p className="text-xs text-accent leading-relaxed">
-                                            Dispatch {issue.type === 'road' ? 'Geo-Technical Assessment Unit' : 'Level 2 Maintenance Crew'} with ground penetrating radar within 4 hours to prevent severity escalation.
-                                        </p>
+
+                                        <div>
+                                            <div className="flex items-center gap-1.5 mb-1">
+                                                <HugeiconsIcon icon={CheckmarkCircle02Icon} className="w-3 h-3 text-accent" />
+                                                <h5 className="text-xs font-semibold text-accent">Recommended Action</h5>
+                                            </div>
+                                            <p className="text-xs text-accent leading-relaxed">
+                                                Dispatch {issue.type === 'road' ? 'Geo-Technical Assessment Unit' : 'Level 2 Maintenance Crew'} with ground penetrating radar within 4 hours to prevent severity escalation.
+                                            </p>
+                                        </div>
                                     </div>
-                                </div>
+                                )}
                             </div>
                         </>
                     )
