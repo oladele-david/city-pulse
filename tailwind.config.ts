@@ -41,7 +41,7 @@ export default {
 					foreground: 'hsl(var(--muted-foreground))'
 				},
 				accent: {
-					DEFAULT: 'hsl(var(--accent))',
+					DEFAULT: '#F59E0B',
 					foreground: 'hsl(var(--accent-foreground))'
 				},
 				popover: {
@@ -67,6 +67,9 @@ export default {
 				lg: 'var(--radius)',
 				md: 'calc(var(--radius) - 2px)',
 				sm: 'calc(var(--radius) - 4px)'
+			},
+			fontFamily: {
+				sans: ["Geist", "sans-serif"],
 			},
 			keyframes: {
 				'accordion-down': {
