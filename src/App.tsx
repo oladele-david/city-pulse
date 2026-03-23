@@ -4,9 +4,11 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import Index from "./pages/Index";
+import Dashboard from "./pages/dashboard/Dashboard";
+import LiveMap from "./pages/dashboard/LiveMap";
 import NotFound from "./pages/NotFound";
-import LoginPage from "./features/auth/pages/LoginPage";
-import { DashboardLayout } from "./features/dashboard/layouts/DashboardLayout";
+import LoginPage from "./pages/auth/LoginPage";
+import { DashboardLayout } from "./components/dashboard/DashboardLayout";
 
 const queryClient = new QueryClient();
 
@@ -19,6 +21,8 @@ const App = () => (
         <Routes>
           <Route path="/" element={<Navigate to="/login" replace />} />
           <Route path="/login" element={<LoginPage />} />
+          <Route path="/dashboard" element={<DashboardLayout><Dashboard /></DashboardLayout>} />
+          <Route path="/dashboard/map" element={<DashboardLayout><LiveMap /></DashboardLayout>} />
           <Route path="/dashboard/*" element={
             <DashboardLayout>
               <Routes>
