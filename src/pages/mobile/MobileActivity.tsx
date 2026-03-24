@@ -1,146 +1,143 @@
-import { useMemo } from 'react';
+import { useState } from 'react';
 import { HugeiconsIcon } from "@hugeicons/react";
 import {
-    TickDouble02Icon,
     CheckmarkBadge01Icon,
-    Alert01Icon,
-    ArrowRight01Icon,
+    InformationCircleIcon,
     Medal02Icon,
-    Clock01Icon,
-    CheckmarkCircle02Icon
+    Calendar01Icon
 } from "@hugeicons/core-free-icons";
 import { cn } from "@/lib/utils";
-
-interface ActivityItem {
-    id: string;
-    type: 'report' | 'confirmation' | 'resolution';
-    title: string;
-    timestamp: string;
-    points: number;
-    status: 'pending' | 'verified' | 'resolved';
-}
+import { activityContributions, ActivityContribution } from '@/data/activityData';
+import { MobileActivityDetailsSheet } from '@/components/mobile/MobileActivityDetailsSheet';
+import { CredibilityInfoModal } from '@/components/mobile/CredibilityInfoModal';
 
 const MobileActivity = () => {
-    // Activity mock data
-    const activities: ActivityItem[] = [
-        {
-            id: '1',
-            type: 'resolution',
-            title: "Road issue you confirmed has been resolved.",
-            timestamp: "2h ago",
-            points: 5,
-            status: 'resolved'
-        },
-        {
-            id: '2',
-            type: 'report',
-            title: "Pothole in Downtown Dubai",
-            timestamp: "1d ago",
-            points: 3,
-            status: 'verified'
-        },
-        {
-            id: '3',
-            type: 'confirmation',
-            title: "Confirmed: Streetlight Outage in Marina",
-            timestamp: "3d ago",
-            points: 1,
-            status: 'verified'
-        },
-        {
-            id: '4',
-            type: 'report',
-            title: "Burst water pipe reported",
-            timestamp: "5d ago",
-            points: 0,
-            status: 'pending'
-        }
-    ];
+    const [selectedContribution, setSelectedContribution] = useState<ActivityContribution | null>(null);
+    const [isDetailsOpen, setIsDetailsOpen] = useState(false);
+    const [isInfoOpen, setIsInfoOpen] = useState(false);
 
-    const credibilityTier = "Reliable"; // New, Reliable, Trusted
+    const handleItemClick = (item: ActivityContribution) => {
+        setSelectedContribution(item);
+        setIsDetailsOpen(true);
+    };
 
     return (
-        <div className="flex flex-col h-full bg-background mt-4">
-            {/* Header / Trust Score */}
-            <div className="px-6 py-6">
-                <div className="bg-primary/5 border border-primary/10 rounded-2xl p-6 relative overflow-hidden">
-                    <div className="relative z-10 flex flex-col gap-1">
-                        <span className="text-[10px] font-bold text-primary uppercase tracking-[0.2em]">Credibility Level</span>
-                        <div className="flex items-center gap-2">
-                            <h1 className="text-3xl font-black text-foreground italic/0 tracking-tight">{credibilityTier}</h1>
-                            <HugeiconsIcon icon={CheckmarkBadge01Icon} className="w-6 h-6 text-primary" />
+        <div className="flex flex-col bg-background pb-32">
+            {/* Fintech Style Header Card */}
+            <div className="px-6 py-6 transition-all duration-300">
+                <div className="bg-primary rounded-3xl p-4 text-white relative overflow-hidden border border-primary/10 shadow-lg">
+                    {/* Information Button */}
+                    <button
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            setIsInfoOpen(true);
+                        }}
+                        className="absolute top-4 right-4 p-1 rounded-full bg-white/10 hover:bg-white/20 transition-all active:scale-90 z-50 border border-white/5"
+                    >
+                        <HugeiconsIcon icon={InformationCircleIcon} className="w-4 h-4 text-white" />
+                    </button>
+
+                    <div className="relative z-10">
+                        <div className="flex items-center gap-2 mb-4 bg-white/10 w-fit px-3 py-1.5 rounded-full border border-white/10">
+                            <span className="text-[10px] font-bold uppercase tracking-wider">Expert Citizen</span>
+                            <HugeiconsIcon icon={CheckmarkBadge01Icon} className="w-3.5 h-3.5" />
                         </div>
-                        <p className="text-[11px] text-muted-foreground font-medium mt-1 leading-relaxed max-w-[80%]">
-                            Your status is based on report accuracy and community verification consistency.
-                        </p>
+
+                        <div className="space-y-1 mb-5">
+                            <span className="text-white/60 text-[10px] font-bold uppercase tracking-widest">Total Points</span>
+                            <div className="flex items-baseline gap-2">
+                                <h1 className="text-3xl font-semibold tracking-tighter">1,240</h1>
+                                <HugeiconsIcon icon={Medal02Icon} className="w-6 h-6 text-white/30" />
+                            </div>
+                        </div>
+
+                        <div className="grid grid-cols-2 gap-3">
+                            <div className="bg-white/10 p-2 rounded-2xl border border-white/5">
+                                <span className="block text-[9px] text-white/60 font-bold uppercase">Accuracy</span>
+                                <span className="text-lg font-semibold">94.2%</span>
+                            </div>
+                            <div className="bg-white/10 p-2 rounded-2xl border border-white/5">
+                                <span className="block text-[9px] text-white/60 font-bold uppercase">Rank</span>
+                                <span className="text-lg font-semibold">#12 <span className="text-xs font-medium text-white/50">Local</span></span>
+                            </div>
+                        </div>
                     </div>
-                    {/* Abstract background element */}
-                    <div className="absolute -right-8 -bottom-8 w-32 h-32 bg-primary/10 rounded-full blur-3xl" />
+
+                    {/* Decorative Blob */}
+                    <div className="absolute -bottom-16 -right-16 w-48 h-48 bg-white/10 rounded-full blur-3xl shrink-0" />
                 </div>
             </div>
 
-            {/* Stats Bar */}
-            <div className="px-6 flex gap-3">
-                <div className="flex-1 bg-muted/20 border border-border/40 rounded-3xl p-4 flex flex-col items-center">
-                    <span className="text-xl font-bold text-foreground">1,240</span>
-                    <span className="text-[9px] font-bold text-muted-foreground uppercase tracking-wider">Total Points</span>
-                </div>
-                <div className="flex-1 bg-muted/20 border border-border/40 rounded-3xl p-4 flex flex-col items-center">
-                    <span className="text-xl font-bold text-foreground">94%</span>
-                    <span className="text-[9px] font-bold text-muted-foreground uppercase tracking-wider">Accuracy</span>
-                </div>
-            </div>
-
-            {/* Contribution List */}
-            <div className="mt-8 px-6 pb-24 flex-1">
-                <div className="flex items-center justify-between mb-4 px-1">
-                    <h2 className="text-[10px] font-bold text-muted-foreground uppercase tracking-[0.25em]">My Contributions</h2>
-                    <HugeiconsIcon icon={Clock01Icon} className="w-4 h-4 text-muted-foreground/40" />
+            {/* Timeline List */}
+            <div className="px-6">
+                <div className="flex items-center justify-between mb-6 px-1">
+                    <h2 className="text-[11px] font-bold text-foreground uppercase tracking-[0.2em] italic">Contribution History</h2>
+                    <HugeiconsIcon icon={Calendar01Icon} className="w-4 h-4 text-muted-foreground/70" />
                 </div>
 
-                <div className="space-y-3">
-                    {activities.map((item) => (
-                        <div
-                            key={item.id}
-                            className="p-4 bg-background border border-border/40 rounded-3xl flex items-center gap-4 active:scale-[0.98] transition-all hover:bg-muted/5 group"
-                        >
-                            <div className={cn(
-                                "w-11 h-11 rounded-2xl flex items-center justify-center transition-colors",
-                                item.type === 'resolution' ? "bg-green-50 text-green-600" :
-                                    item.type === 'report' ? "bg-blue-50 text-blue-600" : "bg-amber-50 text-amber-600"
-                            )}>
-                                <HugeiconsIcon
-                                    icon={item.type === 'resolution' ? CheckmarkCircle02Icon : item.type === 'report' ? Alert01Icon : TickDouble02Icon}
-                                    className="w-5 h-5"
-                                />
-                            </div>
+                <div className="relative">
+                    {/* Vertical Timeline Line */}
+                    <div className="absolute left-[3px] top-4 bottom-4 w-px bg-border/40" />
 
-                            <div className="flex-1 min-w-0">
-                                <p className="text-[13px] font-bold text-foreground leading-tight truncate pr-2">
-                                    {item.title}
-                                </p>
-                                <div className="flex items-center gap-2 mt-1">
-                                    <span className="text-[10px] text-muted-foreground font-semibold uppercase">{item.timestamp}</span>
-                                    <div className="w-1 h-1 bg-border rounded-full" />
-                                    <span className={cn(
-                                        "text-[10px] font-bold uppercase",
-                                        item.status === 'resolved' ? "text-green-600" : "text-muted-foreground"
-                                    )}>
-                                        {item.status}
-                                    </span>
+                    <div className="space-y-10">
+                        {activityContributions.map((item, idx) => (
+                            <div
+                                key={item.id}
+                                onClick={() => handleItemClick(item)}
+                                className="relative pl-8 group active:scale-[0.98] transition-all"
+                            >
+                                {/* Dot */}
+                                <div className={cn(
+                                    "absolute left-0 top-[6px] w-[7px] h-[7px] rounded-full ring-4 ring-background transition-all group-hover:scale-125 z-10",
+                                    item.status === 'resolved' ? "bg-green-500" :
+                                        item.status === 'verified' ? "bg-primary" : "bg-muted-foreground/40"
+                                )} />
+
+                                <div className="flex items-start justify-between gap-4">
+                                    <div className="flex-1 min-w-0">
+                                        <div className="flex items-center gap-2 mb-1">
+                                            <span className="text-[10px] font-semibold text-muted-foreground/60 uppercase tracking-widest">{item.timestamp}</span>
+                                            <div className="w-1 h-1 bg-border rounded-full shrink-0" />
+                                            <span className={cn(
+                                                "text-[10px] font-semibold uppercase",
+                                                item.status === 'resolved' ? "text-green-600" :
+                                                    item.status === 'verified' ? "text-primary/70" : "text-muted-foreground"
+                                            )}>
+                                                {item.status}
+                                            </span>
+                                        </div>
+                                        <h3 className="text-sm font-semibold text-foreground leading-tight mb-1 group-hover:text-primary transition-colors">
+                                            {item.title}
+                                        </h3>
+                                        <p className="text-[11px] text-muted-foreground/80 font-medium truncate">
+                                            {item.location}
+                                        </p>
+                                    </div>
+
+                                    {item.points > 0 && (
+                                        <div className="bg-muted/30 px-3 py-2 rounded-2xl border border-border/40 flex items-center gap-1.5 shrink-0 group-hover:bg-primary/5 group-hover:border-primary/20 transition-all">
+                                            <span className="text-xs font-semibold text-foreground group-hover:text-primary">+{item.points}</span>
+                                            <HugeiconsIcon icon={Medal02Icon} className="w-3.5 h-3.5 text-muted-foreground/60 group-hover:text-primary" />
+                                        </div>
+                                    )}
                                 </div>
                             </div>
-
-                            {item.points > 0 && (
-                                <div className="bg-primary/5 px-2.5 py-1.5 rounded-xl border border-primary/10 flex items-center gap-1.5">
-                                    <span className="text-[11px] font-black text-primary">+{item.points}</span>
-                                    <HugeiconsIcon icon={Medal02Icon} className="w-3 h-3 text-primary" />
-                                </div>
-                            )}
-                        </div>
-                    ))}
+                        ))}
+                    </div>
                 </div>
             </div>
+
+            {/* Sheets & Modals */}
+            <MobileActivityDetailsSheet
+                contribution={selectedContribution}
+                isOpen={isDetailsOpen}
+                onClose={() => setIsDetailsOpen(false)}
+            />
+
+            <CredibilityInfoModal
+                isOpen={isInfoOpen}
+                onClose={() => setIsInfoOpen(false)}
+            />
         </div>
     );
 };

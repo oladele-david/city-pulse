@@ -6,11 +6,11 @@ import {
     MapsLocation01Icon,
     FilterIcon,
     LocationUser03Icon,
-    Road01Icon,
-    DropletIcon,
+    RoadIcon,
+    BlackHole01Icon,
     IdeaIcon,
     VolumeHighIcon,
-    ThermometerIcon,
+    ThermometerWarmIcon,
     TemperatureIcon
 } from "@hugeicons/core-free-icons";
 import { mockIssues, Issue } from '@/data/mockIssues';
@@ -45,12 +45,12 @@ const MobileMap = () => {
 
     const getIconByIssueType = (type: string) => {
         switch (type) {
-            case 'road': return Road01Icon;
-            case 'drainage': return DropletIcon;
+            case 'road': return RoadIcon;
+            case 'drainage': return BlackHole01Icon;
             case 'lighting': return IdeaIcon;
             case 'noise': return VolumeHighIcon;
-            case 'heat': return ThermometerIcon;
-            default: return Road01Icon;
+            case 'heat': return ThermometerWarmIcon;
+            default: return RoadIcon;
         }
     };
 
@@ -105,33 +105,39 @@ const MobileMap = () => {
 
     return (
         <div className="relative w-full h-full bg-background overflow-hidden">
-            {/* Top Bar Controls */}
-            <div className="absolute top-6 left-4 right-4 z-30 flex gap-2">
-                <div className="flex-1 bg-background/90 backdrop-blur-md border border-border/50 rounded-2xl h-14 flex items-center px-4 shadow-lg ring-1 ring-black/5">
-                    <HugeiconsIcon icon={MapsLocation01Icon} className="w-6 h-6 text-muted-foreground mr-3" />
-                    <span className="text-sm font-bold text-foreground truncate select-none">Ahmed's Dubai District</span>
-                </div>
+            {/* Top Bar - Centralized and Balanced */}
+            <div className="fixed top-6 left-0 right-0 z-40 px-4 pointer-events-none">
+                <div className="flex items-center gap-2 max-w-[380px] mx-auto pointer-events-auto">
+                    {/* Search Bar - Slightly flexible */}
+                    <div className="flex-1 min-w-0 h-14 bg-background/95 backdrop-blur-md rounded-2xl border border-border/40 shadow-xl flex items-center px-4 gap-3">
+                        <HugeiconsIcon icon={MapsLocation01Icon} className="w-5 h-5 text-muted-foreground shrink-0" />
+                        <span className="text-[14px] font-bold text-muted-foreground truncate">Search records...</span>
+                    </div>
 
-                <div className="flex gap-2">
+                    {/* Heatmap Toggle */}
                     <button
-                        onClick={() => setShowHeatmap(!showHeatmap)}
+                        onClick={() => {
+                            setShowHeatmap(!showHeatmap);
+                            toast.info(showHeatmap ? "Map markers visible" : "Heatmap enabled");
+                        }}
                         className={cn(
-                            "h-14 w-14 rounded-2xl border shadow-lg flex items-center justify-center transition-all active:scale-95",
+                            "h-14 w-14 rounded-2xl flex items-center justify-center transition-all border shadow-xl active:scale-95 shrink-0",
                             showHeatmap
                                 ? "bg-primary text-white border-primary"
-                                : "bg-background/90 backdrop-blur-md text-foreground border-border/40"
+                                : "bg-background/95 backdrop-blur-md text-foreground border-border/40"
                         )}
                     >
                         <HugeiconsIcon icon={TemperatureIcon} className="w-5 h-5" />
                     </button>
 
+                    {/* Filter Toggle */}
                     <button
                         onClick={() => setIsFilterOpen(!isFilterOpen)}
                         className={cn(
-                            "h-14 w-14 rounded-2xl border shadow-lg flex items-center justify-center transition-all active:scale-95",
+                            "h-14 w-14 rounded-2xl flex items-center justify-center transition-all border shadow-xl active:scale-95 shrink-0",
                             isFilterOpen
                                 ? "bg-primary text-white border-primary"
-                                : "bg-background/90 backdrop-blur-md text-foreground border-border/40"
+                                : "bg-background/95 backdrop-blur-md text-foreground border-border/40"
                         )}
                     >
                         <HugeiconsIcon icon={FilterIcon} className="w-5 h-5" />

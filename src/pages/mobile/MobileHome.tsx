@@ -5,10 +5,10 @@ import { HugeiconsIcon } from "@hugeicons/react";
 import {
     Notification01Icon,
     RoadIcon,
-    DropletIcon,
+    BlackHole01Icon,
     IdeaIcon,
     VolumeHighIcon,
-    ThermometerIcon,
+    ThermometerWarmIcon,
     ArrowRight01Icon,
     LocationUser03Icon
 } from "@hugeicons/core-free-icons";
@@ -73,10 +73,10 @@ const MobileHome = () => {
     const getIconByIssueType = (type: string) => {
         switch (type) {
             case 'road': return RoadIcon;
-            case 'drainage': return DropletIcon;
+            case 'drainage': return BlackHole01Icon;
             case 'lighting': return IdeaIcon;
             case 'noise': return VolumeHighIcon;
-            case 'heat': return ThermometerIcon;
+            case 'heat': return ThermometerWarmIcon;
             default: return RoadIcon;
         }
     };
@@ -104,7 +104,7 @@ const MobileHome = () => {
     };
 
     return (
-        <div className="flex flex-col h-full bg-background pb-8">
+        <div className="flex flex-col bg-background pb-30">
             {/* Header */}
             <div className="flex items-center justify-between px-6 py-4 pt-6">
                 <div className="flex flex-col">
