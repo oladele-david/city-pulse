@@ -1,4 +1,5 @@
 import { useRef, useMemo, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import Map, { Source, Layer, MapRef, Marker } from 'react-map-gl/mapbox';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import { HugeiconsIcon } from "@hugeicons/react";
@@ -10,10 +11,11 @@ import {
     VolumeHighIcon,
     ThermometerWarmIcon,
     ArrowRight01Icon,
-    LocationUser03Icon
+    LocationUser03Icon,
+    Add01Icon
 } from "@hugeicons/core-free-icons";
 import { mockIssues, Issue } from '@/data/mockIssues';
-import { MobileIssueSheet } from '@/components/mobile/MobileIssueSheet';
+import { MobileIssueSheet } from '@/components/mobile/sheets/MobileIssueSheet';
 import { toast } from '@/components/ui/sonner';
 
 // Mapbox Token from environment
@@ -26,6 +28,7 @@ const DUMMY_USER_LOCATION = {
 };
 
 const MobileHome = () => {
+    const navigate = useNavigate();
     const mapRef = useRef<MapRef>(null);
     const [selectedIssue, setSelectedIssue] = useState<Issue | null>(null);
     const [isSheetOpen, setIsSheetOpen] = useState(false);
@@ -104,7 +107,7 @@ const MobileHome = () => {
     };
 
     return (
-        <div className="flex flex-col bg-background pb-30">
+        <div className="flex flex-col bg-background pb-40">
             {/* Header */}
             <div className="flex items-center justify-between px-6 py-4 pt-6">
                 <div className="flex flex-col">
@@ -119,7 +122,7 @@ const MobileHome = () => {
 
             {/* Mini Map Container */}
             <div className="px-6 mb-6">
-                <div className="relative aspect-[4/5] bg-muted rounded-[2.5rem] overflow-hidden border shadow-inner-lg ring-1 ring-border/30">
+                <div className="relative aspect-[4/5] bg-muted rounded-[2rem] overflow-hidden border shadow-inner-lg ring-1 ring-border/30">
                     <Map
                         ref={mapRef}
                         initialViewState={{
@@ -154,6 +157,14 @@ const MobileHome = () => {
                         </Source>
                     </Map>
 
+                    {/* Report CTA - Top Right of Map */}
+                    <button
+                        onClick={() => navigate('/mobile/report')}
+                        className="absolute top-2 right-2 w-12 h-12 bg-primary text-white rounded-full flex items-center justify-center shadow-2xl shadow-primary/40 active:scale-90 transition-all z-10 border border-white/20"
+                    >
+                        <HugeiconsIcon icon={Add01Icon} className="w-6 h-6" />
+                    </button>
+
                     {/* Status Strip */}
                     <div className="absolute bottom-6 left-6 right-6 bg-background/90 backdrop-blur-md p-4 rounded-2xl flex items-center justify-between border border-white/20 shadow-xl">
                         <div className="flex items-center gap-3">
@@ -179,7 +190,7 @@ const MobileHome = () => {
                     </button>
                 </div>
 
-                <div className="space-y-3 mb-6">
+                <div className="space-y-3">
                     {recentIssues.map((issue) => (
                         <div
                             key={issue.id}

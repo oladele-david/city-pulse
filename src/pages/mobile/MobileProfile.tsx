@@ -11,7 +11,7 @@ import {
     InformationCircleIcon
 } from "@hugeicons/core-free-icons";
 import { useNavigate } from "react-router-dom";
-import { MobileProfileSheet } from '@/components/mobile/MobileProfileSheet';
+import { MobileProfileSheet } from '@/components/mobile/sheets/MobileProfileSheet';
 
 const MobileProfile = () => {
     const navigate = useNavigate();

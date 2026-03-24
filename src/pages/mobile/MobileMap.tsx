@@ -14,8 +14,8 @@ import {
     TemperatureIcon
 } from "@hugeicons/core-free-icons";
 import { mockIssues, Issue } from '@/data/mockIssues';
-import { MobileIssueSheet } from '@/components/mobile/MobileIssueSheet';
-import { MobileMapFilters } from '@/components/mobile/MobileMapFilters';
+import { MobileIssueSheet } from '@/components/mobile/sheets/MobileIssueSheet';
+import { MobileMapFilters } from '@/components/mobile/ui/MobileMapFilters';
 import { cn } from "@/lib/utils";
 import { toast } from "@/components/ui/sonner";
 

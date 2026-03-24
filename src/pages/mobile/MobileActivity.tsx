@@ -8,8 +8,8 @@ import {
 } from "@hugeicons/core-free-icons";
 import { cn } from "@/lib/utils";
 import { activityContributions, ActivityContribution } from '@/data/activityData';
-import { MobileActivityDetailsSheet } from '@/components/mobile/MobileActivityDetailsSheet';
-import { CredibilityInfoModal } from '@/components/mobile/CredibilityInfoModal';
+import { MobileActivityDetailsSheet } from '@/components/mobile/sheets/MobileActivityDetailsSheet';
+import { CredibilityInfoModal } from '@/components/mobile/modals/CredibilityInfoModal';
 
 const MobileActivity = () => {
     const [selectedContribution, setSelectedContribution] = useState<ActivityContribution | null>(null);

@@ -13,11 +13,12 @@ import NotFound from "./pages/NotFound";
 import LoginPage from "./pages/auth/LoginPage";
 import { DashboardLayout } from "./components/dashboard/DashboardLayout";
 import { MobileBlocker } from "./components/MobileBlocker";
-import MobileLayout from "./components/mobile/MobileLayout";
+import MobileLayout from "./components/mobile/layout/MobileLayout";
 import MobileHome from "./pages/mobile/MobileHome";
 import MobileMap from "./pages/mobile/MobileMap";
 import MobileProfile from "./pages/mobile/MobileProfile";
 import MobileActivity from "./pages/mobile/MobileActivity";
+import MobileReport from "./pages/mobile/MobileReport";
 
 const queryClient = new QueryClient();
 
@@ -34,7 +35,7 @@ const App = () => (
             <Route path="map" element={<MobileMap />} />
             <Route path="activity" element={<MobileActivity />} />
             <Route path="profile" element={<MobileProfile />} />
-            <Route path="report" element={<div className="p-10 font-bold">Reporting Flow Coming Soon</div>} />
+            <Route path="report" element={<MobileReport />} />
           </Route>
 
           {/* Core App Routes */}
