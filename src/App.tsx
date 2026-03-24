@@ -15,6 +15,8 @@ import { DashboardLayout } from "./components/dashboard/DashboardLayout";
 import { MobileBlocker } from "./components/MobileBlocker";
 import MobileLayout from "./components/mobile/MobileLayout";
 import MobileHome from "./pages/mobile/MobileHome";
+import MobileMap from "./pages/mobile/MobileMap";
+import MobileProfile from "./pages/mobile/MobileProfile";
 
 const queryClient = new QueryClient();
 
@@ -22,15 +24,15 @@ const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
       <Toaster />
-      <Sonner />
+      <Sonner position="top-center" expand={true} richColors closeButton theme="light" toastOptions={{ style: { zIndex: 99999 } }} />
       <BrowserRouter>
         <Routes>
           {/* Mobile Citizen App Routes */}
           <Route path="/mobile" element={<MobileLayout />}>
             <Route index element={<MobileHome />} />
-            <Route path="map" element={<div className="p-10 font-bold">Map View Coming Soon</div>} />
+            <Route path="map" element={<MobileMap />} />
             <Route path="activity" element={<div className="p-10 font-bold">Activity View Coming Soon</div>} />
-            <Route path="profile" element={<div className="p-10 font-bold">Profile View Coming Soon</div>} />
+            <Route path="profile" element={<MobileProfile />} />
             <Route path="report" element={<div className="p-10 font-bold">Reporting Flow Coming Soon</div>} />
           </Route>
 

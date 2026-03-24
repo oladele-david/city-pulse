@@ -1,5 +1,5 @@
-import { useRef, useMemo } from 'react';
-import Map, { Source, Layer, MapRef } from 'react-map-gl/mapbox';
+import { useRef, useMemo, useState } from 'react';
+import Map, { Source, Layer, MapRef, Marker } from 'react-map-gl/mapbox';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import { HugeiconsIcon } from "@hugeicons/react";
 import {
@@ -9,15 +9,26 @@ import {
     IdeaIcon,
     VolumeHighIcon,
     ThermometerIcon,
-    ArrowRight01Icon
+    ArrowRight01Icon,
+    LocationUser03Icon
 } from "@hugeicons/core-free-icons";
-import { mockIssues } from '@/data/mockIssues';
+import { mockIssues, Issue } from '@/data/mockIssues';
+import { MobileIssueSheet } from '@/components/mobile/MobileIssueSheet';
+import { toast } from '@/components/ui/sonner';
 
 // Mapbox Token from environment
 const MAPBOX_TOKEN = import.meta.env.VITE_MAPBOX_TOKEN;
 
+// Dummy user location (Downtown Dubai area)
+const DUMMY_USER_LOCATION = {
+    latitude: 25.1972,
+    longitude: 55.2744
+};
+
 const MobileHome = () => {
     const mapRef = useRef<MapRef>(null);
+    const [selectedIssue, setSelectedIssue] = useState<Issue | null>(null);
+    const [isSheetOpen, setIsSheetOpen] = useState(false);
 
     // Convert mockIssues to GeoJSON for the heatmap
     const geojsonData = useMemo(() => ({
@@ -77,6 +88,21 @@ const MobileHome = () => {
             .slice(0, 3);
     }, []);
 
+    const handleIssueClick = (issue: Issue) => {
+        setSelectedIssue(issue);
+        setIsSheetOpen(true);
+    };
+
+    const handleConfirm = (id: string) => {
+        toast.success("Thank you! Your confirmation has been recorded.");
+        setIsSheetOpen(false);
+    };
+
+    const handleDisagree = (id: string) => {
+        toast.info("Thank you for the feedback. Highlighting for verification.");
+        setIsSheetOpen(false);
+    };
+
     return (
         <div className="flex flex-col h-full bg-background pb-8">
             {/* Header */}
@@ -97,9 +123,9 @@ const MobileHome = () => {
                     <Map
                         ref={mapRef}
                         initialViewState={{
-                            latitude: 25.2048,
-                            longitude: 55.2708,
-                            zoom: 11
+                            latitude: DUMMY_USER_LOCATION.latitude,
+                            longitude: DUMMY_USER_LOCATION.longitude,
+                            zoom: 13
                         }}
                         style={{ width: '100%', height: '100%' }}
                         mapStyle="mapbox://styles/mapbox/light-v11"
@@ -109,6 +135,20 @@ const MobileHome = () => {
                         dragPan={true}
                         doubleClickZoom={false}
                     >
+                        {/* User Location Marker */}
+                        <Marker
+                            latitude={DUMMY_USER_LOCATION.latitude}
+                            longitude={DUMMY_USER_LOCATION.longitude}
+                            anchor="center"
+                        >
+                            <div className="relative flex items-center justify-center">
+                                <div className="absolute w-12 h-12 bg-primary/20 rounded-full animate-ping" />
+                                <div className="relative w-10 h-10 bg-primary rounded-full flex items-center justify-center border-4 border-white shadow-xl">
+                                    <HugeiconsIcon icon={LocationUser03Icon} className="w-5 h-5 text-white" />
+                                </div>
+                            </div>
+                        </Marker>
+
                         <Source id="issues" type="geojson" data={geojsonData}>
                             <Layer {...heatmapLayer} />
                         </Source>
@@ -121,7 +161,7 @@ const MobileHome = () => {
                                 <div className="w-2.5 h-2.5 bg-green-500 rounded-full" />
                                 <div className="absolute inset-0 w-2.5 h-2.5 bg-green-400 rounded-full animate-ping" />
                             </div>
-                            <span className="text-xs font-bold tracking-wide text-foreground">SYSTEM ACTIVE</span>
+                            <span className="text-xs font-bold tracking-wide text-foreground uppercase">System Active</span>
                         </div>
                         <span className="text-[10px] font-medium text-muted-foreground/80 uppercase tracking-widest leading-none">
                             Sync: Just now
@@ -143,9 +183,10 @@ const MobileHome = () => {
                     {recentIssues.map((issue) => (
                         <div
                             key={issue.id}
-                            className="group p-4 bg-background border rounded-2xl flex items-center gap-4 active:scale-[0.98] transition-all hover:bg-muted/10"
+                            onClick={() => handleIssueClick(issue)}
+                            className="group p-4 bg-background border rounded-2xl flex items-center gap-4 active:scale-[0.98] transition-all hover:bg-muted/10 cursor-pointer"
                         >
-                            <div className="w-9 h-9 flex items-center justify-center rounded-xl text-foreground bg-muted/40">
+                            <div className="w-9 h-9 flex items-center justify-center rounded-xl text-foreground bg-muted/40 group-hover:bg-primary group-hover:text-white transition-colors">
                                 <HugeiconsIcon
                                     icon={getIconByIssueType(issue.type)}
                                     className="w-4.5 h-4.5"
@@ -162,6 +203,14 @@ const MobileHome = () => {
                     ))}
                 </div>
             </div>
+
+            <MobileIssueSheet
+                issue={selectedIssue}
+                isOpen={isSheetOpen}
+                onClose={() => setIsSheetOpen(false)}
+                onConfirm={handleConfirm}
+                onDisagree={handleDisagree}
+            />
         </div>
     );
 };
