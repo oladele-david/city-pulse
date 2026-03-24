@@ -24,8 +24,8 @@ const MobileActivity = () => {
     return (
         <div className="flex flex-col bg-background pb-32">
             {/* Fintech Style Header Card */}
-            <div className="px-6 py-6 transition-all duration-300">
-                <div className="bg-primary rounded-3xl p-4 text-white relative overflow-hidden border border-primary/10 shadow-lg">
+            <div className="px-4 py-6 transition-all duration-300">
+                <div className="bg-primary rounded-3xl p-4 text-white relative overflow-hidden border border-2 border-white/10 shadow-lg">
                     {/* Information Button */}
                     <button
                         onClick={(e) => {
@@ -52,11 +52,11 @@ const MobileActivity = () => {
                         </div>
 
                         <div className="grid grid-cols-2 gap-3">
-                            <div className="bg-white/10 p-2 rounded-2xl border border-white/5">
+                            <div className="bg-white/10 p-3 rounded-2xl border border-white/5">
                                 <span className="block text-[9px] text-white/60 font-bold uppercase">Accuracy</span>
                                 <span className="text-lg font-semibold">94.2%</span>
                             </div>
-                            <div className="bg-white/10 p-2 rounded-2xl border border-white/5">
+                            <div className="bg-white/10 p-3 rounded-2xl border border-white/5">
                                 <span className="block text-[9px] text-white/60 font-bold uppercase">Rank</span>
                                 <span className="text-lg font-semibold">#12 <span className="text-xs font-medium text-white/50">Local</span></span>
                             </div>
@@ -71,8 +71,8 @@ const MobileActivity = () => {
             {/* Timeline List */}
             <div className="px-6">
                 <div className="flex items-center justify-between mb-6 px-1">
-                    <h2 className="text-[11px] font-bold text-foreground uppercase tracking-[0.2em] italic">Contribution History</h2>
-                    <HugeiconsIcon icon={Calendar01Icon} className="w-4 h-4 text-muted-foreground/70" />
+                    <h2 className="text-[10px] font-bold text-muted-foreground uppercase tracking-[0.2em] italic">Contribution History</h2>
+                    <HugeiconsIcon icon={Calendar01Icon} className="w-4 h-4 text-muted-foreground/90" />
                 </div>
 
                 <div className="relative">
