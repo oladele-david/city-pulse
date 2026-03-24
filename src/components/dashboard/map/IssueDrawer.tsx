@@ -62,7 +62,8 @@ export const IssueDrawer = ({ isOpen, onClose, issue }: IssueDrawerProps) => {
         setIsGeneratingAi(true);
 
         try {
-            const apiKey = import.meta.env.VITE_GROQ_API;
+            const rawApiKey = import.meta.env.VITE_GROQ_API;
+            const apiKey = rawApiKey?.trim();
 
             if (!apiKey) {
                 // Return mock data if API key is missing for demo purposes
@@ -77,16 +78,19 @@ export const IssueDrawer = ({ isOpen, onClose, issue }: IssueDrawerProps) => {
                 return;
             }
 
-            const prompt = `You are a municipal infrastructure AI. Analyze this issue:
-Type: ${issue.type}
+            const prompt = `You are a municipal infrastructure analyst. Analyze this incident:
+Incident Type: ${issue.type}
 Severity: ${issue.severity}
 Location: ${issue.location_name}
-Reports: ${issue.reports_count}
+Active Reports: ${issue.reports_count}
+Title: ${issue.title}
+Description: ${issue.description}
 
-Provide a JSON object with:
-"rootCause": concise analysis of likely cause (2 sentences)
-"recommendation": strategic action plan (2 sentences)
-Return ONLY JSON.`;
+You must return a JSON object with exactly two keys:
+1. "rootCause": (string) A 2-sentence technical analysis of the likely cause.
+2. "recommendation": (string) A 2-sentence strategic action plan.
+
+Respond ONLY with the JSON object.`;
 
             const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
                 method: 'POST',
@@ -95,9 +99,12 @@ Return ONLY JSON.`;
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
-                    model: 'mixtral-8x7b-32768',
+                    model: 'llama-3.3-70b-versatile',
                     messages: [
-                        { role: 'system', content: 'You are a technical analyst for CityPulse GovOps. Respond in valid JSON.' },
+                        {
+                            role: 'system',
+                            content: 'You are a highly professional structural engineer and municipal analyst for CityPulse GovOps. You provide data-driven insights in valid JSON format only.'
+                        },
                         { role: 'user', content: prompt }
                     ],
                     temperature: 0.1,
@@ -105,10 +112,18 @@ Return ONLY JSON.`;
                 }),
             });
 
-            if (!response.ok) throw new Error('API request failed');
+            if (!response.ok) {
+                const errorData = await response.json().catch(() => ({}));
+                console.error('Groq API Error Response:', errorData);
+                throw new Error(errorData.error?.message || `API request failed with status ${response.status}`);
+            }
 
             const data = await response.json();
-            const result = JSON.parse(data.choices[0]?.message?.content || '{}');
+            const content = data.choices[0]?.message?.content;
+
+            if (!content) throw new Error('No content received from AI');
+
+            const result = JSON.parse(content);
 
             setAiAnalysis({
                 rootCause: result.rootCause || "Analysis inconclusive due to data gaps.",
