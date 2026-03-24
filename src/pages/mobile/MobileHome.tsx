@@ -4,7 +4,7 @@ import 'mapbox-gl/dist/mapbox-gl.css';
 import { HugeiconsIcon } from "@hugeicons/react";
 import {
     Notification01Icon,
-    Road01Icon,
+    RoadIcon,
     DropletIcon,
     IdeaIcon,
     VolumeHighIcon,
@@ -72,12 +72,12 @@ const MobileHome = () => {
 
     const getIconByIssueType = (type: string) => {
         switch (type) {
-            case 'road': return Road01Icon;
+            case 'road': return RoadIcon;
             case 'drainage': return DropletIcon;
             case 'lighting': return IdeaIcon;
             case 'noise': return VolumeHighIcon;
             case 'heat': return ThermometerIcon;
-            default: return Road01Icon;
+            default: return RoadIcon;
         }
     };
 
@@ -179,7 +179,7 @@ const MobileHome = () => {
                     </button>
                 </div>
 
-                <div className="space-y-3">
+                <div className="space-y-3 mb-6">
                     {recentIssues.map((issue) => (
                         <div
                             key={issue.id}

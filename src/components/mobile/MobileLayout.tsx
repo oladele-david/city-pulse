@@ -8,6 +8,7 @@ import {
     Add01Icon
 } from "@hugeicons/core-free-icons";
 import { cn } from "@/lib/utils";
+import ScrollToTop from "./ScrollToTop";
 
 const MobileLayout = () => {
     const location = useLocation();
@@ -22,13 +23,15 @@ const MobileLayout = () => {
 
     return (
         <div className="flex flex-col h-screen bg-background overflow-hidden relative max-w-md mx-auto border-x shadow-2xl">
+            <ScrollToTop />
+
             {/* Mobile Viewport Container */}
-            <main className="flex-1 overflow-y-auto overflow-x-hidden custom-scrollbar">
+            <main className="flex-1 overflow-y-auto overflow-x-hidden custom-scrollbar mobile-main-content">
                 <Outlet />
             </main>
 
-            {/* Navigation */}
-            <div className="h-20 border-t bg-background/80 backdrop-blur-md flex items-center justify-around px-2 shrink-0 pb-safe relative">
+            {/* Navigation - Fixed at bottom */}
+            <div className="absolute bottom-0 left-0 right-0 h-20 border-t bg-background/80 backdrop-blur-md flex items-center justify-around px-2 pb-safe z-50">
                 {navItems.map((item, idx) => {
                     if (item.isFab) {
                         return (
