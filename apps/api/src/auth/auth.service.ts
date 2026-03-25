@@ -11,6 +11,7 @@ import { RegisterCitizenDto } from './dto/register-citizen.dto';
 import { LoginDto } from './dto/login.dto';
 import { getTrustWeight } from 'src/domain/rules/points.rules';
 import { InMemoryDatabaseService } from 'src/infrastructure/in-memory/in-memory-database.service';
+import { UserRecord } from 'src/domain/models';
 import { v4 as uuid } from 'uuid';
 
 @Injectable()
@@ -109,13 +110,7 @@ export class AuthService {
     return this.buildAuthPayload(user);
   }
 
-  private buildAuthPayload(user: {
-    id: string;
-    email: string;
-    role: 'citizen' | 'admin';
-    passwordHash?: string;
-    [key: string]: unknown;
-  }) {
+  private buildAuthPayload(user: UserRecord) {
     const token = this.jwtService.sign(
       {
         sub: user.id,
