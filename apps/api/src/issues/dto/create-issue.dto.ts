@@ -10,6 +10,7 @@ import {
   MaxLength,
   ValidateIf,
 } from 'class-validator';
+import { Type } from 'class-transformer';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
 export class CreateIssueDto {
@@ -47,10 +48,12 @@ export class CreateIssueDto {
   streetOrLandmark!: string;
 
   @ApiProperty({ example: 6.5001 })
+  @Type(() => Number)
   @IsLatitude()
   latitude!: number;
 
   @ApiProperty({ example: 3.3525 })
+  @Type(() => Number)
   @IsLongitude()
   longitude!: number;
 

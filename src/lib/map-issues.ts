@@ -41,20 +41,27 @@ function formatStatusLabel(status: IssueRecord["status"]) {
       : "Open";
 }
 
+function toCoordinateValue(value: number) {
+  const parsed = Number(value);
+  return Number.isFinite(parsed) ? parsed : 0;
+}
+
 export function toMapIssue(issue: IssueRecord): MapIssue {
   const reportsCount =
     issue.confirmationsCount +
     issue.disagreementsCount +
     issue.fixedSignalsCount +
     1;
+  const latitude = toCoordinateValue(issue.latitude);
+  const longitude = toCoordinateValue(issue.longitude);
 
   return {
     id: issue.id,
     type: issue.type,
     title: issue.title,
     description: issue.description,
-    latitude: issue.latitude,
-    longitude: issue.longitude,
+    latitude,
+    longitude,
     severity: issue.severity,
     status: issue.status,
     confidence: issue.confidenceScore / 100,

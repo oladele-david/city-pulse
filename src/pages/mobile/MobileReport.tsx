@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   BlackHole01Icon,
   IdeaIcon,
@@ -12,6 +12,7 @@ import { toast } from "@/components/ui/sonner";
 import { api, ApiError } from "@/lib/api";
 import { useCitizenAuth } from "@/hooks/use-auth";
 import { useCitizenLocation } from "@/hooks/use-citizen-location";
+import { issueQueryKeys } from "@/hooks/use-live-issues";
 import { IssueSeverity } from "@/types/api";
 
 import { CategoryStep } from "@/components/mobile/reporting/CategoryStep";
@@ -32,6 +33,7 @@ const MobileReport = () => {
   const navigate = useNavigate();
   const { session } = useCitizenAuth();
   const location = useCitizenLocation();
+  const queryClient = useQueryClient();
   const [step, setStep] = useState(1);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [markerLocation, setMarkerLocation] = useState(location.coordinates);
@@ -97,6 +99,26 @@ const MobileReport = () => {
       );
     },
     onSuccess: (issue) => {
+      queryClient.setQueriesData(
+        { queryKey: issueQueryKeys.all },
+        (current: unknown) => {
+          if (!Array.isArray(current)) {
+            return current;
+          }
+
+          const existingIssue = current.find(
+            (item): item is { id: string } =>
+              Boolean(item) &&
+              typeof item === "object" &&
+              "id" in item &&
+              typeof item.id === "string" &&
+              item.id === issue.id,
+          );
+
+          return existingIssue ? current : [issue, ...current];
+        },
+      );
+      void queryClient.invalidateQueries({ queryKey: issueQueryKeys.all });
       setSubmittedIssueId(issue.id);
       setStep(4);
       toast.success("Your issue has been submitted to CityPulse.");

@@ -3,6 +3,7 @@ import {
   Injectable,
   ServiceUnavailableException,
 } from '@nestjs/common';
+import { v4 as uuid } from 'uuid';
 import { v2 as cloudinary } from 'cloudinary';
 
 interface UploadableIssueMediaFile {
@@ -39,13 +40,7 @@ export class CloudinaryMediaService {
     this.validateFile(file);
 
     if (!this.isConfigured()) {
-      throw new ServiceUnavailableException({
-        error: {
-          code: 'media_upload_unavailable',
-          message: 'Cloudinary is not configured for media uploads',
-          details: [],
-        },
-      });
+      return this.createInlineMedia(file);
     }
 
     cloudinary.config({
@@ -97,6 +92,16 @@ export class CloudinaryMediaService {
 
   private isConfigured() {
     return Boolean(this.cloudName && this.apiKey && this.apiSecret);
+  }
+
+  private createInlineMedia(file: UploadableIssueMediaFile): UploadedIssueMedia {
+    const resourceType = file.mimetype.startsWith('video/') ? 'video' : 'image';
+
+    return {
+      secureUrl: `data:${file.mimetype};base64,${file.buffer.toString('base64')}`,
+      resourceType,
+      publicId: `local-inline/${resourceType}/${uuid()}`,
+    };
   }
 
   private validateFile(file: UploadableIssueMediaFile) {

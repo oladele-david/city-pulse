@@ -215,6 +215,8 @@ describe('CityPulse API integration', () => {
     expect(issueResponse.body.data.videoUrl).toContain(
       'res.cloudinary.com/demo/video/upload',
     );
+    expect(issueResponse.body.data.latitude).toBeCloseTo(6.5011);
+    expect(issueResponse.body.data.longitude).toBeCloseTo(3.3531);
   });
 
   it('resolves public guest location requests', async () => {
