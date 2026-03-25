@@ -17,7 +17,7 @@ export class PaymentsController {
   @Roles('citizen')
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Initialize an Interswitch Web Checkout payment' })
-  initialize(
+  async initialize(
     @Body() dto: InitializePaymentDto,
     @CurrentUser() user: AuthUser,
   ) {
@@ -28,7 +28,7 @@ export class PaymentsController {
   @Roles('citizen')
   @ApiBearerAuth()
   @ApiOperation({ summary: 'List the authenticated citizen payment history' })
-  getMine(@CurrentUser() user: AuthUser) {
+  async getMine(@CurrentUser() user: AuthUser) {
     return this.paymentsService.getMyPayments(user.sub);
   }
 
@@ -36,7 +36,7 @@ export class PaymentsController {
   @Roles('citizen', 'admin')
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Get the current status of a payment reference' })
-  getStatus(
+  async getStatus(
     @Param('reference') reference: string,
     @CurrentUser() user: AuthUser,
   ) {
@@ -47,7 +47,7 @@ export class PaymentsController {
   @Post('payments/webhook')
   @HttpCode(200)
   @ApiOperation({ summary: 'Process an idempotent payment webhook callback' })
-  webhook(@Body() dto: PaymentWebhookDto) {
+  async webhook(@Body() dto: PaymentWebhookDto) {
     return this.paymentsService.processWebhook(dto);
   }
 
@@ -55,7 +55,7 @@ export class PaymentsController {
   @Roles('admin')
   @ApiBearerAuth()
   @ApiOperation({ summary: 'List all payments for admin operations' })
-  listAll() {
+  async listAll() {
     return this.paymentsService.listAll();
   }
 }

@@ -1,26 +1,48 @@
 import { Injectable } from '@nestjs/common';
-import { InMemoryDatabaseService } from 'src/infrastructure/in-memory/in-memory-database.service';
+import { PrismaService } from 'src/infrastructure/prisma/prisma.service';
 
 @Injectable()
 export class AnalyticsService {
-  constructor(private readonly db: InMemoryDatabaseService) {}
+  constructor(private readonly prisma: PrismaService) {}
 
-  overview() {
+  async overview() {
+    const [
+      totalIssues,
+      openIssues,
+      inProgressIssues,
+      resolvedIssues,
+      totalPayments,
+      succeededPayments,
+      nonSucceededPayments,
+      citizens,
+      admins,
+    ] = await Promise.all([
+      this.prisma.issue.count(),
+      this.prisma.issue.count({ where: { status: 'open' } }),
+      this.prisma.issue.count({ where: { status: 'in_progress' } }),
+      this.prisma.issue.count({ where: { status: 'resolved' } }),
+      this.prisma.payment.count(),
+      this.prisma.payment.count({ where: { status: 'succeeded' } }),
+      this.prisma.payment.count({ where: { status: { not: 'succeeded' } } }),
+      this.prisma.user.count({ where: { role: 'citizen' } }),
+      this.prisma.user.count({ where: { role: 'admin' } }),
+    ]);
+
     return {
       issues: {
-        total: this.db.issues.length,
-        open: this.db.issues.filter((issue) => issue.status === 'open').length,
-        inProgress: this.db.issues.filter((issue) => issue.status === 'in_progress').length,
-        resolved: this.db.issues.filter((issue) => issue.status === 'resolved').length,
+        total: totalIssues,
+        open: openIssues,
+        inProgress: inProgressIssues,
+        resolved: resolvedIssues,
       },
       payments: {
-        total: this.db.payments.length,
-        succeeded: this.db.payments.filter((payment) => payment.status === 'succeeded').length,
-        pending: this.db.payments.filter((payment) => payment.status !== 'succeeded').length,
+        total: totalPayments,
+        succeeded: succeededPayments,
+        pending: nonSucceededPayments,
       },
       users: {
-        citizens: this.db.users.filter((user) => user.role === 'citizen').length,
-        admins: this.db.users.filter((user) => user.role === 'admin').length,
+        citizens,
+        admins,
       },
     };
   }

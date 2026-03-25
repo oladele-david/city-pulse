@@ -11,21 +11,21 @@ export class LeaderboardController {
   @Public()
   @Get()
   @ApiOperation({ summary: 'Get the Lagos-wide community leaderboard' })
-  getLagos() {
+  async getLagos() {
     return this.leaderboardService.getLagosLeaderboard();
   }
 
   @Public()
   @Get('lgas/:lgaId')
   @ApiOperation({ summary: 'Get the leaderboard filtered to one LGA' })
-  getByLga(@Param('lgaId') lgaId: string) {
+  async getByLga(@Param('lgaId') lgaId: string) {
     return this.leaderboardService.getLgaLeaderboard(lgaId);
   }
 
   @Public()
   @Get('communities/:communityId')
   @ApiOperation({ summary: 'Get the leaderboard filtered to one community' })
-  getByCommunity(@Param('communityId') communityId: string) {
+  async getByCommunity(@Param('communityId') communityId: string) {
     return this.leaderboardService.getCommunityLeaderboard(communityId);
   }
 }

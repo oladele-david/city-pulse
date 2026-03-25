@@ -12,7 +12,7 @@ export class AnalyticsController {
   @Roles('admin')
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Return the admin analytics overview' })
-  overview() {
+  async overview() {
     return this.analyticsService.overview();
   }
 }

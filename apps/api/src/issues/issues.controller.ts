@@ -43,7 +43,7 @@ export class IssuesController {
   @Public()
   @Get(':id')
   @ApiOperation({ summary: 'Get a single issue by id' })
-  getById(@Param('id') id: string) {
+  async getById(@Param('id') id: string) {
     return this.issuesService.getByIdOrThrow(id);
   }
 
@@ -108,7 +108,7 @@ export class IssuesController {
       { name: 'video', maxCount: 1 },
     ]),
   )
-  create(
+  async create(
     @Body() dto: CreateIssueDto,
     @CurrentUser() user: AuthUser,
     @UploadedFiles()
@@ -134,7 +134,7 @@ export class IssuesController {
   @Roles('admin')
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Update the official issue status as an admin' })
-  updateStatus(@Param('id') id: string, @Body() dto: UpdateIssueStatusDto) {
+  async updateStatus(@Param('id') id: string, @Body() dto: UpdateIssueStatusDto) {
     return this.issuesService.updateStatus(id, dto);
   }
 
@@ -142,7 +142,7 @@ export class IssuesController {
   @Roles('citizen')
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Set, switch, or undo a citizen reaction on an issue' })
-  updateReaction(
+  async updateReaction(
     @Param('id') id: string,
     @Body() dto: UpdateReactionDto,
     @CurrentUser() user: AuthUser,
@@ -154,7 +154,7 @@ export class IssuesController {
   @Roles('citizen')
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Get the current citizen reaction for an issue' })
-  getReaction(@Param('id') id: string, @CurrentUser() user: AuthUser) {
+  async getReaction(@Param('id') id: string, @CurrentUser() user: AuthUser) {
     return this.issuesService.getReaction(id, user.sub);
   }
 }

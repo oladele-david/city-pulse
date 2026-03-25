@@ -1,53 +1,97 @@
 import { Injectable } from '@nestjs/common';
-import { v4 as uuid } from 'uuid';
+import { Prisma } from '@prisma/client';
 import { PaymentRecord, PaymentWebhookRecord } from 'src/domain/models';
-import { InMemoryDatabaseService } from 'src/infrastructure/in-memory/in-memory-database.service';
+import {
+  paymentRecordFromPrisma,
+  toPrismaPaymentStatus,
+  toPrismaPaymentType,
+} from 'src/infrastructure/prisma/prisma-mappers';
+import { PrismaService } from 'src/infrastructure/prisma/prisma.service';
 
 @Injectable()
 export class PaymentsRepository {
-  constructor(private readonly db: InMemoryDatabaseService) {}
+  constructor(private readonly prisma: PrismaService) {}
 
-  create(data: Omit<PaymentRecord, 'id' | 'createdAt' | 'updatedAt'>) {
-    const now = new Date().toISOString();
-    const payment: PaymentRecord = {
-      ...data,
-      id: uuid(),
-      createdAt: now,
-      updatedAt: now,
-    };
-    this.db.payments.unshift(payment);
-    return payment;
+  private toInputJson(
+    value?: Record<string, unknown>,
+  ): Prisma.InputJsonValue | undefined {
+    return value as Prisma.InputJsonValue | undefined;
   }
 
-  update(payment: PaymentRecord) {
-    const index = this.db.payments.findIndex((item) => item.id === payment.id);
-    this.db.payments[index] = payment;
-    return payment;
+  async create(data: Omit<PaymentRecord, 'id' | 'createdAt' | 'updatedAt'>) {
+    const payment = await this.prisma.payment.create({
+      data: {
+        userId: data.userId,
+        reference: data.reference,
+        paymentType: toPrismaPaymentType(data.paymentType),
+        amount: data.amount,
+        status: toPrismaPaymentStatus(data.status),
+        checkoutUrl: data.checkoutUrl,
+        providerReference: data.providerReference,
+        metadata: this.toInputJson(data.metadata),
+      },
+    });
+
+    return paymentRecordFromPrisma(payment);
   }
 
-  findByReference(reference: string) {
-    return this.db.payments.find((payment) => payment.reference === reference);
+  async update(payment: PaymentRecord) {
+    const updated = await this.prisma.payment.update({
+      where: { id: payment.id },
+      data: {
+        paymentType: toPrismaPaymentType(payment.paymentType),
+        amount: payment.amount,
+        status: toPrismaPaymentStatus(payment.status),
+        checkoutUrl: payment.checkoutUrl,
+        providerReference: payment.providerReference,
+        metadata: this.toInputJson(payment.metadata),
+        updatedAt: new Date(payment.updatedAt),
+      },
+    });
+
+    return paymentRecordFromPrisma(updated);
   }
 
-  listByUser(userId: string) {
-    return this.db.payments.filter((payment) => payment.userId === userId);
+  async findByReference(reference: string) {
+    const payment = await this.prisma.payment.findUnique({
+      where: { reference },
+    });
+
+    return payment ? paymentRecordFromPrisma(payment) : undefined;
   }
 
-  listAll() {
-    return this.db.payments;
+  async listByUser(userId: string) {
+    const payments = await this.prisma.payment.findMany({
+      where: { userId },
+      orderBy: { createdAt: 'desc' },
+    });
+
+    return payments.map(paymentRecordFromPrisma);
   }
 
-  hasWebhookEvent(eventId: string) {
-    return this.db.paymentWebhooks.some((event) => event.eventId === eventId);
+  async listAll() {
+    const payments = await this.prisma.payment.findMany({
+      orderBy: { createdAt: 'desc' },
+    });
+
+    return payments.map(paymentRecordFromPrisma);
   }
 
-  createWebhook(data: Omit<PaymentWebhookRecord, 'id' | 'createdAt'>) {
-    const webhook: PaymentWebhookRecord = {
-      ...data,
-      id: uuid(),
-      createdAt: new Date().toISOString(),
-    };
-    this.db.paymentWebhooks.push(webhook);
-    return webhook;
+  async hasWebhookEvent(eventId: string) {
+    const count = await this.prisma.paymentWebhook.count({
+      where: { eventId },
+    });
+
+    return count > 0;
+  }
+
+  async createWebhook(data: Omit<PaymentWebhookRecord, 'id' | 'createdAt'>) {
+    return this.prisma.paymentWebhook.create({
+      data: {
+        paymentId: data.paymentId,
+        eventId: data.eventId,
+        payload: data.payload as Prisma.InputJsonValue,
+      },
+    });
   }
 }

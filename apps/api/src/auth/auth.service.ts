@@ -10,20 +10,22 @@ import { UsersRepository } from 'src/users/users.repository';
 import { RegisterCitizenDto } from './dto/register-citizen.dto';
 import { LoginDto } from './dto/login.dto';
 import { getTrustWeight } from 'src/domain/rules/points.rules';
-import { InMemoryDatabaseService } from 'src/infrastructure/in-memory/in-memory-database.service';
 import { UserRecord } from 'src/domain/models';
-import { v4 as uuid } from 'uuid';
+import { PrismaService } from 'src/infrastructure/prisma/prisma.service';
+import { toPrismaLedgerReason } from 'src/infrastructure/prisma/prisma-mappers';
+import { LocationsRepository } from 'src/locations/locations.repository';
 
 @Injectable()
 export class AuthService {
   constructor(
     private readonly usersRepository: UsersRepository,
     private readonly jwtService: JwtService,
-    private readonly db: InMemoryDatabaseService,
+    private readonly locationsRepository: LocationsRepository,
+    private readonly prisma: PrismaService,
   ) {}
 
   async registerCitizen(dto: RegisterCitizenDto) {
-    const existing = this.usersRepository.findByEmail(dto.email);
+    const existing = await this.usersRepository.findByEmail(dto.email);
     if (existing) {
       throw new ConflictException({
         error: {
@@ -35,9 +37,10 @@ export class AuthService {
     }
 
     const passwordHash = await bcrypt.hash(dto.password, 10);
-    const lga = this.db.lgas.find((item) => item.id === dto.lgaId);
-    const community = this.db.communities.find(
-      (item) => item.id === dto.communityId && item.lgaId === dto.lgaId,
+    const lga = await this.locationsRepository.findLgaById(dto.lgaId);
+    const community = await this.locationsRepository.findCommunityInLga(
+      dto.communityId,
+      dto.lgaId,
     );
 
     if (!lga || !community) {
@@ -50,7 +53,7 @@ export class AuthService {
       });
     }
 
-    const user = this.usersRepository.create({
+    const user = await this.usersRepository.create({
       fullName: dto.fullName,
       email: dto.email,
       passwordHash,
@@ -63,15 +66,15 @@ export class AuthService {
       trustWeight: getTrustWeight('New'),
     });
 
-    this.db.ledger.push({
-      id: uuid(),
+    await this.prisma.pointsLedger.create({
+      data: {
       userId: user.id,
-      reason: 'report_submitted',
+      reason: toPrismaLedgerReason('report_submitted'),
       pointsDelta: 0,
       metadata: { source: 'registration' },
-      createdAt: new Date().toISOString(),
+      },
     });
-    this.db.recalculateUserStanding(user.id);
+    await this.usersRepository.recalculateStanding(user.id);
 
     return this.buildAuthPayload(user);
   }
@@ -85,7 +88,7 @@ export class AuthService {
   }
 
   private async loginByRole(dto: LoginDto, role: 'citizen' | 'admin') {
-    const user = this.usersRepository.findByEmail(dto.email);
+    const user = await this.usersRepository.findByEmail(dto.email);
     if (!user || user.role !== role) {
       throw new UnauthorizedException({
         error: {

@@ -13,21 +13,21 @@ export class LocationsController {
   @Post('resolve')
   @HttpCode(200)
   @ApiOperation({ summary: 'Resolve a guest coordinate to the nearest Lagos community point' })
-  resolve(@Body() dto: ResolveLocationDto) {
+  async resolve(@Body() dto: ResolveLocationDto) {
     return this.locationsService.resolve(dto.latitude, dto.longitude, dto.street);
   }
 
   @Public()
   @Get('lgas')
   @ApiOperation({ summary: 'List Lagos LGAs' })
-  listLgas() {
+  async listLgas() {
     return this.locationsService.listLgas();
   }
 
   @Public()
   @Get('lgas/:lgaId/communities')
   @ApiOperation({ summary: 'List communities for a specific LGA' })
-  listCommunities(@Param('lgaId') lgaId: string) {
+  async listCommunities(@Param('lgaId') lgaId: string) {
     return this.locationsService.listCommunitiesByLga(lgaId);
   }
 }

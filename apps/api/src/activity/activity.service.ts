@@ -1,13 +1,17 @@
 import { Injectable } from '@nestjs/common';
-import { InMemoryDatabaseService } from 'src/infrastructure/in-memory/in-memory-database.service';
+import { pointsLedgerRecordFromPrisma } from 'src/infrastructure/prisma/prisma-mappers';
+import { PrismaService } from 'src/infrastructure/prisma/prisma.service';
 
 @Injectable()
 export class ActivityService {
-  constructor(private readonly db: InMemoryDatabaseService) {}
+  constructor(private readonly prisma: PrismaService) {}
 
-  getMyActivity(userId: string) {
-    return this.db.ledger
-      .filter((entry) => entry.userId === userId)
-      .sort((left, right) => right.createdAt.localeCompare(left.createdAt));
+  async getMyActivity(userId: string) {
+    const entries = await this.prisma.pointsLedger.findMany({
+      where: { userId },
+      orderBy: { createdAt: 'desc' },
+    });
+
+    return entries.map(pointsLedgerRecordFromPrisma);
   }
 }

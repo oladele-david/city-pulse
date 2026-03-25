@@ -1,9 +1,9 @@
 import { Global, Module } from '@nestjs/common';
-import { InMemoryDatabaseService } from './in-memory/in-memory-database.service';
+import { PrismaService } from './prisma/prisma.service';
 
 @Global()
 @Module({
-  providers: [InMemoryDatabaseService],
-  exports: [InMemoryDatabaseService],
+  providers: [PrismaService],
+  exports: [PrismaService],
 })
 export class InfrastructureModule {}

@@ -1,23 +1,69 @@
 import { Injectable } from '@nestjs/common';
-import { InMemoryDatabaseService } from 'src/infrastructure/in-memory/in-memory-database.service';
+import {
+  communityRecordFromPrisma,
+  lgaRecordFromPrisma,
+  stateRecordFromPrisma,
+} from 'src/infrastructure/prisma/prisma-mappers';
+import { PrismaService } from 'src/infrastructure/prisma/prisma.service';
 
 @Injectable()
 export class LocationsRepository {
-  constructor(private readonly db: InMemoryDatabaseService) {}
+  constructor(private readonly prisma: PrismaService) {}
 
-  getState() {
-    return this.db.state;
+  async getState() {
+    const state = await this.prisma.state.findFirst({
+      orderBy: { createdAt: 'asc' },
+    });
+
+    return state ? stateRecordFromPrisma(state) : undefined;
   }
 
-  listLgas() {
-    return this.db.lgas;
+  async findLgaById(id: string) {
+    const lga = await this.prisma.lga.findUnique({
+      where: { id },
+    });
+
+    return lga ? lgaRecordFromPrisma(lga) : undefined;
   }
 
-  listCommunitiesByLga(lgaId: string) {
-    return this.db.communities.filter((community) => community.lgaId === lgaId);
+  async listLgas() {
+    const lgas = await this.prisma.lga.findMany({
+      orderBy: { name: 'asc' },
+    });
+
+    return lgas.map(lgaRecordFromPrisma);
   }
 
-  listCommunities() {
-    return this.db.communities;
+  async findCommunityById(id: string) {
+    const community = await this.prisma.community.findUnique({
+      where: { id },
+    });
+
+    return community ? communityRecordFromPrisma(community) : undefined;
+  }
+
+  async findCommunityInLga(id: string, lgaId: string) {
+    const community = await this.prisma.community.findFirst({
+      where: { id, lgaId },
+    });
+
+    return community ? communityRecordFromPrisma(community) : undefined;
+  }
+
+  async listCommunitiesByLga(lgaId: string) {
+    const communities = await this.prisma.community.findMany({
+      where: { lgaId },
+      orderBy: { name: 'asc' },
+    });
+
+    return communities.map(communityRecordFromPrisma);
+  }
+
+  async listCommunities() {
+    const communities = await this.prisma.community.findMany({
+      orderBy: { name: 'asc' },
+    });
+
+    return communities.map(communityRecordFromPrisma);
   }
 }

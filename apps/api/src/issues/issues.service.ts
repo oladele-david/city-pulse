@@ -1,11 +1,14 @@
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
-import { v4 as uuid } from 'uuid';
 import { AuthUser, IssueRecord, ReactionType } from 'src/domain/models';
 import { calculateConfidenceScore } from 'src/domain/rules/confidence.rules';
 import { POINTS_BY_REASON } from 'src/domain/rules/points.rules';
 import { applyReactionTransition } from 'src/domain/rules/reaction.rules';
-import { InMemoryDatabaseService } from 'src/infrastructure/in-memory/in-memory-database.service';
+import {
+  toPrismaLedgerReason,
+} from 'src/infrastructure/prisma/prisma-mappers';
+import { PrismaService } from 'src/infrastructure/prisma/prisma.service';
 import { UsersRepository } from 'src/users/users.repository';
+import { LocationsRepository } from 'src/locations/locations.repository';
 import { CreateIssueDto } from './dto/create-issue.dto';
 import { UpdateIssueStatusDto } from './dto/update-issue-status.dto';
 import { UpdateReactionDto } from './dto/update-reaction.dto';
@@ -29,11 +32,12 @@ export class IssuesService {
   constructor(
     private readonly issuesRepository: IssuesRepository,
     private readonly usersRepository: UsersRepository,
-    private readonly db: InMemoryDatabaseService,
+    private readonly locationsRepository: LocationsRepository,
+    private readonly prisma: PrismaService,
     private readonly cloudinaryMediaService: CloudinaryMediaService,
   ) {}
 
-  list(filters: {
+  async list(filters: {
     lgaId?: string;
     communityId?: string;
     status?: string;
@@ -42,8 +46,8 @@ export class IssuesService {
     return this.issuesRepository.list(filters);
   }
 
-  getByIdOrThrow(id: string): IssueRecord {
-    const issue = this.issuesRepository.findById(id);
+  async getByIdOrThrow(id: string): Promise<IssueRecord> {
+    const issue = await this.issuesRepository.findById(id);
     if (!issue) {
       throw new NotFoundException({
         error: {
@@ -58,7 +62,7 @@ export class IssuesService {
   }
 
   async create(dto: CreateIssueDto, user: AuthUser, files?: IssueUploadFiles) {
-    const reporter = this.usersRepository.findById(user.sub);
+    const reporter = await this.usersRepository.findById(user.sub);
     if (!reporter) {
       throw new NotFoundException({
         error: {
@@ -69,9 +73,10 @@ export class IssuesService {
       });
     }
 
-    const lga = this.db.lgas.find((item) => item.id === dto.lgaId);
-    const community = this.db.communities.find(
-      (item) => item.id === dto.communityId && item.lgaId === dto.lgaId,
+    const lga = await this.locationsRepository.findLgaById(dto.lgaId);
+    const community = await this.locationsRepository.findCommunityInLga(
+      dto.communityId,
+      dto.lgaId,
     );
     if (!lga || !community) {
       throw new NotFoundException({
@@ -84,7 +89,7 @@ export class IssuesService {
     }
 
     const similarNearbyIssueExists = Boolean(
-      this.issuesRepository.findNearbySimilar({
+      await this.issuesRepository.findNearbySimilar({
         type: dto.type,
         communityId: dto.communityId,
         latitude: dto.latitude,
@@ -103,7 +108,7 @@ export class IssuesService {
       reporterRank: reporter.rank,
     });
 
-    const issue = this.issuesRepository.create({
+    const issue = await this.issuesRepository.create({
       type: dto.type,
       title: dto.title,
       description: dto.description,
@@ -126,15 +131,15 @@ export class IssuesService {
       needsResolutionReview: false,
     });
 
-    this.db.ledger.push({
-      id: uuid(),
+    await this.prisma.pointsLedger.create({
+      data: {
       userId: reporter.id,
-      reason: 'report_submitted',
+      reason: toPrismaLedgerReason('report_submitted'),
       pointsDelta: POINTS_BY_REASON.report_submitted,
       metadata: { issueId: issue.id },
-      createdAt: new Date().toISOString(),
+      },
     });
-    this.db.recalculateUserStanding(reporter.id);
+    await this.usersRepository.recalculateStanding(reporter.id);
 
     return issue;
   }
@@ -201,51 +206,51 @@ export class IssuesService {
     };
   }
 
-  updateStatus(id: string, dto: UpdateIssueStatusDto) {
-    const issue = this.getByIdOrThrow(id);
+  async updateStatus(id: string, dto: UpdateIssueStatusDto) {
+    const issue = await this.getByIdOrThrow(id);
     issue.status = dto.status;
     issue.updatedAt = new Date().toISOString();
 
     if (dto.status === 'in_progress') {
-      this.db.ledger.push({
-        id: uuid(),
+      await this.prisma.pointsLedger.create({
+        data: {
         userId: issue.reportedByUserId,
-        reason: 'report_validated',
+        reason: toPrismaLedgerReason('report_validated'),
         pointsDelta: POINTS_BY_REASON.report_validated,
         metadata: { issueId: issue.id },
-        createdAt: new Date().toISOString(),
+        },
       });
-      this.db.recalculateUserStanding(issue.reportedByUserId);
+      await this.usersRepository.recalculateStanding(issue.reportedByUserId);
     }
 
     if (dto.status === 'resolved') {
-      this.db.ledger.push({
-        id: uuid(),
+      await this.prisma.pointsLedger.create({
+        data: {
         userId: issue.reportedByUserId,
-        reason: 'report_kept_valid',
+        reason: toPrismaLedgerReason('report_kept_valid'),
         pointsDelta: POINTS_BY_REASON.report_kept_valid,
         metadata: { issueId: issue.id },
-        createdAt: new Date().toISOString(),
+        },
       });
-      this.db.recalculateUserStanding(issue.reportedByUserId);
+      await this.usersRepository.recalculateStanding(issue.reportedByUserId);
       issue.needsResolutionReview = false;
     }
 
     return this.issuesRepository.update(issue);
   }
 
-  getReaction(issueId: string, userId: string) {
-    const reaction = this.issuesRepository.findReaction(issueId, userId);
+  async getReaction(issueId: string, userId: string) {
+    const reaction = await this.issuesRepository.findReaction(issueId, userId);
     return {
       issueId,
       reaction: reaction?.reaction ?? ('none' as ReactionType),
     };
   }
 
-  updateReaction(issueId: string, dto: UpdateReactionDto, user: AuthUser) {
-    const issue = this.getByIdOrThrow(issueId);
+  async updateReaction(issueId: string, dto: UpdateReactionDto, user: AuthUser) {
+    const issue = await this.getByIdOrThrow(issueId);
     const currentReaction =
-      this.issuesRepository.findReaction(issueId, user.sub)?.reaction ?? 'none';
+      (await this.issuesRepository.findReaction(issueId, user.sub))?.reaction ?? 'none';
 
     const reactionState = applyReactionTransition({
       issue: issue,
@@ -259,7 +264,7 @@ export class IssuesService {
     issue.needsResolutionReview = reactionState.needsResolutionReview;
     issue.updatedAt = new Date().toISOString();
 
-    const reporter = this.usersRepository.findById(issue.reportedByUserId);
+    const reporter = await this.usersRepository.findById(issue.reportedByUserId);
     if (reporter) {
       const confidence = calculateConfidenceScore({
         hasPhoto: Boolean(issue.photoUrls.length || issue.videoUrl),
@@ -273,23 +278,23 @@ export class IssuesService {
       issue.confidenceBand = confidence.band;
     }
 
-    this.issuesRepository.update(issue);
-    this.issuesRepository.upsertReaction({
+    await this.issuesRepository.update(issue);
+    await this.issuesRepository.upsertReaction({
       issueId,
       userId: user.sub,
       reaction: reactionState.nextReaction,
     });
 
     if (reactionState.nextReaction === 'confirm') {
-      this.db.ledger.push({
-        id: uuid(),
+      await this.prisma.pointsLedger.create({
+        data: {
         userId: user.sub,
-        reason: 'confirm_issue',
+        reason: toPrismaLedgerReason('confirm_issue'),
         pointsDelta: POINTS_BY_REASON.confirm_issue,
         metadata: { issueId },
-        createdAt: new Date().toISOString(),
+        },
       });
-      this.db.recalculateUserStanding(user.sub);
+      await this.usersRepository.recalculateStanding(user.sub);
     }
 
     return {

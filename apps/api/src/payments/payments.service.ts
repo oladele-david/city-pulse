@@ -8,9 +8,9 @@ import { PaymentsRepository } from './payments.repository';
 export class PaymentsService {
   constructor(private readonly paymentsRepository: PaymentsRepository) {}
 
-  initialize(dto: InitializePaymentDto, user: AuthUser) {
+  async initialize(dto: InitializePaymentDto, user: AuthUser) {
     const reference = `CP-${Date.now()}`;
-    const payment = this.paymentsRepository.create({
+    const payment = await this.paymentsRepository.create({
       userId: user.sub,
       reference,
       paymentType: dto.paymentType,
@@ -26,12 +26,12 @@ export class PaymentsService {
     return payment;
   }
 
-  getMyPayments(userId: string) {
+  async getMyPayments(userId: string) {
     return this.paymentsRepository.listByUser(userId);
   }
 
-  getStatus(reference: string, user?: AuthUser) {
-    const payment = this.paymentsRepository.findByReference(reference);
+  async getStatus(reference: string, user?: AuthUser) {
+    const payment = await this.paymentsRepository.findByReference(reference);
     if (!payment || (user && payment.userId !== user.sub && user.role !== 'admin')) {
       throw new NotFoundException({
         error: {
@@ -45,12 +45,12 @@ export class PaymentsService {
     return payment;
   }
 
-  listAll() {
+  async listAll() {
     return this.paymentsRepository.listAll();
   }
 
-  processWebhook(dto: PaymentWebhookDto) {
-    const payment = this.paymentsRepository.findByReference(dto.reference);
+  async processWebhook(dto: PaymentWebhookDto) {
+    const payment = await this.paymentsRepository.findByReference(dto.reference);
     if (!payment) {
       throw new NotFoundException({
         error: {
@@ -61,7 +61,7 @@ export class PaymentsService {
       });
     }
 
-    if (this.paymentsRepository.hasWebhookEvent(dto.eventId)) {
+    if (await this.paymentsRepository.hasWebhookEvent(dto.eventId)) {
       return {
         reference: dto.reference,
         processed: false,
@@ -72,8 +72,8 @@ export class PaymentsService {
     payment.status = dto.status;
     payment.providerReference = dto.providerReference;
     payment.updatedAt = new Date().toISOString();
-    this.paymentsRepository.update(payment);
-    this.paymentsRepository.createWebhook({
+    await this.paymentsRepository.update(payment);
+    await this.paymentsRepository.createWebhook({
       paymentId: payment.id,
       eventId: dto.eventId,
       payload: dto.payload ?? {},

@@ -42,8 +42,8 @@ export class AuthController {
   @Get('me')
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Return the authenticated user profile' })
-  me(@CurrentUser() user: AuthUser) {
-    const profile = this.usersRepository.findById(user.sub);
+  async me(@CurrentUser() user: AuthUser) {
+    const profile = await this.usersRepository.findById(user.sub);
     if (!profile) {
       throw new UnauthorizedException({
         error: {

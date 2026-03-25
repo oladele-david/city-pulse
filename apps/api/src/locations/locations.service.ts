@@ -6,12 +6,12 @@ import { haversineDistanceKm } from './location.utils';
 export class LocationsService {
   constructor(private readonly locationsRepository: LocationsRepository) {}
 
-  listLgas() {
+  async listLgas() {
     return this.locationsRepository.listLgas();
   }
 
-  listCommunitiesByLga(lgaId: string) {
-    const lga = this.locationsRepository.listLgas().find((item) => item.id === lgaId);
+  async listCommunitiesByLga(lgaId: string) {
+    const lga = await this.locationsRepository.findLgaById(lgaId);
     if (!lga) {
       throw new NotFoundException({
         error: {
@@ -25,10 +25,12 @@ export class LocationsService {
     return this.locationsRepository.listCommunitiesByLga(lgaId);
   }
 
-  resolve(latitude: number, longitude: number, street?: string) {
-    const communities = this.locationsRepository.listCommunities();
-    const lgas = this.locationsRepository.listLgas();
-    const state = this.locationsRepository.getState();
+  async resolve(latitude: number, longitude: number, street?: string) {
+    const [communities, lgas, state] = await Promise.all([
+      this.locationsRepository.listCommunities(),
+      this.locationsRepository.listLgas(),
+      this.locationsRepository.getState(),
+    ]);
 
     const nearest = communities
       .map((community) => ({
@@ -41,6 +43,16 @@ export class LocationsService {
         ),
       }))
       .sort((left, right) => left.distanceKm - right.distanceKm)[0];
+
+    if (!nearest) {
+      throw new NotFoundException({
+        error: {
+          code: 'not_found',
+          message: 'No Lagos communities have been loaded in the database',
+          details: [],
+        },
+      });
+    }
 
     const lga = lgas.find((item) => item.id === nearest.community.lgaId);
 
