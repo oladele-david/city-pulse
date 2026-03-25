@@ -124,6 +124,27 @@ npm run build
 npm run preview
 ```
 
+### Backend MVP Foundation
+
+The Lagos MVP backend now lives in `apps/api` and is designed around NestJS + Prisma + PostgreSQL contracts.
+
+```bash
+npm run api:dev
+npm run api:test
+```
+
+Create `apps/api/.env` from [apps/api/.env.example](/home/dot/hackathons/citypulse-govops/apps/api/.env.example) before running the API.
+
+Demo credentials:
+- Citizen: `citizen@citypulse.ng` / `CitizenPass123!`
+- Admin: `admin@citypulse.ng` / `AdminPass123!`
+
+Notes:
+- The API serves under `/api/v1`.
+- Swagger UI is available at `/api/docs` once the Nest app is running.
+- Prisma schema and Lagos seed data live in [schema.prisma](/home/dot/hackathons/citypulse-govops/apps/api/prisma/schema.prisma) and [lagos-locations.json](/home/dot/hackathons/citypulse-govops/apps/api/prisma/seeds/lagos-locations.json).
+- The service currently uses in-memory repositories for local/demo execution while keeping the Prisma schema and seed flow ready for the Postgres rollout.
+
 ---
 
 ## 📁 Project Structure
