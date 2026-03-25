@@ -1,26 +1,25 @@
 import {
+  ActivityEntry,
   AuthResponse,
   IssueRecord,
+  IssueReactionRecord,
+  IssueReactionUpdate,
   IssueSeverity,
   IssueStatus,
+  LeaderboardEntry,
   LoginPayload,
+  Lga,
+  Community,
+  ReactionType,
+  RegisterCitizenPayload,
   ResolvedLocation,
   ApiEnvelope,
   ApiErrorResponse,
 } from "@/types/api";
-import {
-  getStoredCitizenSession,
-  setStoredCitizenSession,
-} from "@/lib/auth-storage";
 
 const API_BASE_URL =
   import.meta.env.VITE_API_BASE_URL?.replace(/\/$/, "") ??
   "http://localhost:3001/api/v1";
-
-const DEMO_CITIZEN_EMAIL =
-  import.meta.env.VITE_DEMO_CITIZEN_EMAIL ?? "citizen@citypulse.ng";
-const DEMO_CITIZEN_PASSWORD =
-  import.meta.env.VITE_DEMO_CITIZEN_PASSWORD ?? "CitizenPass123!";
 
 export class ApiError extends Error {
   code: string;
@@ -87,10 +86,32 @@ export const api = {
     });
   },
 
-  getAdminProfile(token: string) {
+  loginCitizen(payload: LoginPayload) {
+    return request<AuthResponse>("/auth/citizen/login", {
+      method: "POST",
+      body: JSON.stringify(payload),
+    });
+  },
+
+  registerCitizen(payload: RegisterCitizenPayload) {
+    return request<AuthResponse>("/auth/citizen/register", {
+      method: "POST",
+      body: JSON.stringify(payload),
+    });
+  },
+
+  getProfile(token: string) {
     return request<AuthResponse["user"]>("/auth/me", {
       token,
     });
+  },
+
+  listLgas() {
+    return request<Lga[]>("/locations/lgas");
+  },
+
+  listCommunitiesByLga(lgaId: string) {
+    return request<Community[]>(`/locations/lgas/${lgaId}/communities`);
   },
 
   listIssues(filters?: {
@@ -148,7 +169,8 @@ export const api = {
       streetOrLandmark: string;
       latitude: number;
       longitude: number;
-      imageFile?: File | null;
+      imageFiles?: File[];
+      videoFile?: File | null;
     },
     token: string,
   ) {
@@ -164,8 +186,12 @@ export const api = {
     formData.append("latitude", String(payload.latitude));
     formData.append("longitude", String(payload.longitude));
 
-    if (payload.imageFile) {
-      formData.append("images", payload.imageFile);
+    payload.imageFiles?.forEach((file) => {
+      formData.append("images", file);
+    });
+
+    if (payload.videoFile) {
+      formData.append("video", payload.videoFile);
     }
 
     return request<IssueRecord>("/issues", {
@@ -175,21 +201,37 @@ export const api = {
     });
   },
 
-  async ensureCitizenSession() {
-    const storedSession = getStoredCitizenSession();
-    if (storedSession?.accessToken) {
-      return storedSession;
+  listLeaderboard(scope?: { lgaId?: string; communityId?: string }) {
+    if (scope?.communityId) {
+      return request<LeaderboardEntry[]>(
+        `/leaderboard/communities/${scope.communityId}`,
+      );
     }
 
-    const session = await request<AuthResponse>("/auth/citizen/login", {
-      method: "POST",
-      body: JSON.stringify({
-        email: DEMO_CITIZEN_EMAIL,
-        password: DEMO_CITIZEN_PASSWORD,
-      }),
-    });
+    if (scope?.lgaId) {
+      return request<LeaderboardEntry[]>(`/leaderboard/lgas/${scope.lgaId}`);
+    }
 
-    setStoredCitizenSession(session);
-    return session;
+    return request<LeaderboardEntry[]>("/leaderboard");
+  },
+
+  getMyActivity(token: string) {
+    return request<ActivityEntry[]>("/activity/me", {
+      token,
+    });
+  },
+
+  getIssueReaction(issueId: string, token: string) {
+    return request<IssueReactionRecord>(`/issues/${issueId}/reaction`, {
+      token,
+    });
+  },
+
+  updateIssueReaction(issueId: string, reaction: ReactionType, token: string) {
+    return request<IssueReactionUpdate>(`/issues/${issueId}/reaction`, {
+      method: "PUT",
+      token,
+      body: JSON.stringify({ reaction }),
+    });
   },
 };

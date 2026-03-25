@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
@@ -33,7 +33,11 @@ export const LoginForm = () => {
     const [showPassword, setShowPassword] = useState(false);
     const { toast } = useToast();
     const navigate = useNavigate();
+    const location = useLocation();
     const { login } = useAuth();
+    const redirectTo = typeof location.state?.from === "string"
+        ? location.state.from
+        : "/console/dashboard";
 
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
@@ -51,7 +55,7 @@ export const LoginForm = () => {
                 title: "Welcome back",
                 description: "You are now connected to the live CityPulse admin backend.",
             });
-            navigate("/console/dashboard");
+            navigate(redirectTo, { replace: true });
         },
         onError: (error) => {
             const message = error instanceof ApiError

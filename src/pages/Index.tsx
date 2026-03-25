@@ -104,6 +104,19 @@ const Index = () => {
                   </Button>
                 </Link>
               </div>
+
+              <div className="mt-4 flex flex-wrap items-center gap-3 text-sm">
+                <Link to="/mobile/auth">
+                  <Button variant="link" className="h-auto px-0 text-sm font-semibold">
+                    Citizen Login
+                  </Button>
+                </Link>
+                <Link to="/mobile/auth?mode=register">
+                  <Button variant="link" className="h-auto px-0 text-sm font-semibold">
+                    Create an Account
+                  </Button>
+                </Link>
+              </div>
             </div>
 
             <div className="grid gap-3">

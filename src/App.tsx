@@ -19,6 +19,8 @@ import MobileMap from "./pages/mobile/MobileMap";
 import MobileProfile from "./pages/mobile/MobileProfile";
 import MobileActivity from "./pages/mobile/MobileActivity";
 import MobileReport from "./pages/mobile/MobileReport";
+import MobileAuth from "./pages/mobile/MobileAuth";
+import MobileLeaderboard from "./pages/mobile/MobileLeaderboard";
 import { AuthProvider } from "./hooks/use-auth";
 import { ProtectedRoute, PublicOnlyRoute } from "./components/auth/RouteGuards";
 
@@ -32,13 +34,44 @@ const App = () => (
         <Sonner position="top-center" expand={true} richColors closeButton theme="light" toastOptions={{ style: { zIndex: 99999 } }} />
         <BrowserRouter>
           <Routes>
+            <Route
+              path="/mobile/auth"
+              element={
+                <PublicOnlyRoute role="citizen">
+                  <MobileAuth />
+                </PublicOnlyRoute>
+              }
+            />
+
             {/* Mobile Citizen App Routes */}
             <Route path="/mobile" element={<MobileLayout />}>
               <Route index element={<MobileHome />} />
               <Route path="map" element={<MobileMap />} />
-              <Route path="activity" element={<MobileActivity />} />
-              <Route path="profile" element={<MobileProfile />} />
-              <Route path="report" element={<MobileReport />} />
+              <Route path="leaderboard" element={<MobileLeaderboard />} />
+              <Route
+                path="activity"
+                element={
+                  <ProtectedRoute role="citizen">
+                    <MobileActivity />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="profile"
+                element={
+                  <ProtectedRoute role="citizen">
+                    <MobileProfile />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="report"
+                element={
+                  <ProtectedRoute role="citizen">
+                    <MobileReport />
+                  </ProtectedRoute>
+                }
+              />
             </Route>
 
             {/* Core App Routes */}

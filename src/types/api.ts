@@ -3,6 +3,7 @@ export type UserRank = "New" | "Reliable" | "Trusted" | "Community Sentinel";
 export type IssueSeverity = "low" | "medium" | "high";
 export type IssueStatus = "open" | "in_progress" | "resolved";
 export type ConfidenceBand = "low" | "medium" | "high";
+export type ReactionType = "confirm" | "disagree" | "fixed_signal" | "none";
 
 export interface ApiEnvelope<T> {
   data: T;
@@ -46,6 +47,13 @@ export type AuthSession = AuthResponse;
 export interface LoginPayload {
   email: string;
   password: string;
+}
+
+export interface RegisterCitizenPayload extends LoginPayload {
+  fullName: string;
+  lgaId: string;
+  communityId: string;
+  streetOrArea: string;
 }
 
 export interface Lga {
@@ -100,4 +108,52 @@ export interface IssueRecord {
   needsResolutionReview: boolean;
   createdAt: string;
   updatedAt: string;
+}
+
+export interface IssueReactionRecord {
+  issueId: string;
+  reaction: ReactionType;
+}
+
+export interface IssueReactionUpdate {
+  issueId: string;
+  reaction: ReactionType;
+  counts: Pick<
+    IssueRecord,
+    "confirmationsCount" | "disagreementsCount" | "fixedSignalsCount"
+  >;
+  needsResolutionReview: boolean;
+  confidenceScore: number;
+  confidenceBand: ConfidenceBand;
+}
+
+export interface LeaderboardEntry {
+  communityId: string;
+  communityName: string;
+  lgaId: string;
+  lgaName: string | null;
+  score: number;
+  resolvedIssueCount: number;
+  unresolvedIssueCount: number;
+}
+
+export type LedgerReason =
+  | "report_submitted"
+  | "report_validated"
+  | "report_kept_valid"
+  | "confirm_issue"
+  | "valid_confirmation"
+  | "correct_disagreement"
+  | "fixed_signal_match"
+  | "false_report"
+  | "invalid_reaction"
+  | "fraud_abuse";
+
+export interface ActivityEntry {
+  id: string;
+  userId: string;
+  reason: LedgerReason;
+  pointsDelta: number;
+  metadata?: Record<string, unknown>;
+  createdAt: string;
 }

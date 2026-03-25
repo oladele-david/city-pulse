@@ -92,6 +92,26 @@ describe('CityPulse API integration', () => {
     expect(meResponse.body.data.email).toBe('aisha@example.com');
   });
 
+  it('logs in an admin and returns the admin profile from /auth/me', async () => {
+    const loginResponse = await request(app.getHttpServer())
+      .post('/api/v1/auth/admin/login')
+      .send({
+        email: 'admin@citypulse.ng',
+        password: 'AdminPass123!',
+      })
+      .expect(200);
+
+    expect(loginResponse.body.data.user.role).toBe('admin');
+
+    const meResponse = await request(app.getHttpServer())
+      .get('/api/v1/auth/me')
+      .set('Authorization', `Bearer ${loginResponse.body.data.accessToken}`)
+      .expect(200);
+
+    expect(meResponse.body.data.email).toBe('admin@citypulse.ng');
+    expect(meResponse.body.data.role).toBe('admin');
+  });
+
   it('creates an issue, reads it publicly, and switches reactions', async () => {
     const loginResponse = await request(app.getHttpServer())
       .post('/api/v1/auth/citizen/login')
@@ -208,6 +228,23 @@ describe('CityPulse API integration', () => {
 
     expect(response.body.data.state.id).toBe('lagos');
     expect(response.body.data.community.id).toBe('alausa');
+  });
+
+  it('lists seeded Lagos issues and respects status filters', async () => {
+    const response = await request(app.getHttpServer())
+      .get('/api/v1/issues?status=open')
+      .expect(200);
+
+    expect(response.body.data.length).toBeGreaterThan(0);
+    expect(response.body.data.every((issue: { status: string }) => issue.status === 'open')).toBe(
+      true,
+    );
+    expect(
+      response.body.data.every(
+        (issue: { latitude: number; longitude: number }) =>
+          issue.latitude > 6 && issue.latitude < 7 && issue.longitude > 3 && issue.longitude < 4,
+      ),
+    ).toBe(true);
   });
 
   it('initializes payments, exposes status, and handles webhook idempotently', async () => {

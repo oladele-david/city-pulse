@@ -1,31 +1,52 @@
 import { PrismaClient, Rank, Role } from '@prisma/client';
 import * as bcrypt from 'bcrypt';
-import lagosLocations from './seeds/lagos-locations.json';
+import {
+  lagosCommunities,
+  lagosLgaCatalog,
+  lagosLgas,
+  lagosState,
+} from '../src/locations/lagos-location-catalog';
 
 const prisma = new PrismaClient();
 
 async function main() {
   await prisma.state.upsert({
-    where: { id: lagosLocations.state.id },
-    update: { name: lagosLocations.state.name },
-    create: { id: lagosLocations.state.id, name: lagosLocations.state.name },
+    where: { id: lagosState.id },
+    update: { name: lagosState.name },
+    create: { id: lagosState.id, name: lagosState.name },
   });
 
-  for (const lga of lagosLocations.lgas) {
+  await prisma.community.deleteMany({
+    where: {
+      id: {
+        notIn: lagosCommunities.map((community) => community.id),
+      },
+    },
+  });
+
+  await prisma.lga.deleteMany({
+    where: {
+      id: {
+        notIn: lagosLgas.map((lga) => lga.id),
+      },
+    },
+  });
+
+  for (const lga of lagosLgaCatalog) {
     await prisma.lga.upsert({
       where: { id: lga.id },
       update: {
         name: lga.name,
         latitude: lga.latitude,
         longitude: lga.longitude,
-        stateId: lagosLocations.state.id,
+        stateId: lagosState.id,
       },
       create: {
         id: lga.id,
         name: lga.name,
         latitude: lga.latitude,
         longitude: lga.longitude,
-        stateId: lagosLocations.state.id,
+        stateId: lagosState.id,
       },
     });
 
