@@ -1,0 +1,58 @@
+{
+  "state": {
+    "id": "lagos",
+    "name": "Lagos"
+  },
+  "lgas": [
+    {
+      "id": "ikeja",
+      "name": "Ikeja",
+      "latitude": 6.601838,
+      "longitude": 3.351486,
+      "communities": [
+        { "id": "alausa", "name": "Alausa", "latitude": 6.6211, "longitude": 3.3581 },
+        { "id": "ojodu", "name": "Ojodu", "latitude": 6.6498, "longitude": 3.3619 }
+      ]
+    },
+    {
+      "id": "surulere",
+      "name": "Surulere",
+      "latitude": 6.50056,
+      "longitude": 3.35861,
+      "communities": [
+        { "id": "adeniran-ogunsanya", "name": "Adeniran Ogunsanya", "latitude": 6.5003, "longitude": 3.3528 },
+        { "id": "bode-thomas", "name": "Bode Thomas", "latitude": 6.5156, "longitude": 3.3507 }
+      ]
+    },
+    {
+      "id": "lagos-mainland",
+      "name": "Lagos Mainland",
+      "latitude": 6.5244,
+      "longitude": 3.3792,
+      "communities": [
+        { "id": "yaba", "name": "Yaba", "latitude": 6.5159, "longitude": 3.3733 },
+        { "id": "ebute-metta", "name": "Ebute Metta", "latitude": 6.4856, "longitude": 3.3876 }
+      ]
+    },
+    {
+      "id": "eti-osa",
+      "name": "Eti-Osa",
+      "latitude": 6.4333,
+      "longitude": 3.4833,
+      "communities": [
+        { "id": "lekki-phase-1", "name": "Lekki Phase 1", "latitude": 6.4478, "longitude": 3.4757 },
+        { "id": "ajah", "name": "Ajah", "latitude": 6.4698, "longitude": 3.5852 }
+      ]
+    },
+    {
+      "id": "alimosho",
+      "name": "Alimosho",
+      "latitude": 6.6097,
+      "longitude": 3.2958,
+      "communities": [
+        { "id": "egbeda", "name": "Egbeda", "latitude": 6.5962, "longitude": 3.2914 },
+        { "id": "ipaja", "name": "Ipaja", "latitude": 6.6128, "longitude": 3.2845 }
+      ]
+    }
+  ]
+}
