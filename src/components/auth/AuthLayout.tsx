@@ -24,8 +24,8 @@ export const AuthLayout = ({ children }: AuthLayoutProps) => {
                 </div>
 
                 <footer className="w-full max-w-[440px] mx-auto text-sm text-muted-foreground mt-8 text-center bg-transparent">
-                    <p>© {new Date().getFullYear()} CityPulse GovOps. All rights reserved.</p>
-                    <p className="text-xs mt-1 opacity-70">Authorized Personnel Only</p>
+                    <p>© {new Date().getFullYear()} CityPulse Lagos Console. All rights reserved.</p>
+                    <p className="text-xs mt-1 opacity-70">Authorized operations personnel only</p>
                 </footer>
             </div>
 
@@ -35,13 +35,13 @@ export const AuthLayout = ({ children }: AuthLayoutProps) => {
                     <div className="absolute inset-0 bg-primary/20 z-10 mix-blend-multiply pointer-events-none" />
                     <img
                         src="https://i.pinimg.com/1200x/b6/2d/31/b62d31d6145b88f902241daa667023df.jpg"
-                        alt="Dubai Cityscape"
+                        alt="Lagos city life"
                         className="h-full w-full object-cover"
                     />
                     <div className="absolute bottom-0 left-0 right-0 p-12 z-20 bg-gradient-to-t from-black/80 to-transparent text-white">
-                        <h2 className="text-3xl font-bold mb-2">Operational Excellence</h2>
+                        <h2 className="text-3xl font-bold mb-2">Lagos Operations Console</h2>
                         <p className="text-white/80 max-w-md">
-                            Advanced civic infrastructure intelligence for a smarter, safer city.
+                            Civic reporting, live incident visibility, and verification workflows for the hackathon demo.
                         </p>
                     </div>
                 </div>

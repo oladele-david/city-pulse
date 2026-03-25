@@ -10,6 +10,8 @@ import {
 } from "@hugeicons/core-free-icons";
 import { cn } from "@/lib/utils";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Button } from "@/components/ui/button";
+import { useAuth } from "@/hooks/use-auth";
 
 interface SidebarProps {
     isOpen: boolean;
@@ -19,33 +21,40 @@ interface SidebarProps {
 const navItems = [
     {
         name: "Dashboard",
-        href: "/dashboard",
+        href: "/console/dashboard",
         icon: DashboardSquare01Icon,
     },
     {
         name: "Live Map",
-        href: "/dashboard/map",
+        href: "/console/dashboard/map",
         icon: MapsLocation01Icon,
     },
     {
         name: "Issues",
-        href: "/dashboard/issues",
+        href: "/console/dashboard/issues",
         icon: Alert02Icon,
     },
     {
         name: "Analytics",
-        href: "/dashboard/analytics",
+        href: "/console/dashboard/analytics",
         icon: Analytics01Icon,
     },
     {
         name: "Settings",
-        href: "/dashboard/settings",
+        href: "/console/dashboard/settings",
         icon: Settings01Icon,
     },
 ];
 
 export const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
     const location = useLocation();
+    const { session, logout } = useAuth();
+    const initials = session?.user.fullName
+        .split(" ")
+        .map((part) => part[0])
+        .join("")
+        .slice(0, 2)
+        .toUpperCase() ?? "CP";
 
     return (
         <aside
@@ -96,16 +105,24 @@ export const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
 
                 {/* Footer - User Profile */}
                 <div className="p-4 border-t border-primary-foreground/10 shrink-0">
-                    <div className="flex items-center gap-3 p-2 rounded-lg hover:bg-primary-foreground/10 transition-colors cursor-pointer">
+                    <div className="flex items-center gap-3 p-2 rounded-lg transition-colors">
                         <Avatar className="h-10 w-10 bg-white border-2 border-primary-foreground/20">
                             <AvatarImage src="https://api.dicebear.com/7.x/avataaars/svg?seed=Felix" />
-                            <AvatarFallback className="bg-accent text-primary font-medium">AD</AvatarFallback>
+                            <AvatarFallback className="bg-accent text-primary font-medium">{initials}</AvatarFallback>
                         </Avatar>
                         <div className="flex-1 min-w-0">
-                            <p className="text-sm font-medium truncate text-white">Admin User</p>
-                            <p className="text-xs text-primary-foreground/60 truncate">Operator</p>
+                            <p className="text-sm font-medium truncate text-white">{session?.user.fullName ?? "CityPulse Admin"}</p>
+                            <p className="text-xs text-primary-foreground/60 truncate">{session?.user.email ?? "admin@citypulse.ng"}</p>
                         </div>
                     </div>
+                    <Button
+                        type="button"
+                        variant="secondary"
+                        onClick={logout}
+                        className="mt-3 w-full justify-center rounded-xl bg-white/10 text-white hover:bg-white/20 hover:text-white"
+                    >
+                        Sign out
+                    </Button>
                 </div>
             </div>
         </aside>

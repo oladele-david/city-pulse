@@ -108,6 +108,9 @@ CityPulse GovOps provides municipal authorities with comprehensive tools to moni
    Create a `.env` file in the root directory:
    ```env
    VITE_MAPBOX_TOKEN=your_mapbox_token_here
+   VITE_API_BASE_URL=http://localhost:3001/api/v1
+   VITE_DEMO_CITIZEN_EMAIL=citizen@citypulse.ng
+   VITE_DEMO_CITIZEN_PASSWORD=CitizenPass123!
    ```
 
 4. **Start development server**

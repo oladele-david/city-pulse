@@ -1,13 +1,17 @@
-import { useState, useRef } from 'react';
+import { useRef } from 'react';
 import { HugeiconsIcon } from "@hugeicons/react";
 import { Camera01Icon, Note01Icon, Delete02Icon } from "@hugeicons/core-free-icons";
 import { cn } from "@/lib/utils";
 import { ReportActions } from "./ReportActions";
+import { IssueSeverity } from '@/types/api';
 
 interface DetailsStepProps {
     note: string;
+    severity: IssueSeverity;
     onNoteChange: (val: string) => void;
+    onSeverityChange: (severity: IssueSeverity) => void;
     imagePreview: string | null;
+    onImageFileChange: (file: File | null) => void;
     onImageChange: (val: string | null) => void;
     onBack: () => void;
     onSubmit: () => void;
@@ -16,8 +20,11 @@ interface DetailsStepProps {
 
 export const DetailsStep = ({
     note,
+    severity,
     onNoteChange,
+    onSeverityChange,
     imagePreview,
+    onImageFileChange,
     onImageChange,
     onBack,
     onSubmit,
@@ -37,12 +44,14 @@ export const DetailsStep = ({
                 onImageChange(reader.result as string);
             };
             reader.readAsDataURL(file);
+            onImageFileChange(file);
         }
     };
 
     const removeImage = (e: React.MouseEvent) => {
         e.stopPropagation();
         onImageChange(null);
+        onImageFileChange(null);
         if (fileInputRef.current) fileInputRef.current.value = '';
     };
 
@@ -116,6 +125,34 @@ export const DetailsStep = ({
                         </span>
                     </div>
                 </div>
+
+                <div className="space-y-3">
+                    <div className="flex items-center justify-between px-1">
+                        <span className="text-xs font-bold text-muted-foreground uppercase tracking-widest">
+                            Severity
+                        </span>
+                        <span className="text-[10px] text-muted-foreground">
+                            Helps operators prioritize faster
+                        </span>
+                    </div>
+                    <div className="grid grid-cols-3 gap-2">
+                        {(["low", "medium", "high"] as IssueSeverity[]).map((value) => (
+                            <button
+                                key={value}
+                                type="button"
+                                onClick={() => onSeverityChange(value)}
+                                className={cn(
+                                    "h-12 rounded-2xl border text-sm font-bold capitalize transition-all",
+                                    severity === value
+                                        ? "border-primary bg-primary text-white shadow-lg shadow-primary/20"
+                                        : "border-border/60 bg-background text-foreground",
+                                )}
+                            >
+                                {value === "high" ? "High" : value === "medium" ? "Medium" : "Low"}
+                            </button>
+                        ))}
+                    </div>
+                </div>
             </div>
 
             <ReportActions
@@ -123,7 +160,7 @@ export const DetailsStep = ({
                 onBack={onBack}
                 onNext={onSubmit}
                 isSubmitting={isSubmitting}
-                disabled={!imagePreview || note.length < 5}
+                disabled={note.trim().length < 5}
             />
         </div>
     );

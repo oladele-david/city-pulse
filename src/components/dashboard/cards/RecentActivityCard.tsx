@@ -7,7 +7,7 @@ export const RecentActivityCard = ({ className }: { className?: string }) => {
         <div className={cn("rounded-xl border bg-card text-card-foreground shadow-sm flex flex-col overflow-hidden", className)}>
             <div className="p-6 pb-4 flex justify-between items-center">
                 <h3 className="font-semibold text-lg">Recent Activity</h3>
-                <Link to="/dashboard/issues">
+                <Link to="/console/dashboard/issues">
                     <button className="text-xs font-medium text-primary hover:text-primary/80 transition-colors">
                         View All Issues
                     </button>

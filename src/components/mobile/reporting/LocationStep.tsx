@@ -1,13 +1,16 @@
-import { useState, useEffect, useRef } from 'react';
+import { useRef } from 'react';
 import Map, { Marker, MapRef } from 'react-map-gl/mapbox';
 import { HugeiconsIcon } from "@hugeicons/react";
-import { MapsLocation01Icon } from "@hugeicons/core-free-icons";
+import { Alert01Icon, MapsLocation01Icon } from "@hugeicons/core-free-icons";
 import { ReportActions } from "./ReportActions";
+import { ResolvedLocation } from '@/types/api';
 
 const MAPBOX_TOKEN = import.meta.env.VITE_MAPBOX_TOKEN;
 
 interface LocationStepProps {
     markerLocation: { latitude: number; longitude: number };
+    resolvedLocation?: ResolvedLocation;
+    isResolvingLocation: boolean;
     onLocationChange: (loc: { latitude: number; longitude: number }) => void;
     onBack: () => void;
     onNext: () => void;
@@ -15,33 +18,16 @@ interface LocationStepProps {
 
 export const LocationStep = ({
     markerLocation,
+    resolvedLocation,
+    isResolvingLocation,
     onLocationChange,
     onBack,
     onNext
 }: LocationStepProps) => {
     const mapRef = useRef<MapRef>(null);
-    const [streetName, setStreetName] = useState<string>("Fetching location...");
-
-    useEffect(() => {
-        const fetchAddress = async () => {
-            try {
-                const response = await fetch(
-                    `https://api.mapbox.com/geocoding/v5/mapbox.places/${markerLocation.longitude},${markerLocation.latitude}.json?access_token=${MAPBOX_TOKEN}&types=address,poi&language=en`
-                );
-                const data = await response.json();
-                if (data.features && data.features.length > 0) {
-                    setStreetName(data.features[0].place_name.split(',')[0]);
-                } else {
-                    setStreetName(`${markerLocation.latitude.toFixed(4)}, ${markerLocation.longitude.toFixed(4)}`);
-                }
-            } catch (error) {
-                console.error("Error fetching address:", error);
-                setStreetName(`${markerLocation.latitude.toFixed(4)}, ${markerLocation.longitude.toFixed(4)}`);
-            }
-        };
-
-        fetchAddress();
-    }, [markerLocation.latitude, markerLocation.longitude]);
+    const streetLabel = resolvedLocation?.street
+        ?? resolvedLocation?.community.name
+        ?? `${markerLocation.latitude.toFixed(4)}, ${markerLocation.longitude.toFixed(4)}`;
 
     return (
         <div className="flex flex-col animate-in fade-in slide-in-from-right-4 duration-500 px-6">
@@ -90,21 +76,32 @@ export const LocationStep = ({
                         </div>
                         <div className="min-w-0">
                             <p className="text-[12px] font-bold text-foreground truncate">
-                                {streetName}
+                                {isResolvingLocation ? "Resolving Lagos location..." : streetLabel}
                             </p>
                             <p className="text-[10px] text-muted-foreground truncate">
-                                {markerLocation.latitude.toFixed(4)}, {markerLocation.longitude.toFixed(4)}
+                                {resolvedLocation
+                                    ? `${resolvedLocation.community.name}, ${resolvedLocation.lga.name}`
+                                    : `${markerLocation.latitude.toFixed(4)}, ${markerLocation.longitude.toFixed(4)}`}
                             </p>
                         </div>
                     </div>
                 </div>
             </div>
 
+            {resolvedLocation?.weakMatch && (
+                <div className="mt-4 rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 flex items-start gap-3">
+                    <HugeiconsIcon icon={Alert01Icon} className="w-4 h-4 text-amber-600 mt-0.5 shrink-0" />
+                    <p className="text-xs font-medium text-amber-900 leading-relaxed">
+                        This pin is a weaker Lagos match, so double-check the location before continuing.
+                    </p>
+                </div>
+            )}
+
             <ReportActions
                 step={2}
                 onBack={onBack}
                 onNext={onNext}
-                disabled={streetName === "Fetching location..."}
+                disabled={isResolvingLocation || !resolvedLocation}
             />
         </div>
     );

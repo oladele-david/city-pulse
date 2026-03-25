@@ -90,7 +90,7 @@ const MobileProfile = () => {
                 ))}
 
                 <button
-                    onClick={() => navigate('/login')}
+                    onClick={() => navigate('/')}
                     className="w-full flex items-center gap-4 p-4.5 mt-4 bg-red-50 border border-red-100 rounded-2xl active:scale-[0.98] transition-all"
                 >
                     <div className="w-11 h-11 flex items-center justify-center text-red-600 transition-colors border border-transparent">

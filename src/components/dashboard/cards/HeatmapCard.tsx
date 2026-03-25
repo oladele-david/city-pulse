@@ -1,14 +1,25 @@
-import { useRef, useEffect, useState } from 'react';
-import Map, { Source, Layer, MapRef } from 'react-map-gl/mapbox';
+import Map, { Source, Layer } from 'react-map-gl/mapbox';
+import type { FeatureCollection, Point } from 'geojson';
+import type { HeatmapLayer } from 'react-map-gl/mapbox';
 import { cn } from "@/lib/utils";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { MapsLocation01Icon } from "@hugeicons/core-free-icons";
 import { Link } from "react-router-dom";
 import 'mapbox-gl/dist/mapbox-gl.css';
 
+type HeatmapFeatureCollection = FeatureCollection<
+    Point,
+    {
+        id: number;
+        mag: number;
+        severity: number;
+        confidence: number;
+    }
+>;
+
 // Mock Data Generator for Dubai
-const generateDubaiPoints = (count: number) => {
-    const features = [];
+const generateDubaiPoints = (count: number): HeatmapFeatureCollection => {
+    const features: HeatmapFeatureCollection["features"] = [];
     // Dubai approx bounds
     const minLat = 25.0;
     const maxLat = 25.3;
@@ -43,7 +54,7 @@ const generateDubaiPoints = (count: number) => {
 
 const data = generateDubaiPoints(100);
 
-const heatmapLayer: any = {
+const heatmapLayer: HeatmapLayer = {
     id: 'heatmap',
     maxzoom: 15,
     type: 'heatmap',
@@ -119,7 +130,7 @@ export const HeatmapCard = ({ className }: { className?: string }) => {
                 <div>
                     <h3 className="font-semibold text-lg text-white drop-shadow-md">Issue Density Heatmap</h3>
                 </div>
-                <Link to="/dashboard/map" className="pointer-events-auto">
+                <Link to="/console/dashboard/map" className="pointer-events-auto">
                     <button className="bg-white/90 hover:bg-white text-primary text-xs font-medium px-3 py-1.5 rounded-full shadow-sm transition-colors backdrop-blur-sm flex items-center gap-1.5">
                         <HugeiconsIcon icon={MapsLocation01Icon} className="w-3.5 h-3.5" />
                         View Live Map
@@ -138,7 +149,7 @@ export const HeatmapCard = ({ className }: { className?: string }) => {
                     mapboxAccessToken={import.meta.env.VITE_MAPBOX_TOKEN}
                     attributionControl={false}
                 >
-                    <Source type="geojson" data={data as any}>
+                    <Source type="geojson" data={data}>
                         <Layer {...heatmapLayer} />
                     </Source>
                 </Map>

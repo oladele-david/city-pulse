@@ -19,58 +19,70 @@ import MobileMap from "./pages/mobile/MobileMap";
 import MobileProfile from "./pages/mobile/MobileProfile";
 import MobileActivity from "./pages/mobile/MobileActivity";
 import MobileReport from "./pages/mobile/MobileReport";
+import { AuthProvider } from "./hooks/use-auth";
+import { ProtectedRoute, PublicOnlyRoute } from "./components/auth/RouteGuards";
 
 const queryClient = new QueryClient();
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <Toaster />
-      <Sonner position="top-center" expand={true} richColors closeButton theme="light" toastOptions={{ style: { zIndex: 99999 } }} />
-      <BrowserRouter>
-        <Routes>
-          {/* Mobile Citizen App Routes */}
-          <Route path="/mobile" element={<MobileLayout />}>
-            <Route index element={<MobileHome />} />
-            <Route path="map" element={<MobileMap />} />
-            <Route path="activity" element={<MobileActivity />} />
-            <Route path="profile" element={<MobileProfile />} />
-            <Route path="report" element={<MobileReport />} />
-          </Route>
+    <AuthProvider>
+      <TooltipProvider>
+        <Toaster />
+        <Sonner position="top-center" expand={true} richColors closeButton theme="light" toastOptions={{ style: { zIndex: 99999 } }} />
+        <BrowserRouter>
+          <Routes>
+            {/* Mobile Citizen App Routes */}
+            <Route path="/mobile" element={<MobileLayout />}>
+              <Route index element={<MobileHome />} />
+              <Route path="map" element={<MobileMap />} />
+              <Route path="activity" element={<MobileActivity />} />
+              <Route path="profile" element={<MobileProfile />} />
+              <Route path="report" element={<MobileReport />} />
+            </Route>
 
-          {/* Core App Routes */}
-          <Route path="/*" element={
-            <>
-              {/* Desktop View */}
-              <div className="hidden lg:block">
-                <Routes>
-                  <Route path="/" element={<Navigate to="/login" replace />} />
-                  <Route path="/login" element={<LoginPage />} />
-                  <Route path="/dashboard" element={<DashboardLayout><Dashboard /></DashboardLayout>} />
-                  <Route path="/dashboard/map" element={<DashboardLayout><LiveMap /></DashboardLayout>} />
-                  <Route path="/dashboard/issues" element={<DashboardLayout><Issues /></DashboardLayout>} />
-                  <Route path="/dashboard/analytics" element={<DashboardLayout><Analytics /></DashboardLayout>} />
-                  <Route path="/dashboard/settings" element={<DashboardLayout><Settings /></DashboardLayout>} />
-                  <Route path="/dashboard/*" element={
-                    <DashboardLayout>
-                      <Routes>
-                        <Route index element={<Index />} />
-                      </Routes>
-                    </DashboardLayout>
-                  } />
-                  <Route path="*" element={<NotFound />} />
-                </Routes>
-              </div>
+            {/* Core App Routes */}
+            <Route path="/*" element={
+              <>
+                {/* Desktop View */}
+                <div className="hidden lg:block">
+                  <Routes>
+                    <Route path="/" element={<Index />} />
+                    <Route path="/login" element={<Navigate to="/console/login" replace />} />
+                    <Route path="/dashboard" element={<Navigate to="/console/dashboard" replace />} />
+                    <Route path="/dashboard/map" element={<Navigate to="/console/dashboard/map" replace />} />
+                    <Route path="/dashboard/issues" element={<Navigate to="/console/dashboard/issues" replace />} />
+                    <Route path="/dashboard/analytics" element={<Navigate to="/console/dashboard/analytics" replace />} />
+                    <Route path="/dashboard/settings" element={<Navigate to="/console/dashboard/settings" replace />} />
+                    <Route path="/console/login" element={<PublicOnlyRoute><LoginPage /></PublicOnlyRoute>} />
+                    <Route path="/console/dashboard" element={<ProtectedRoute><DashboardLayout><Dashboard /></DashboardLayout></ProtectedRoute>} />
+                    <Route path="/console/dashboard/map" element={<ProtectedRoute><DashboardLayout><LiveMap /></DashboardLayout></ProtectedRoute>} />
+                    <Route path="/console/dashboard/issues" element={<ProtectedRoute><DashboardLayout><Issues /></DashboardLayout></ProtectedRoute>} />
+                    <Route path="/console/dashboard/analytics" element={<ProtectedRoute><DashboardLayout><Analytics /></DashboardLayout></ProtectedRoute>} />
+                    <Route path="/console/dashboard/settings" element={<ProtectedRoute><DashboardLayout><Settings /></DashboardLayout></ProtectedRoute>} />
+                    <Route path="/console/dashboard/*" element={
+                      <ProtectedRoute>
+                        <DashboardLayout>
+                          <Routes>
+                            <Route index element={<Dashboard />} />
+                          </Routes>
+                        </DashboardLayout>
+                      </ProtectedRoute>
+                    } />
+                    <Route path="*" element={<NotFound />} />
+                  </Routes>
+                </div>
 
-              {/* Mobile Block View for Admin/Dashboard (Except /mobile) */}
-              <div className="lg:hidden">
-                <MobileBlocker />
-              </div>
-            </>
-          } />
-        </Routes>
-      </BrowserRouter>
-    </TooltipProvider>
+                {/* Mobile Block View for Admin/Dashboard (Except /mobile) */}
+                <div className="lg:hidden">
+                  <MobileBlocker />
+                </div>
+              </>
+            } />
+          </Routes>
+        </BrowserRouter>
+      </TooltipProvider>
+    </AuthProvider>
   </QueryClientProvider>
 );
 
