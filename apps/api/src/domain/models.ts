@@ -75,7 +75,8 @@ export interface IssueRecord {
   streetOrLandmark: string;
   latitude: number;
   longitude: number;
-  photoUrl?: string | null;
+  photoUrls: string[];
+  videoUrl?: string | null;
   confirmationsCount: number;
   disagreementsCount: number;
   fixedSignalsCount: number;

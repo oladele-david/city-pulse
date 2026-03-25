@@ -1,5 +1,23 @@
-import { Body, Controller, Get, Param, Patch, Post, Put, Query } from '@nestjs/common';
-import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  Patch,
+  Post,
+  Put,
+  Query,
+  UploadedFiles,
+  UseInterceptors,
+} from '@nestjs/common';
+import {
+  ApiBearerAuth,
+  ApiBody,
+  ApiConsumes,
+  ApiOperation,
+  ApiTags,
+} from '@nestjs/swagger';
+import { FileFieldsInterceptor } from '@nestjs/platform-express';
 import { CurrentUser } from 'src/common/decorators/current-user.decorator';
 import { Public } from 'src/common/decorators/public.decorator';
 import { Roles } from 'src/common/decorators/roles.decorator';
@@ -33,8 +51,83 @@ export class IssuesController {
   @Roles('citizen')
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Create a new citizen issue report' })
-  create(@Body() dto: CreateIssueDto, @CurrentUser() user: AuthUser) {
-    return this.issuesService.create(dto, user);
+  @ApiConsumes('multipart/form-data')
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        type: { type: 'string', example: 'drainage' },
+        title: { type: 'string', example: 'Flooded drainage by community clinic' },
+        description: {
+          type: 'string',
+          example:
+            'Blocked drainage channel is overflowing beside the clinic entrance',
+        },
+        severity: { type: 'string', enum: ['low', 'medium', 'high'] },
+        lgaId: { type: 'string', example: 'surulere' },
+        communityId: { type: 'string', example: 'adeniran-ogunsanya' },
+        streetOrLandmark: { type: 'string', example: 'Clinic Road' },
+        latitude: { type: 'number', example: 6.5001 },
+        longitude: { type: 'number', example: 3.3525 },
+        photoUrls: {
+          type: 'array',
+          items: { type: 'string', format: 'uri' },
+          maxItems: 5,
+        },
+        videoUrl: { type: 'string', format: 'uri' },
+        images: {
+          type: 'array',
+          items: {
+            type: 'string',
+            format: 'binary',
+          },
+          description: 'Up to 5 image files, 30MB max each',
+        },
+        video: {
+          type: 'string',
+          format: 'binary',
+          description: 'Optional video file, 30MB max',
+        },
+      },
+      required: [
+        'type',
+        'title',
+        'description',
+        'severity',
+        'lgaId',
+        'communityId',
+        'streetOrLandmark',
+        'latitude',
+        'longitude',
+      ],
+    },
+  })
+  @UseInterceptors(
+    FileFieldsInterceptor([
+      { name: 'images', maxCount: 5 },
+      { name: 'video', maxCount: 1 },
+    ]),
+  )
+  create(
+    @Body() dto: CreateIssueDto,
+    @CurrentUser() user: AuthUser,
+    @UploadedFiles()
+    files?: {
+      images?: Array<{
+        originalname: string;
+        mimetype: string;
+        size: number;
+        buffer: Buffer;
+      }>;
+      video?: Array<{
+        originalname: string;
+        mimetype: string;
+        size: number;
+        buffer: Buffer;
+      }>;
+    },
+  ) {
+    return this.issuesService.create(dto, user, files);
   }
 
   @Patch(':id/status')

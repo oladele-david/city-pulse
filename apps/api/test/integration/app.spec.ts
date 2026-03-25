@@ -4,11 +4,32 @@ import request from 'supertest';
 import { AppModule } from 'src/app.module';
 import { HttpExceptionFilter } from 'src/common/filters/http-exception.filter';
 import { ResponseEnvelopeInterceptor } from 'src/common/interceptors/response-envelope.interceptor';
+import { CloudinaryMediaService } from 'src/issues/cloudinary-media.service';
 
 async function createApp(): Promise<INestApplication> {
-  const moduleRef = await Test.createTestingModule({
+  const moduleBuilder = Test.createTestingModule({
     imports: [AppModule],
-  }).compile();
+  });
+
+  moduleBuilder.overrideProvider(CloudinaryMediaService).useValue({
+    uploadIssueMedia: jest.fn(async (file: { mimetype: string }) => ({
+      secureUrl:
+        file.mimetype.startsWith('video/')
+          ? 'https://res.cloudinary.com/demo/video/upload/citypulse/issues/mock-video.mp4'
+          : 'https://res.cloudinary.com/demo/image/upload/citypulse/issues/mock-image.jpg',
+      resourceType: file.mimetype.startsWith('video/') ? 'video' : 'image',
+      publicId: 'citypulse/issues/mock-upload',
+    })),
+    uploadIssueMediaBatch: jest.fn(async (files: Array<{ mimetype: string }>) =>
+      files.map((file, index) => ({
+        secureUrl: `https://res.cloudinary.com/demo/image/upload/citypulse/issues/mock-image-${index + 1}.jpg`,
+        resourceType: file.mimetype.startsWith('video/') ? 'video' : 'image',
+        publicId: `citypulse/issues/mock-upload-${index + 1}`,
+      })),
+    ),
+  });
+
+  const moduleRef = await moduleBuilder.compile();
 
   const app = moduleRef.createNestApplication();
   app.setGlobalPrefix('api/v1');
@@ -96,7 +117,7 @@ describe('CityPulse API integration', () => {
         streetOrLandmark: 'Clinic Road',
         latitude: 6.5001,
         longitude: 3.3525,
-        photoUrl: 'https://example.com/flood.jpg',
+        photoUrls: ['https://example.com/flood.jpg'],
       })
       .expect(201);
 
@@ -125,6 +146,55 @@ describe('CityPulse API integration', () => {
 
     expect(switchResponse.body.data.reaction).toBe('fixed_signal');
     expect(switchResponse.body.data.counts.confirmationsCount).toBe(0);
+  });
+
+  it('uploads issue media with multipart form data and stores the Cloudinary URL', async () => {
+    const loginResponse = await request(app.getHttpServer())
+      .post('/api/v1/auth/citizen/login')
+      .send({
+        email: 'citizen@citypulse.ng',
+        password: 'CitizenPass123!',
+      })
+      .expect(200);
+
+    const token = loginResponse.body.data.accessToken;
+
+    const issueResponse = await request(app.getHttpServer())
+      .post('/api/v1/issues')
+      .set('Authorization', `Bearer ${token}`)
+      .field('type', 'waste')
+      .field('title', 'Overflowing refuse pile near market gate')
+      .field(
+        'description',
+        'Refuse heap has grown large and is spilling into the roadside drainage',
+      )
+      .field('severity', 'medium')
+      .field('lgaId', 'surulere')
+      .field('communityId', 'adeniran-ogunsanya')
+      .field('streetOrLandmark', 'Market Gate')
+      .field('latitude', '6.5011')
+      .field('longitude', '3.3531')
+      .attach('images', Buffer.from('fake-image-1'), {
+        filename: 'refuse-1.jpg',
+        contentType: 'image/jpeg',
+      })
+      .attach('images', Buffer.from('fake-image-2'), {
+        filename: 'refuse-2.jpg',
+        contentType: 'image/jpeg',
+      })
+      .attach('video', Buffer.from('fake-video'), {
+        filename: 'refuse.mp4',
+        contentType: 'video/mp4',
+      })
+      .expect(201);
+
+    expect(issueResponse.body.data.photoUrls).toHaveLength(2);
+    expect(issueResponse.body.data.photoUrls[0]).toContain(
+      'res.cloudinary.com/demo/image/upload',
+    );
+    expect(issueResponse.body.data.videoUrl).toContain(
+      'res.cloudinary.com/demo/video/upload',
+    );
   });
 
   it('resolves public guest location requests', async () => {

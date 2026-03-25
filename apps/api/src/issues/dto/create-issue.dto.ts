@@ -1,4 +1,5 @@
 import {
+  IsArray,
   IsIn,
   IsLatitude,
   IsLongitude,
@@ -7,6 +8,7 @@ import {
   IsString,
   IsUrl,
   MaxLength,
+  ValidateIf,
 } from 'class-validator';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
@@ -52,8 +54,15 @@ export class CreateIssueDto {
   @IsLongitude()
   longitude!: number;
 
-  @ApiPropertyOptional({ example: 'https://example.com/flood.jpg' })
+  @ApiPropertyOptional({ example: ['https://example.com/flood-1.jpg'] })
+  @IsOptional()
+  @IsArray()
+  @IsUrl({}, { each: true })
+  photoUrls?: string[];
+
+  @ApiPropertyOptional({ example: 'https://example.com/flood.mp4' })
+  @ValidateIf((_, value) => value !== '')
   @IsOptional()
   @IsUrl()
-  photoUrl?: string;
+  videoUrl?: string;
 }
