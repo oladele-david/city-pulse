@@ -236,11 +236,11 @@ All components follow accessibility best practices (WCAG 2.1 AA) and support key
 
 ---
 
-## 🤝 Contributing
+## 🤝 Contributors
 
-I'm not accepting contributions yet... reach me at abiodunoluwamurewa@gmail.com
+- oladele-david => Backend Engr
+- Pysbah => Frontend Engr
 
 ## 🙏 Acknowledgments
 
-**Version** - 1.0.0  
-**Last Updated** - December 2025
+**Version** - 1.0.0
