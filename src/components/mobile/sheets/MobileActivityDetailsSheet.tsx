@@ -11,10 +11,9 @@ import {
     MapsLocation01Icon,
     Calendar01Icon,
     Tag01Icon,
-    CheckmarkBadge01Icon,
     Medal02Icon
 } from "@hugeicons/core-free-icons";
-import { ActivityContribution } from "@/data/activityData";
+import { ActivityContribution } from "@/lib/activity";
 
 interface MobileActivityDetailsSheetProps {
     contribution: ActivityContribution | null;

@@ -4,9 +4,11 @@ import { CheckmarkBadge01Icon, ArrowRight01Icon, PlusSignIcon } from "@hugeicons
 
 interface SuccessStepProps {
     onReset: () => void;
+    issueId?: string;
+    locationLabel?: string;
 }
 
-export const SuccessStep = ({ onReset }: SuccessStepProps) => {
+export const SuccessStep = ({ onReset, issueId, locationLabel }: SuccessStepProps) => {
     const navigate = useNavigate();
 
     return (
@@ -19,7 +21,7 @@ export const SuccessStep = ({ onReset }: SuccessStepProps) => {
             <div className="space-y-2 mb-12">
                 <h2 className="text-2xl font-bold tracking-tight text-foreground">Report Submitted!</h2>
                 <p className="text-muted-foreground font-medium leading-relaxed px-4">
-                    Thank you, Ahmed. Your contribution helps keep Dubai running smoothly.
+                    Your Lagos report is now in the live system and ready for operator review.
                 </p>
             </div>
 
@@ -31,13 +33,20 @@ export const SuccessStep = ({ onReset }: SuccessStepProps) => {
                         </div>
                         <div className="text-left">
                             <p className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Score Preview</p>
-                            <p className="text-sm font-semibold text-foreground">Community Points</p>
+                            <p className="text-sm font-semibold text-foreground">{issueId ? `Issue ${issueId.slice(0, 8).toUpperCase()}` : "Community Points"}</p>
                         </div>
                     </div>
                     <span className="text-[10px] font-bold text-accent bg-accent/5 px-2 py-1 rounded-full uppercase tracking-widest border border-accent/20">
                         Pending
                     </span>
                 </div>
+
+                {locationLabel && (
+                    <div className="rounded-[2rem] border border-border/50 bg-background px-5 py-4 text-left shadow-sm">
+                        <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Location</p>
+                        <p className="mt-1 text-sm font-semibold text-foreground">{locationLabel}</p>
+                    </div>
+                )}
 
                 <div className="pt-4 space-y-3">
                     <button

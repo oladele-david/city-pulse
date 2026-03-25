@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import {
     Drawer,
     DrawerContent,
@@ -19,14 +19,32 @@ import {
     FileSecurityIcon
 } from "@hugeicons/core-free-icons";
 import { Switch } from "@/components/ui/switch";
+import { UserProfile } from "@/types/api";
 
 interface MobileProfileSheetProps {
     type: string | null;
     isOpen: boolean;
     onClose: () => void;
+    session: UserProfile | null;
 }
 
-export const MobileProfileSheet = ({ type, isOpen, onClose }: MobileProfileSheetProps) => {
+interface ProfileSheetItem {
+    label: string;
+    value: string;
+    icon?: typeof GlobalIcon;
+    isToggle?: boolean;
+    checked?: boolean;
+    onToggle?: () => void;
+}
+
+interface ProfileSheetContent {
+    title: string;
+    description: string;
+    icon: typeof UserCircleIcon;
+    items: ProfileSheetItem[];
+}
+
+export const MobileProfileSheet = ({ type, isOpen, onClose, session }: MobileProfileSheetProps) => {
     // State for Security & Privacy toggles
     const [toggles, setToggles] = useState({
         biometric: true,
@@ -38,18 +56,18 @@ export const MobileProfileSheet = ({ type, isOpen, onClose }: MobileProfileSheet
         setToggles(prev => ({ ...prev, [key]: !prev[key] }));
     };
 
-    const getContent = () => {
+    const getContent = (): ProfileSheetContent | null => {
         switch (type) {
             case "Personal Information":
                 return {
-                    title: "Personal Information",
-                    description: "Manage your identity and contact details",
-                    icon: UserCircleIcon,
-                    items: [
-                        { label: "Full Name", value: "Ahmed Al-Maktoum" },
-                        { label: "Email", value: "ahmed.m@dubai.gov.ae" },
-                        { label: "Phone", value: "+971 50 123 4567" },
-                        { label: "District", value: "Downtown Dubai" }
+                        title: "Personal Information",
+                        description: "Manage your identity and contact details",
+                        icon: UserCircleIcon,
+                        items: [
+                        { label: "Full Name", value: session?.fullName ?? "CityPulse Citizen" },
+                        { label: "Email", value: session?.email ?? "citizen@citypulse.ng" },
+                        { label: "Street / Area", value: session?.streetOrArea ?? "Lagos" },
+                        { label: "Community", value: session?.communityId ?? "Unknown community" }
                     ]
                 };
             case "Security & Privacy":
@@ -86,24 +104,24 @@ export const MobileProfileSheet = ({ type, isOpen, onClose }: MobileProfileSheet
                 };
             case "Settings":
                 return {
-                    title: "App Settings",
-                    description: "Customize your CityPulse experience",
-                    icon: Settings02Icon,
-                    items: [
-                        { label: "Language", value: "English (UK)", icon: GlobalIcon },
-                        { label: "Notifications", value: "Critical Only", icon: Notification01Icon },
-                        { label: "Theme", value: "System", icon: Settings02Icon }
+                        title: "App Settings",
+                        description: "Customize your CityPulse experience",
+                        icon: Settings02Icon,
+                        items: [
+                        { label: "Language", value: "English", icon: GlobalIcon },
+                        { label: "Notifications", value: "Issue updates", icon: Notification01Icon },
+                        { label: "Theme", value: "Light", icon: Settings02Icon }
                     ]
                 };
             case "Help & Support":
                 return {
-                    title: "Help & Support",
-                    description: "Get assistance from our team",
-                    icon: InformationCircleIcon,
-                    items: [
+                        title: "Help & Support",
+                        description: "Get assistance from our team",
+                        icon: InformationCircleIcon,
+                        items: [
                         { label: "Version", value: "v1.0.0 (Beta)" },
-                        { label: "Contact Support", value: "Support Hub" },
-                        { label: "Terms of Service", value: "View Document" }
+                        { label: "Contact Support", value: "citypulse.ng/support" },
+                        { label: "Terms of Service", value: "Available in-app" }
                     ]
                 };
             default:
@@ -128,7 +146,7 @@ export const MobileProfileSheet = ({ type, isOpen, onClose }: MobileProfileSheet
                 </DrawerHeader>
 
                 <div className="p-6 space-y-4">
-                    {content.items.map((item: any, idx) => (
+                    {content.items.map((item, idx) => (
                         <div key={idx} className="flex items-center justify-between p-4 bg-muted/20 border rounded-2xl hover:bg-muted/30 transition-colors">
                             <div className="flex items-center gap-3">
                                 {item.icon && <HugeiconsIcon icon={item.icon} className="w-4 h-4 text-muted-foreground" />}

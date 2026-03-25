@@ -5,7 +5,7 @@ import {
     CheckmarkCircle02Icon,
 } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
-import { Issue } from "@/data/mockIssues";
+import { MapIssue } from "@/lib/map-issues";
 import { toast } from "sonner";
 import { Skeleton } from "@/components/ui/skeleton";
 import { AiAnalysisModal } from "./drawer/AiAnalysisModal";
@@ -17,7 +17,7 @@ import { AiAnalysisSection } from "./drawer/AiAnalysisSection";
 interface IssueDrawerProps {
     isOpen: boolean;
     onClose: () => void;
-    issue: Issue | null;
+    issue: MapIssue | null;
 }
 
 interface AiAnalysis {
@@ -81,8 +81,8 @@ export const IssueDrawer = ({ isOpen, onClose, issue }: IssueDrawerProps) => {
             const prompt = `You are a municipal infrastructure analyst. Analyze this incident:
 Incident Type: ${issue.type}
 Severity: ${issue.severity}
-Location: ${issue.location_name}
-Active Reports: ${issue.reports_count}
+Location: ${issue.locationName}
+Active Reports: ${issue.reportsCount}
 Title: ${issue.title}
 Description: ${issue.description}
 

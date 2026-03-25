@@ -1,225 +1,310 @@
-import { useRef, useMemo, useState } from 'react';
-import Map, { Source, Layer, MapRef, Marker } from 'react-map-gl/mapbox';
-import 'mapbox-gl/dist/mapbox-gl.css';
+import { useEffect, useMemo, useRef, useState } from "react";
+import Map, { Layer, MapRef, Marker, Source } from "react-map-gl/mapbox";
+import "mapbox-gl/dist/mapbox-gl.css";
 import { HugeiconsIcon } from "@hugeicons/react";
 import {
-    MapsLocation01Icon,
-    FilterIcon,
-    LocationUser03Icon,
-    RoadIcon,
-    BlackHole01Icon,
-    IdeaIcon,
-    VolumeHighIcon,
-    ThermometerWarmIcon,
-    TemperatureIcon
+  FilterIcon,
+  LocationUser03Icon,
+  MapsLocation01Icon,
+  TemperatureIcon,
 } from "@hugeicons/core-free-icons";
-import { mockIssues, Issue } from '@/data/mockIssues';
-import { MobileIssueSheet } from '@/components/mobile/sheets/MobileIssueSheet';
-import { MobileMapFilters } from '@/components/mobile/ui/MobileMapFilters';
-import { cn } from "@/lib/utils";
+import { MobileIssueSheet } from "@/components/mobile/sheets/MobileIssueSheet";
+import { MobileMapFilters } from "@/components/mobile/ui/MobileMapFilters";
 import { toast } from "@/components/ui/sonner";
+import { useCitizenAuth } from "@/hooks/use-auth";
+import { useCitizenLocation } from "@/hooks/use-citizen-location";
+import {
+  useIssueReaction,
+  useIssueReactionMutation,
+  useLiveIssues,
+} from "@/hooks/use-live-issues";
+import { LAGOS_DEFAULT_ZOOM } from "@/lib/lagos";
+import { MapIssue, toIssueGeoJson, toMapIssue } from "@/lib/map-issues";
+import { cn } from "@/lib/utils";
 
-// Mapbox Token from environment
 const MAPBOX_TOKEN = import.meta.env.VITE_MAPBOX_TOKEN;
 
-const DUMMY_USER_LOCATION = {
-    latitude: 25.1972,
-    longitude: 55.2744
+const heatmapLayer = {
+  id: "heatmap-layer",
+  type: "heatmap",
+  paint: {
+    "heatmap-weight": ["interpolate", ["linear"], ["get", "confidence"], 0, 0, 1, 1],
+    "heatmap-intensity": ["interpolate", ["linear"], ["zoom"], 0, 1, 15, 3],
+    "heatmap-color": [
+      "interpolate",
+      ["linear"],
+      ["heatmap-density"],
+      0,
+      "rgba(0,0,0,0)",
+      0.2,
+      "rgba(239,68,68,0.1)",
+      0.4,
+      "rgba(239,68,68,0.2)",
+      0.6,
+      "rgba(239,68,68,0.4)",
+      0.8,
+      "rgba(239,68,68,0.6)",
+      1,
+      "rgba(239,68,68,0.8)",
+    ],
+    "heatmap-radius": ["interpolate", ["linear"], ["zoom"], 0, 15, 15, 60],
+    "heatmap-opacity": 0.8,
+  },
 };
 
 const MobileMap = () => {
-    const mapRef = useRef<MapRef>(null);
-    const [selectedIssue, setSelectedIssue] = useState<Issue | null>(null);
-    const [isSheetOpen, setIsSheetOpen] = useState(false);
-    const [isFilterOpen, setIsFilterOpen] = useState(false);
-    const [showHeatmap, setShowHeatmap] = useState(false);
+  const mapRef = useRef<MapRef>(null);
+  const location = useCitizenLocation();
+  const { isAuthenticated } = useCitizenAuth();
+  const [selectedIssue, setSelectedIssue] = useState<MapIssue | null>(null);
+  const [isSheetOpen, setIsSheetOpen] = useState(false);
+  const [isFilterOpen, setIsFilterOpen] = useState(false);
+  const [showHeatmap, setShowHeatmap] = useState(false);
+  const [activeFilters, setActiveFilters] = useState({
+    severity: "all",
+    type: "all",
+  });
+  const issuesQuery = useLiveIssues("mobile-map");
+  const reactionMutation = useIssueReactionMutation();
+  const selectedReactionQuery = useIssueReaction(selectedIssue?.id ?? null);
 
-    const [activeFilters, setActiveFilters] = useState({
-        severity: 'all',
-        type: 'all'
+  const issues = useMemo(
+    () => (issuesQuery.data ?? []).map(toMapIssue),
+    [issuesQuery.data],
+  );
+
+  const filteredIssues = useMemo(
+    () =>
+      issues.filter((issue) => {
+        if (
+          activeFilters.severity !== "all" &&
+          issue.severity !== activeFilters.severity
+        ) {
+          return false;
+        }
+        if (activeFilters.type !== "all" && issue.type !== activeFilters.type) {
+          return false;
+        }
+        return true;
+      }),
+    [activeFilters, issues],
+  );
+
+  const geojsonData = useMemo(
+    () => toIssueGeoJson(filteredIssues),
+    [filteredIssues],
+  );
+
+  useEffect(() => {
+    mapRef.current?.flyTo({
+      center: [location.coordinates.longitude, location.coordinates.latitude],
+      zoom: location.source === "user" ? 13.2 : LAGOS_DEFAULT_ZOOM,
+      duration: 1200,
     });
+  }, [location.coordinates.latitude, location.coordinates.longitude, location.source]);
 
-    const handleFilterChange = (key: 'severity' | 'type', value: string) => {
-        setActiveFilters(prev => ({ ...prev, [key]: value }));
-    };
+  const handleFilterChange = (key: "severity" | "type", value: string) => {
+    setActiveFilters((previous) => ({ ...previous, [key]: value }));
+  };
 
-    const getIconByIssueType = (type: string) => {
-        switch (type) {
-            case 'road': return RoadIcon;
-            case 'drainage': return BlackHole01Icon;
-            case 'lighting': return IdeaIcon;
-            case 'noise': return VolumeHighIcon;
-            case 'heat': return ThermometerWarmIcon;
-            default: return RoadIcon;
-        }
-    };
+  const handleReaction = async (reaction: "confirm" | "disagree") => {
+    if (!selectedIssue || !isAuthenticated) {
+      toast.info("Sign in to react to this issue.");
+      return;
+    }
 
-    const filteredIssues = useMemo(() => {
-        return mockIssues.filter(issue => {
-            if (activeFilters.severity !== 'all' && issue.severity !== activeFilters.severity) return false;
-            if (activeFilters.type !== 'all' && issue.type !== activeFilters.type) return false;
-            return true;
-        });
-    }, [activeFilters]);
+    try {
+      const nextReaction =
+        selectedReactionQuery.data?.reaction === reaction ? "none" : reaction;
+      await reactionMutation.mutateAsync({
+        issueId: selectedIssue.id,
+        reaction: nextReaction,
+      });
+      toast.success(
+        nextReaction === "none"
+          ? "Your reaction was removed."
+          : nextReaction === "confirm"
+            ? "Your agreement was recorded."
+            : "Your disagreement was recorded.",
+      );
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Could not update reaction.");
+    }
+  };
 
-    const heatmapLayer: any = {
-        id: 'heatmap-layer',
-        type: 'heatmap',
-        paint: {
-            'heatmap-weight': ['interpolate', ['linear'], ['get', 'confidence'], 0, 0, 1, 1],
-            'heatmap-intensity': ['interpolate', ['linear'], ['zoom'], 0, 1, 15, 3],
-            'heatmap-color': [
-                'interpolate',
-                ['linear'],
-                ['heatmap-density'],
-                0, 'rgba(0,0,0,0)',
-                0.2, 'rgba(239, 68, 68, 0.1)',
-                0.4, 'rgba(239, 68, 68, 0.2)',
-                0.6, 'rgba(239, 68, 68, 0.4)',
-                0.8, 'rgba(239, 68, 68, 0.6)',
-                1, 'rgba(239, 68, 68, 0.8)'
-            ],
-            'heatmap-radius': ['interpolate', ['linear'], ['zoom'], 0, 15, 15, 60],
-            'heatmap-opacity': 0.8
-        }
-    };
+  return (
+    <div className="relative h-full w-full overflow-hidden bg-background">
+      <div className="pointer-events-none fixed left-0 right-0 top-6 z-40 px-4">
+        <div className="pointer-events-auto mx-auto flex max-w-[380px] flex-col gap-3">
+          {!location.hasPrompted && (
+            <div className="rounded-2xl border border-border/50 bg-background/95 p-4 shadow-xl backdrop-blur-md">
+              <p className="text-sm font-bold text-foreground">Center the map around you</p>
+              <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
+                Allow location to jump to nearby Lagos issues. If you skip, the map stays centered on Lagos.
+              </p>
+              <div className="mt-3 flex gap-2">
+                <button
+                  onClick={location.requestLocation}
+                  className="rounded-full bg-primary px-4 py-2 text-[11px] font-bold uppercase tracking-[0.16em] text-white"
+                >
+                  Use My Location
+                </button>
+                <button
+                  onClick={location.dismissPrompt}
+                  className="rounded-full border border-border/60 px-4 py-2 text-[11px] font-bold uppercase tracking-[0.16em] text-foreground"
+                >
+                  Not Now
+                </button>
+              </div>
+            </div>
+          )}
 
-    const geojsonData = useMemo(() => ({
-        type: 'FeatureCollection' as const,
-        features: filteredIssues.map(issue => ({
-            type: 'Feature' as const,
-            properties: { id: issue.id, confidence: issue.confidence },
-            geometry: { type: 'Point' as const, coordinates: [issue.longitude, issue.latitude] }
-        }))
-    }), [filteredIssues]);
+          {location.locationErrorMessage && (
+            <div className="rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-xs font-medium text-amber-900 shadow-lg">
+              {location.locationErrorMessage}
+            </div>
+          )}
 
-    const handleConfirm = () => {
-        toast.success("Issue verified successfully");
-        setIsSheetOpen(false);
-    };
-
-    const handleDisagree = () => {
-        toast.info("Thank you for your feedback");
-        setIsSheetOpen(false);
-    };
-
-    return (
-        <div className="relative w-full h-full bg-background overflow-hidden">
-            {/* Top Bar - Centralized and Balanced */}
-            <div className="fixed top-6 left-0 right-0 z-40 px-4 pointer-events-none">
-                <div className="flex items-center gap-2 max-w-[380px] mx-auto pointer-events-auto">
-                    {/* Search Bar - Slightly flexible */}
-                    <div className="flex-1 min-w-0 h-14 bg-background/95 backdrop-blur-md rounded-2xl border border-border/40 shadow-xl flex items-center px-4 gap-3">
-                        <HugeiconsIcon icon={MapsLocation01Icon} className="w-5 h-5 text-muted-foreground shrink-0" />
-                        <span className="text-[14px] font-bold text-muted-foreground truncate">Search records...</span>
-                    </div>
-
-                    {/* Heatmap Toggle */}
-                    <button
-                        onClick={() => {
-                            setShowHeatmap(!showHeatmap);
-                            toast.info(showHeatmap ? "Map markers visible" : "Heatmap enabled");
-                        }}
-                        className={cn(
-                            "h-14 w-14 rounded-2xl flex items-center justify-center transition-all border shadow-xl active:scale-95 shrink-0",
-                            showHeatmap
-                                ? "bg-primary text-white border-primary"
-                                : "bg-background/95 backdrop-blur-md text-foreground border-border/40"
-                        )}
-                    >
-                        <HugeiconsIcon icon={TemperatureIcon} className="w-5 h-5" />
-                    </button>
-
-                    {/* Filter Toggle */}
-                    <button
-                        onClick={() => setIsFilterOpen(!isFilterOpen)}
-                        className={cn(
-                            "h-14 w-14 rounded-2xl flex items-center justify-center transition-all border shadow-xl active:scale-95 shrink-0",
-                            isFilterOpen
-                                ? "bg-primary text-white border-primary"
-                                : "bg-background/95 backdrop-blur-md text-foreground border-border/40"
-                        )}
-                    >
-                        <HugeiconsIcon icon={FilterIcon} className="w-5 h-5" />
-                    </button>
-                </div>
+          <div className="flex items-center gap-2">
+            <div className="flex h-14 min-w-0 flex-1 items-center gap-3 rounded-2xl border border-border/40 bg-background/95 px-4 shadow-xl backdrop-blur-md">
+              <HugeiconsIcon
+                icon={MapsLocation01Icon}
+                className="h-5 w-5 shrink-0 text-muted-foreground"
+              />
+              <span className="truncate text-[14px] font-bold text-muted-foreground">
+                {issuesQuery.isFetching ? "Syncing live Lagos reports" : "Lagos issue map"}
+              </span>
             </div>
 
-            {/* Dropdown Filters */}
-            <MobileMapFilters
-                isOpen={isFilterOpen}
-                onClose={() => setIsFilterOpen(false)}
-                activeFilters={activeFilters}
-                onFilterChange={handleFilterChange}
-            />
-
-            <Map
-                ref={mapRef}
-                initialViewState={{
-                    latitude: DUMMY_USER_LOCATION.latitude,
-                    longitude: DUMMY_USER_LOCATION.longitude,
-                    zoom: 12.5
-                }}
-                style={{ width: '100%', height: '100%' }}
-                mapStyle="mapbox://styles/mapbox/light-v11"
-                mapboxAccessToken={MAPBOX_TOKEN}
-                attributionControl={false}
+            <button
+              onClick={() => {
+                setShowHeatmap((previous) => !previous);
+                toast.info(showHeatmap ? "Map markers visible" : "Heatmap enabled");
+              }}
+              className={cn(
+                "flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl border shadow-xl transition-all active:scale-95",
+                showHeatmap
+                  ? "border-primary bg-primary text-white"
+                  : "border-border/40 bg-background/95 text-foreground backdrop-blur-md",
+              )}
             >
-                {/* Heatmap Layer */}
-                {showHeatmap && (
-                    <Source id="heatmap" type="geojson" data={geojsonData}>
-                        <Layer {...heatmapLayer} />
-                    </Source>
-                )}
+              <HugeiconsIcon icon={TemperatureIcon} className="h-5 w-5" />
+            </button>
 
-                {/* Issue Markers - Subtle Style */}
-                {!showHeatmap && filteredIssues.map((issue) => (
-                    <Marker
-                        key={issue.id}
-                        latitude={issue.latitude}
-                        longitude={issue.longitude}
-                        onClick={(e) => {
-                            e.originalEvent.stopPropagation();
-                            setSelectedIssue(issue);
-                            setIsSheetOpen(true);
-                        }}
-                    >
-                        <div className="relative group cursor-pointer transition-transform hover:scale-110 active:scale-90">
-                            <div className={cn(
-                                "w-8 h-8 rounded-xl flex items-center justify-center border-2 border-white shadow-sm ring-1 ring-black/10",
-                                issue.severity === 'high' ? "bg-red-500/90" :
-                                    issue.severity === 'medium' ? "bg-orange-500/90" : "bg-yellow-500/90"
-                            )}>
-                                <HugeiconsIcon icon={getIconByIssueType(issue.type)} className="w-4 h-4 text-white" />
-                            </div>
-                        </div>
-                    </Marker>
-                ))}
-
-                {/* User Location Marker */}
-                <Marker
-                    latitude={DUMMY_USER_LOCATION.latitude}
-                    longitude={DUMMY_USER_LOCATION.longitude}
-                    anchor="center"
-                >
-                    <div className="relative flex items-center justify-center">
-                        <div className="absolute w-12 h-12 bg-primary/20 rounded-full animate-ping" />
-                        <div className="relative w-10 h-10 bg-primary rounded-full flex items-center justify-center border-4 border-white shadow-xl">
-                            <HugeiconsIcon icon={LocationUser03Icon} className="w-5 h-5 text-white" />
-                        </div>
-                    </div>
-                </Marker>
-            </Map>
-
-            <MobileIssueSheet
-                issue={selectedIssue}
-                isOpen={isSheetOpen}
-                onClose={() => setIsSheetOpen(false)}
-                onConfirm={handleConfirm}
-                onDisagree={handleDisagree}
-            />
+            <button
+              onClick={() => setIsFilterOpen((previous) => !previous)}
+              className={cn(
+                "flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl border shadow-xl transition-all active:scale-95",
+                isFilterOpen
+                  ? "border-primary bg-primary text-white"
+                  : "border-border/40 bg-background/95 text-foreground backdrop-blur-md",
+              )}
+            >
+              <HugeiconsIcon icon={FilterIcon} className="h-5 w-5" />
+            </button>
+          </div>
         </div>
-    );
+      </div>
+
+      <MobileMapFilters
+        isOpen={isFilterOpen}
+        onClose={() => setIsFilterOpen(false)}
+        activeFilters={activeFilters}
+        onFilterChange={handleFilterChange}
+      />
+
+      <Map
+        ref={mapRef}
+        initialViewState={{
+          latitude: location.coordinates.latitude,
+          longitude: location.coordinates.longitude,
+          zoom: location.source === "user" ? 13.2 : LAGOS_DEFAULT_ZOOM,
+        }}
+        style={{ width: "100%", height: "100%" }}
+        mapStyle="mapbox://styles/mapbox/light-v11"
+        mapboxAccessToken={MAPBOX_TOKEN}
+        attributionControl={false}
+      >
+        {location.source === "user" && (
+          <Marker
+            latitude={location.coordinates.latitude}
+            longitude={location.coordinates.longitude}
+            anchor="center"
+          >
+            <div className="relative flex items-center justify-center">
+              <div className="absolute h-12 w-12 animate-ping rounded-full bg-primary/20" />
+              <div className="relative flex h-10 w-10 items-center justify-center rounded-full border-4 border-white bg-primary shadow-xl">
+                <HugeiconsIcon
+                  icon={LocationUser03Icon}
+                  className="h-5 w-5 text-white"
+                />
+              </div>
+            </div>
+          </Marker>
+        )}
+
+        {showHeatmap && filteredIssues.length > 0 && (
+          <Source id="heatmap" type="geojson" data={geojsonData}>
+            <Layer {...heatmapLayer} />
+          </Source>
+        )}
+
+        {!showHeatmap &&
+          filteredIssues.map((issue) => (
+            <Marker
+              key={issue.id}
+              latitude={issue.latitude}
+              longitude={issue.longitude}
+              onClick={(event) => {
+                event.originalEvent.stopPropagation();
+                setSelectedIssue(issue);
+                setIsSheetOpen(true);
+              }}
+            >
+              <div className="group relative cursor-pointer transition-transform hover:scale-110 active:scale-90">
+                <div
+                  className={cn(
+                    "flex h-8 w-8 items-center justify-center rounded-xl border-2 border-white shadow-sm ring-1 ring-black/10",
+                    issue.severity === "high"
+                      ? "bg-red-500/90"
+                      : issue.severity === "medium"
+                        ? "bg-orange-500/90"
+                        : "bg-yellow-500/90",
+                  )}
+                />
+                {(issue.photoUrls.length > 0 || issue.videoUrl) && (
+                  <span className="absolute -right-1 -top-1 h-3.5 w-3.5 rounded-full border border-white bg-sky-500" />
+                )}
+              </div>
+            </Marker>
+          ))}
+      </Map>
+
+      <div className="pointer-events-none absolute bottom-28 left-4 right-4 z-30">
+        <div className="rounded-2xl border border-border/50 bg-background/95 p-4 shadow-xl backdrop-blur-md">
+          <p className="text-sm font-bold text-foreground">
+            {issuesQuery.isLoading
+              ? "Loading reports..."
+              : `${filteredIssues.length} issue${filteredIssues.length === 1 ? "" : "s"} match your filters`}
+          </p>
+          <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
+            New issues from other users are refetched automatically so the map stays current.
+          </p>
+        </div>
+      </div>
+
+      <MobileIssueSheet
+        issue={selectedIssue}
+        isOpen={isSheetOpen}
+        onClose={() => setIsSheetOpen(false)}
+        onConfirm={() => void handleReaction("confirm")}
+        onDisagree={() => void handleReaction("disagree")}
+        userReaction={selectedReactionQuery.data?.reaction}
+        canReact={isAuthenticated}
+        isSubmittingReaction={reactionMutation.isPending}
+      />
+    </div>
+  );
 };
 
 export default MobileMap;

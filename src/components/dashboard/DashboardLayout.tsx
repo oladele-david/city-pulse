@@ -11,7 +11,7 @@ interface DashboardLayoutProps {
 
 export const DashboardLayout = ({ children }: DashboardLayoutProps) => {
     const { pathname } = useLocation();
-    const isMapPage = pathname === "/dashboard/map";
+    const isMapPage = pathname === "/console/dashboard/map";
     const [isSidebarOpen, setIsSidebarOpen] = useState(!isMapPage);
 
     // Auto-collapse sidebar when entering map page

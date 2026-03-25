@@ -1,7 +1,8 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useMutation } from "@tanstack/react-query";
 import * as z from "zod";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { Mail02Icon, LockIcon, ArrowRight01Icon, ViewIcon, ViewOffIcon } from "@hugeicons/core-free-icons";
@@ -16,6 +17,8 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
+import { api, ApiError } from "@/lib/api";
+import { useAuth } from "@/hooks/use-auth";
 
 const formSchema = z.object({
     email: z.string().email({
@@ -27,10 +30,14 @@ const formSchema = z.object({
 });
 
 export const LoginForm = () => {
-    const [isLoading, setIsLoading] = useState(false);
     const [showPassword, setShowPassword] = useState(false);
     const { toast } = useToast();
     const navigate = useNavigate();
+    const location = useLocation();
+    const { login } = useAuth();
+    const redirectTo = typeof location.state?.from === "string"
+        ? location.state.from
+        : "/console/dashboard";
 
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
@@ -40,27 +47,34 @@ export const LoginForm = () => {
         },
     });
 
+    const loginMutation = useMutation({
+        mutationFn: api.loginAdmin,
+        onSuccess: (session) => {
+            login(session);
+            toast({
+                title: "Welcome back",
+                description: "You are now connected to the live CityPulse admin backend.",
+            });
+            navigate(redirectTo, { replace: true });
+        },
+        onError: (error) => {
+            const message = error instanceof ApiError
+                ? error.message
+                : "Unable to sign in right now. Please try again.";
+
+            toast({
+                title: "Authentication Failed",
+                description: message,
+                variant: "destructive",
+            });
+        },
+    });
+
     function onSubmit(values: z.infer<typeof formSchema>) {
-        setIsLoading(true);
-        // Simulate login delay
-        setTimeout(() => {
-            console.log(values);
-            setIsLoading(false);
-            if (values.email === "admin@gov.ae" && values.password === "test1234") {
-                toast({
-                    title: "Welcome back",
-                    description: "Successfully authenticated as Operator.",
-                });
-                navigate("/dashboard");
-            } else {
-                toast({
-                    title: "Authentication Failed",
-                    description: "Invalid credentials. Please try again.",
-                    variant: "destructive",
-                });
-            }
-        }, 1500);
+        loginMutation.mutate(values);
     }
+
+    const isLoading = loginMutation.isPending;
 
     return (
         <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
@@ -69,8 +83,11 @@ export const LoginForm = () => {
                     Login
                 </h1>
                 <p className="text-muted-foreground text-lg">
-                    Enter your credentials to access the government operations portal.
+                    Sign in with your CityPulse admin account to access live operations data.
                 </p>
+                <div className="rounded-2xl border border-primary/10 bg-primary/5 px-4 py-3 text-sm text-muted-foreground">
+                    Demo admin: <span className="font-semibold text-foreground">admin@citypulse.ng</span> / <span className="font-semibold text-foreground">AdminPass123!</span>
+                </div>
             </div>
 
             <Form {...form}>
@@ -85,7 +102,7 @@ export const LoginForm = () => {
                                     <div className="relative">
                                         <HugeiconsIcon icon={Mail02Icon} className="absolute left-3 top-2.5 h-5 w-5 text-muted-foreground" />
                                         <Input
-                                            placeholder="admin@gov.ae"
+                                            placeholder="admin@citypulse.ng"
                                             className="pl-10 h-11 focus-visible:ring-1 focus-visible:ring-accent focus-visible:ring-offset-0 focus-visible:border-accent"
                                             {...field}
                                         />
@@ -106,7 +123,7 @@ export const LoginForm = () => {
                                         <HugeiconsIcon icon={LockIcon} className="absolute left-3 top-2.5 h-5 w-5 text-muted-foreground" />
                                         <Input
                                             type={showPassword ? "text" : "password"}
-                                            placeholder="test1234"
+                                            placeholder="AdminPass123!"
                                             className="pl-10 pr-10 h-11 focus-visible:ring-1 focus-visible:ring-accent focus-visible:ring-offset-0 focus-visible:border-accent"
                                             {...field}
                                         />

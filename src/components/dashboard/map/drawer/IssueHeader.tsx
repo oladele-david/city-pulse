@@ -1,10 +1,10 @@
 import { HugeiconsIcon } from "@hugeicons/react";
 import { Location01Icon } from "@hugeicons/core-free-icons";
 import { cn } from "@/lib/utils";
-import { Issue } from "@/data/mockIssues";
+import { MapIssue } from "@/lib/map-issues";
 
 interface IssueHeaderProps {
-    issue: Issue;
+    issue: MapIssue;
 }
 
 export const IssueHeader = ({ issue }: IssueHeaderProps) => {
@@ -27,7 +27,7 @@ export const IssueHeader = ({ issue }: IssueHeaderProps) => {
             <p className="text-sm text-muted-foreground mb-3">{issue.description}</p>
             <div className="flex items-center text-xs text-muted-foreground gap-1 bg-muted/50 p-2 rounded-lg">
                 <HugeiconsIcon icon={Location01Icon} className="w-3.5 h-3.5" />
-                <span>{issue.location_name} • {issue.latitude.toFixed(4)}, {issue.longitude.toFixed(4)}</span>
+                <span>{issue.locationName} • {issue.latitude.toFixed(4)}, {issue.longitude.toFixed(4)}</span>
             </div>
         </div>
     );

@@ -1,7 +1,7 @@
-import { Issue } from "@/data/mockIssues";
+import { MapIssue } from "@/lib/map-issues";
 
 interface IssueTimelineProps {
-    issue: Issue;
+    issue: MapIssue;
 }
 
 export const IssueTimeline = ({ issue }: IssueTimelineProps) => {

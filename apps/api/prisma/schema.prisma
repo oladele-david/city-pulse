@@ -1,0 +1,252 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  citizen
+  admin
+}
+
+enum Rank {
+  NEW
+  RELIABLE
+  TRUSTED
+  COMMUNITY_SENTINEL
+}
+
+enum Severity {
+  low
+  medium
+  high
+}
+
+enum IssueStatus {
+  open
+  in_progress
+  resolved
+}
+
+enum ConfidenceBand {
+  low
+  medium
+  high
+}
+
+enum ReactionType {
+  confirm
+  disagree
+  fixed_signal
+  none
+}
+
+enum PaymentType {
+  sanitation_levy
+  environmental_fee
+  community_due
+}
+
+enum PaymentStatus {
+  pending
+  initialized
+  succeeded
+  failed
+}
+
+enum LedgerReason {
+  report_submitted
+  report_validated
+  report_kept_valid
+  confirm_issue
+  valid_confirmation
+  correct_disagreement
+  fixed_signal_match
+  false_report
+  invalid_reaction
+  fraud_abuse
+}
+
+model State {
+  id          String      @id
+  name        String
+  createdAt   DateTime    @default(now()) @map("created_at")
+  updatedAt   DateTime    @updatedAt @map("updated_at")
+  lgas        Lga[]
+
+  @@map("states")
+}
+
+model Lga {
+  id          String      @id
+  stateId     String      @map("state_id")
+  name        String
+  latitude    Decimal     @db.Decimal(9, 6)
+  longitude   Decimal     @db.Decimal(9, 6)
+  createdAt   DateTime    @default(now()) @map("created_at")
+  updatedAt   DateTime    @updatedAt @map("updated_at")
+  state       State       @relation(fields: [stateId], references: [id])
+  communities Community[]
+  users       User[]
+  issues      Issue[]
+
+  @@index([stateId])
+  @@map("lgas")
+}
+
+model Community {
+  id            String      @id
+  lgaId         String      @map("lga_id")
+  name          String
+  latitude      Decimal     @db.Decimal(9, 6)
+  longitude     Decimal     @db.Decimal(9, 6)
+  createdAt     DateTime    @default(now()) @map("created_at")
+  updatedAt     DateTime    @updatedAt @map("updated_at")
+  lga           Lga         @relation(fields: [lgaId], references: [id])
+  users         User[]
+  issues        Issue[]
+  leaderboard   LeaderboardSnapshot[]
+
+  @@index([lgaId])
+  @@map("communities")
+}
+
+model User {
+  id             String       @id @default(cuid())
+  fullName       String       @map("full_name")
+  email          String       @unique
+  passwordHash   String       @map("password_hash")
+  role           Role
+  lgaId          String       @map("lga_id")
+  communityId    String       @map("community_id")
+  streetOrArea   String       @map("street_or_area")
+  points         Int          @default(0)
+  rank           Rank         @default(NEW)
+  trustWeight    Decimal      @default(1.0) @map("trust_weight") @db.Decimal(4, 2)
+  createdAt      DateTime     @default(now()) @map("created_at")
+  updatedAt      DateTime     @updatedAt @map("updated_at")
+  lga            Lga          @relation(fields: [lgaId], references: [id])
+  community      Community    @relation(fields: [communityId], references: [id])
+  reportedIssues Issue[]      @relation("reported_issues")
+  reactions      IssueReaction[]
+  ledgerEntries  PointsLedger[]
+  payments       Payment[]
+
+  @@index([role])
+  @@index([lgaId])
+  @@index([communityId])
+  @@map("users")
+}
+
+model Issue {
+  id                    String            @id @default(cuid())
+  type                  String
+  title                 String
+  description           String
+  severity              Severity
+  status                IssueStatus       @default(open)
+  confidenceScore       Int               @map("confidence_score")
+  confidenceBand        ConfidenceBand    @map("confidence_band")
+  reportedByUserId      String            @map("reported_by_user_id")
+  reporterTrustWeight   Decimal           @map("reporter_trust_weight") @db.Decimal(4, 2)
+  lgaId                 String            @map("lga_id")
+  communityId           String            @map("community_id")
+  streetOrLandmark      String            @map("street_or_landmark")
+  latitude              Decimal           @db.Decimal(9, 6)
+  longitude             Decimal           @db.Decimal(9, 6)
+  photoUrls             Json              @default("[]") @map("photo_urls")
+  videoUrl              String?           @map("video_url")
+  confirmationsCount    Int               @default(0) @map("confirmations_count")
+  disagreementsCount    Int               @default(0) @map("disagreements_count")
+  fixedSignalsCount     Int               @default(0) @map("fixed_signals_count")
+  needsResolutionReview Boolean           @default(false) @map("needs_resolution_review")
+  createdAt             DateTime          @default(now()) @map("created_at")
+  updatedAt             DateTime          @updatedAt @map("updated_at")
+  reporter              User              @relation("reported_issues", fields: [reportedByUserId], references: [id])
+  lga                   Lga               @relation(fields: [lgaId], references: [id])
+  community             Community         @relation(fields: [communityId], references: [id])
+  reactions             IssueReaction[]
+
+  @@index([status, createdAt(sort: Desc)])
+  @@index([lgaId, communityId, createdAt(sort: Desc)])
+  @@index([type, latitude, longitude])
+  @@map("issues")
+}
+
+model IssueReaction {
+  id          String        @id @default(cuid())
+  issueId     String        @map("issue_id")
+  userId      String        @map("user_id")
+  reaction    ReactionType
+  createdAt   DateTime      @default(now()) @map("created_at")
+  updatedAt   DateTime      @updatedAt @map("updated_at")
+  issue       Issue         @relation(fields: [issueId], references: [id])
+  user        User          @relation(fields: [userId], references: [id])
+
+  @@unique([issueId, userId])
+  @@index([userId, reaction])
+  @@map("issue_reactions")
+}
+
+model PointsLedger {
+  id          String       @id @default(cuid())
+  userId      String       @map("user_id")
+  reason      LedgerReason
+  pointsDelta Int          @map("points_delta")
+  metadata    Json?
+  createdAt   DateTime     @default(now()) @map("created_at")
+  user        User         @relation(fields: [userId], references: [id])
+
+  @@index([userId, createdAt(sort: Desc)])
+  @@map("points_ledger")
+}
+
+model Payment {
+  id                String        @id @default(cuid())
+  userId            String        @map("user_id")
+  reference         String        @unique
+  paymentType       PaymentType   @map("payment_type")
+  amount            Decimal       @db.Decimal(10, 2)
+  status            PaymentStatus @default(pending)
+  checkoutUrl       String?       @map("checkout_url")
+  providerReference String?       @map("provider_reference")
+  metadata          Json?
+  createdAt         DateTime      @default(now()) @map("created_at")
+  updatedAt         DateTime      @updatedAt @map("updated_at")
+  user              User          @relation(fields: [userId], references: [id])
+  webhooks          PaymentWebhook[]
+
+  @@index([userId, createdAt(sort: Desc)])
+  @@index([status, createdAt(sort: Desc)])
+  @@map("payments")
+}
+
+model PaymentWebhook {
+  id         String   @id @default(cuid())
+  paymentId  String   @map("payment_id")
+  eventId    String   @unique @map("event_id")
+  payload    Json
+  createdAt  DateTime @default(now()) @map("created_at")
+  payment    Payment  @relation(fields: [paymentId], references: [id])
+
+  @@index([paymentId])
+  @@map("payment_webhooks")
+}
+
+model LeaderboardSnapshot {
+  id                String   @id @default(cuid())
+  communityId       String   @map("community_id")
+  streetOrArea      String?  @map("street_or_area")
+  score             Int
+  resolvedCount     Int      @default(0) @map("resolved_count")
+  unresolvedCount   Int      @default(0) @map("unresolved_count")
+  freshnessBonus    Int      @default(0) @map("freshness_bonus")
+  computedAt        DateTime @default(now()) @map("computed_at")
+  community         Community @relation(fields: [communityId], references: [id])
+
+  @@index([communityId, computedAt(sort: Desc)])
+  @@map("leaderboard_snapshots")
+}
