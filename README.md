@@ -1,246 +1,153 @@
-# CityPulse GovOps
+# CityPulse
 
-**Enterprise Civic Infrastructure Intelligence Platform**
+CityPulse is a Lagos-focused civic reporting platform with two connected experiences:
 
-CityPulse is a real-time civic infrastructure monitoring and management platform designed for government agencies to detect, prioritize, and resolve urban issues using trusted community signals and AI-powered analytics.
+- a citizen mobile flow for reporting, tracking, and validating issues in the community
+- an admin operations console for reviewing signals, mapping incidents, and managing response activity
 
----
+The current build combines a React frontend with a NestJS API foundation for auth, issues, analytics, locations, leaderboard, and payments.
 
-## 🏛️ Overview
+## What The Product Does
 
-CityPulse GovOps provides municipal authorities with comprehensive tools to monitor and manage civic infrastructure health across their jurisdiction. The platform aggregates community reports, applies AI-driven confidence scoring, and presents actionable intelligence through an intuitive dashboard interface.
+CityPulse helps residents raise civic complaints with location context and helps operators turn those complaints into visible action.
 
-### Key Capabilities
+Core workflows in this repo:
 
-- **Real-Time Issue Monitoring** - Live map visualization of civic infrastructure issues across the city
-- **AI-Powered Confidence Scoring** - Machine learning algorithms validate and prioritize community reports
-- **Advanced Analytics** - Comprehensive insights into issue trends, resolution times, and heat zones
-- **Multi-Channel Reporting** - Aggregate issues from social media, mobile apps, and direct submissions
-- **Role-Based Access Control** - Secure, permission-based access for different agency roles
-- **Desktop-Optimized Experience** - Professional interface designed for government workstations
+- citizen reporting flow for complaints and public-interest incidents
+- citizen sign up and login
+- live issue map with Lagos context
+- issue reactions and credibility signals
+- admin login and protected console routes
+- analytics, issue management, and status updates
+- location resolution for Lagos LGAs and communities
+- payment initialization and webhook handling in the API MVP
 
----
+## Experience Map
 
-## 🚀 Technology Stack
+### Citizen app
 
-### Frontend Framework
-- **React 18.3** - Modern component-based UI library
-- **TypeScript 5.8** - Type-safe development
-- **Vite 5.4** - Lightning-fast build tooling
-- **React Router 6.30** - Client-side routing
+- Landing page at `/`
+- Mobile app at `/mobile`
+- Citizen auth at `/mobile/auth`
+- Citizens can register, sign in, report issues, view nearby issues, react to reports, and track community activity
 
-### UI & Visualization
-- **Tailwind CSS 3.4** - Utility-first styling framework
-- **Shadcn/UI** - Accessible component library
-- **Radix UI** - Unstyled, accessible primitives
-- **Recharts 2.15** - Data visualization and charting
-- **Mapbox GL** - Interactive mapping
+### Admin console
 
-### State & Data Management
-- **TanStack Query 5.83** - Server state synchronization
-- **React Hook Form 7.61** - Performant form handling
-- **Zod 3.25** - Schema validation
+- Admin login at `/console/login`
+- Console routes under `/console`
+- Admins can review live issues, inspect map activity, monitor analytics, and update issue status
 
-### Icons & Assets
-- **Hugeicons** - Comprehensive icon library
-- **Lucide React** - Additional icon set
+## Tech Stack
 
----
+### Frontend
 
-## 📋 Features
+- React 18
+- TypeScript
+- Vite
+- React Router
+- Tailwind CSS
+- shadcn/ui
+- TanStack Query
+- React Hook Form
+- Zod
+- Mapbox GL / `react-map-gl`
 
-### Dashboard Overview
-- Active issues summary with severity breakdown
-- Real-time metrics and trend indicators
-- Issue density heatmap visualization
-- Recent activity feed
+### Backend
 
-### Live Map
-- Interactive city-wide issue mapping
-- Severity-based marker clustering
-- Real-time filtering by status and severity
-- Issue detail drawer with AI analysis
-- Light/Dark map theme toggle
+- NestJS
+- Prisma
+- PostgreSQL
+- JWT auth
+- Jest
 
-### Issues Management
-- Comprehensive issue table with pagination
-- Advanced search and filtering
-- Bulk status updates
-- Inline status editing
-- CSV/PDF export capabilities
-- Confidence score visualization
+## Local Setup
 
-### Analytics
-- Issues distribution by type and area (pie charts)
-- Heat zone analysis with trend indicators
-- Resolution time trends across severity levels
-- Scrollable data tables
-
-### Settings
-- Profile management
-- Notification preferences
-- Role and permission configuration
-
----
-
-## 🛠️ Installation & Setup
-
-### Prerequisites
-- **Node.js** 18.x or higher
-- **npm** 9.x or higher
-- **Mapbox Access Token** (for map functionality)
-
-### Environment Configuration
-
-1. **Clone the repository**
-   ```bash
-   git clone https://github.com/Psybah/citypulse-govops.git
-   cd citypulse-govops
-   ```
-
-2. **Install dependencies**
-   ```bash
-   npm install
-   ```
-
-3. **Configure environment variables**
-   
-   Create a `.env` file in the root directory:
-   ```env
-   VITE_MAPBOX_TOKEN=your_mapbox_token_here
-   VITE_API_BASE_URL=http://localhost:3001/api/v1
-   VITE_DEMO_CITIZEN_EMAIL=citizen@citypulse.ng
-   VITE_DEMO_CITIZEN_PASSWORD=CitizenPass123!
-   ```
-
-4. **Start development server**
-   ```bash
-   npm run dev
-   ```
-
-   The application will be available at `http://localhost:8080`
-
-### Production Build
+### Frontend
 
 ```bash
-npm run build
-npm run preview
+npm install
+npm run dev
 ```
 
-### Backend MVP Foundation
+The frontend runs at `http://localhost:8080`.
 
-The Lagos MVP backend now lives in `apps/api` and is designed around NestJS + Prisma + PostgreSQL contracts.
+Create a root `.env` file if you want the full mapped experience:
+
+```env
+VITE_MAPBOX_TOKEN=your_mapbox_token_here
+VITE_API_BASE_URL=http://localhost:3001/api/v1
+VITE_DEMO_CITIZEN_EMAIL=citizen@citypulse.ng
+VITE_DEMO_CITIZEN_PASSWORD=CitizenPass123!
+```
+
+### API
 
 ```bash
 npm run api:dev
-npm run api:test
 ```
 
-Create `apps/api/.env` from [apps/api/.env.example](/home/dot/hackathons/citypulse-govops/apps/api/.env.example) before running the API.
+Create `apps/api/.env` from [apps/api/.env.example](/home/dot/hackathons/city-pulse/apps/api/.env.example).
 
-Demo credentials:
-- Citizen: `citizen@citypulse.ng` / `CitizenPass123!`
+Important API env values:
+
+```env
+DATABASE_URL=postgresql://postgres:postgres@localhost:5432/citypulse
+JWT_SECRET=replace-me
+PERSISTENCE_DRIVER=database
+```
+
+The API serves under `/api/v1`, and Swagger is available at `/api/docs` when the Nest app is running.
+
+## Demo Login Details
+
+These credentials are hard-coded in the seeded/in-memory demo setup and exposed in the frontend auth flows:
+
 - Admin: `admin@citypulse.ng` / `AdminPass123!`
+- Citizen: `citizen@citypulse.ng` / `CitizenPass123!`
 
-Notes:
-- The API serves under `/api/v1`.
-- Swagger UI is available at `/api/docs` once the Nest app is running.
-- Prisma schema and Lagos seed data live in [schema.prisma](/home/dot/hackathons/citypulse-govops/apps/api/prisma/schema.prisma) and [lagos-locations.json](/home/dot/hackathons/citypulse-govops/apps/api/prisma/seeds/lagos-locations.json).
-- The service currently uses in-memory repositories for local/demo execution while keeping the Prisma schema and seed flow ready for the Postgres rollout.
+Where they appear in the codebase:
 
----
+- [src/components/auth/LoginForm.tsx](/home/dot/hackathons/city-pulse/src/components/auth/LoginForm.tsx)
+- [apps/api/src/infrastructure/in-memory/in-memory-database.service.ts](/home/dot/hackathons/city-pulse/apps/api/src/infrastructure/in-memory/in-memory-database.service.ts)
+- [apps/api/prisma/seed.ts](/home/dot/hackathons/city-pulse/apps/api/prisma/seed.ts)
 
-## 📁 Project Structure
+## Project Structure
 
-```
-citypulse-govops/
-├── src/
-│   ├── components/
-│   │   ├── dashboard/
-│   │   │   ├── analytics/          # Analytics chart components
-│   │   │   ├── cards/              # Dashboard card components
-│   │   │   ├── map/                # Map-related components
-│   │   │   ├── DashboardLayout.tsx # Main layout wrapper
-│   │   │   └── Sidebar.tsx         # Navigation sidebar
-│   │   ├── ui/                     # Shadcn/UI components
-│   │   └── MobileBlocker.tsx       # Mobile device blocker
-│   ├── data/                       # Mock data and types
-│   ├── lib/                        # Utility functions
-│   ├── pages/
-│   │   ├── auth/                   # Authentication pages
-│   │   └── dashboard/              # Dashboard pages
-│   ├── App.tsx                     # Root component
-│   └── main.tsx                    # Application entry point
-├── public/                         # Static assets
-└── prd.md                          # Product requirements document
+```text
+city-pulse/
+├── src/                  # React frontend
+├── apps/api/             # NestJS API
+├── public/               # Static assets
+├── prd.md                # Product context
+├── mobile-prd.md         # Mobile experience notes
+└── CityPulse_Pitch_Deck_Script.md
 ```
 
----
+## Team Contributions
 
-## 🎨 Design System
+CityPulse was built as a collaborative hackathon project spanning product thinking, interface design, frontend delivery, backend systems, and supporting documentation. The contribution breakdown below shows how each team member contributed to the submission.
 
-### Color Palette
-- **Primary** - `#1e40af` (Blue) - Main brand color
-- **Accent** - `#f59e0b` (Amber) - Highlights and CTAs
-- **Destructive** - `#ef4444` (Red) - Errors and high severity
-- **Muted** - Neutral grays for secondary content
+### Psybah
 
-### Typography
-- **Font Family** - System font stack for optimal performance
-- **Headings** - Bold, tracking-tight
-- **Body** - Regular weight, comfortable line height
+- Frontend implementation across the main React app and mobile-first citizen experience
+- Admin console UI and dashboard presentation
+- Citizen-facing flows, landing page, and interaction design implementation
+- README and product-facing documentation contributions
 
-### Components
-All components follow accessibility best practices (WCAG 2.1 AA) and support keyboard navigation.
+Evidence in repo history:
 
----
+- dominant history across `src/`
+- commits touching [README.md](/home/dot/hackathons/city-pulse/README.md), [prd.md](/home/dot/hackathons/city-pulse/prd.md), and [CityPulse_Pitch_Deck_Script.md](/home/dot/hackathons/city-pulse/CityPulse_Pitch_Deck_Script.md)
 
-## 📊 Data Flow
+### oladele-david
 
-1. **Issue Ingestion** - Community reports aggregated from multiple channels
-2. **AI Processing** - Confidence scoring and validation
-3. **Dashboard Display** - Real-time visualization and analytics
-4. **Agency Action** - Status updates and resolution tracking
-5. **Analytics** - Historical trend analysis and insights
+- Backend engineering for the NestJS API in `apps/api`
+- Auth, issues, analytics, locations, leaderboard, and payments API foundations
+- Prisma schema, migrations, seed data, and backend test coverage
+- Documentation contributions across product and setup materials
 
----
+Evidence in repo history:
 
-## 🧪 Development Guidelines
+- primary history across `apps/api/`
+- commits touching backend tests and supporting documentation
 
-### Code Standards
-- TypeScript strict mode enabled
-- ESLint configuration enforced
-- Component-driven architecture
-- Functional components with hooks
-
-### Naming Conventions
-- **Components** - PascalCase (e.g., `DashboardLayout`)
-- **Files** - PascalCase for components, camelCase for utilities
-- **CSS Classes** - Tailwind utilities, no custom CSS unless necessary
-
-### State Management
-- Server state via TanStack Query
-- Form state via React Hook Form
-- Local state via React hooks
-- No global state management library (intentional simplicity)
-
----
-
-## 📈 Performance Optimization
-
-- Code splitting via React Router
-- Lazy loading for heavy components
-- Optimized bundle size with Vite
-- Efficient re-rendering with React.memo where appropriate
-- Virtualized lists for large datasets (planned)
-
----
-
-## 🤝 Contributors
-
-- oladele-david => Backend Engr
-- Pysbah => Frontend Engr
-
-## 🙏 Acknowledgments
-
-**Version** - 1.0.0
