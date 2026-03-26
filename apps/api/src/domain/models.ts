@@ -9,6 +9,8 @@ export type PaymentType =
   | 'environmental_fee'
   | 'community_due';
 export type PaymentStatus = 'pending' | 'initialized' | 'succeeded' | 'failed';
+export type LevyTargetType = 'community' | 'lga';
+export type LevyStatus = 'draft' | 'published' | 'closed';
 
 export type LedgerReason =
   | 'report_submitted'
@@ -106,12 +108,23 @@ export interface PointsLedgerRecord {
 export interface PaymentRecord {
   id: string;
   userId: string;
+  levyId?: string | null;
   reference: string;
   paymentType: PaymentType;
   amount: number;
   status: PaymentStatus;
   checkoutUrl?: string;
   providerReference?: string;
+  gatewayProvider: string;
+  gatewayStatus?: string;
+  gatewayResponseCode?: string;
+  gatewayResponseDescription?: string;
+  providerPaymentReference?: string;
+  providerRetrievalReferenceNumber?: string;
+  providerTransactionDate?: string | null;
+  lastWebhookEventId?: string;
+  confirmedAt?: string | null;
+  failedAt?: string | null;
   metadata?: Record<string, unknown>;
   createdAt: string;
   updatedAt: string;
@@ -121,8 +134,37 @@ export interface PaymentWebhookRecord {
   id: string;
   paymentId: string;
   eventId: string;
+  eventName?: string;
+  signature?: string;
+  isSignatureValid?: boolean | null;
+  processedAt?: string | null;
   payload: Record<string, unknown>;
   createdAt: string;
+}
+
+export interface PaymentEventRecord {
+  id: string;
+  paymentId: string;
+  eventType: string;
+  status?: PaymentStatus;
+  payload?: Record<string, unknown>;
+  createdAt: string;
+}
+
+export interface LevyRecord {
+  id: string;
+  title: string;
+  description: string;
+  levyType: PaymentType;
+  amount: number;
+  dueDate: string;
+  targetType: LevyTargetType;
+  targetCommunityId?: string | null;
+  targetLgaId?: string | null;
+  status: LevyStatus;
+  createdByAdminId: string;
+  createdAt: string;
+  updatedAt: string;
 }
 
 export interface AuthUser {

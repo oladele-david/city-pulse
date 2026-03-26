@@ -1,4 +1,13 @@
-import { IssueStatus, LedgerReason, PrismaClient, Rank, Role, Severity } from '@prisma/client';
+import {
+  IssueStatus,
+  LedgerReason,
+  LevyStatus,
+  PaymentType,
+  PrismaClient,
+  Rank,
+  Role,
+  Severity,
+} from '@prisma/client';
 import * as bcrypt from 'bcrypt';
 import { calculateConfidenceScore } from '../src/domain/rules/confidence.rules';
 import { deriveRank, getTrustWeight, POINTS_BY_REASON } from '../src/domain/rules/points.rules';
@@ -39,6 +48,35 @@ const DEMO_ISSUE_LEDGER_REASONS: LedgerReason[] = [
   'report_submitted',
   'report_validated',
   'report_kept_valid',
+];
+
+const demoLevySeeds = [
+  {
+    id: 'seed-levy-community-sanitation',
+    title: 'Adeniran Ogunsanya sanitation levy',
+    description:
+      'Quarterly contribution for community sanitation materials and waste evacuation support.',
+    levyType: PaymentType.sanitation_levy,
+    amount: 15000,
+    dueDate: '2026-04-30T00:00:00.000Z',
+    targetType: 'community' as const,
+    targetCommunityId: 'adeniran-ogunsanya',
+    targetLgaId: null,
+    status: LevyStatus.published,
+  },
+  {
+    id: 'seed-levy-surulere-environmental',
+    title: 'Surulere environmental response levy',
+    description:
+      'LGA-wide levy supporting drainage clearance and emergency environmental response.',
+    levyType: PaymentType.environmental_fee,
+    amount: 22000,
+    dueDate: '2026-05-15T00:00:00.000Z',
+    targetType: 'lga' as const,
+    targetCommunityId: null,
+    targetLgaId: 'surulere',
+    status: LevyStatus.published,
+  },
 ];
 
 const demoIssueSeeds: SeedIssue[] = [
@@ -217,7 +255,7 @@ async function main() {
   const adminPasswordHash = await bcrypt.hash('AdminPass123!', 10);
   const citizenPasswordHash = await bcrypt.hash('CitizenPass123!', 10);
 
-  await prisma.user.upsert({
+  const demoAdmin = await prisma.user.upsert({
     where: { email: DEMO_ADMIN_EMAIL },
     update: {
       fullName: 'CityPulse Admin',
@@ -376,6 +414,37 @@ async function main() {
       trustWeight: getTrustWeight(demoCitizenRank),
     },
   });
+
+  for (const levy of demoLevySeeds) {
+    await prisma.levy.upsert({
+      where: { id: levy.id },
+      update: {
+        title: levy.title,
+        description: levy.description,
+        levyType: levy.levyType,
+        amount: levy.amount,
+        dueDate: new Date(levy.dueDate),
+        targetType: levy.targetType,
+        targetCommunityId: levy.targetCommunityId,
+        targetLgaId: levy.targetLgaId,
+        status: levy.status,
+        createdByAdminId: demoAdmin.id,
+      },
+      create: {
+        id: levy.id,
+        title: levy.title,
+        description: levy.description,
+        levyType: levy.levyType,
+        amount: levy.amount,
+        dueDate: new Date(levy.dueDate),
+        targetType: levy.targetType,
+        targetCommunityId: levy.targetCommunityId,
+        targetLgaId: levy.targetLgaId,
+        status: levy.status,
+        createdByAdminId: demoAdmin.id,
+      },
+    });
+  }
 }
 
 main()

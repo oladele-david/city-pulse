@@ -3,11 +3,16 @@ import {
   ConfidenceBand as PrismaConfidenceBand,
   Issue,
   IssueReaction,
+  Levy,
+  LevyStatus as PrismaLevyStatus,
+  LevyTargetType as PrismaLevyTargetType,
   Lga,
   LedgerReason as PrismaLedgerReason,
   Payment,
+  PaymentEvent,
   PaymentStatus as PrismaPaymentStatus,
   PaymentType as PrismaPaymentType,
+  PaymentWebhook,
   PointsLedger,
   Rank as PrismaRank,
   ReactionType as PrismaReactionType,
@@ -20,11 +25,16 @@ import {
   ConfidenceBand,
   IssueReactionRecord,
   IssueRecord,
+  LevyRecord,
+  LevyStatus,
+  LevyTargetType,
   LgaRecord,
   LedgerReason,
+  PaymentEventRecord,
   PaymentRecord,
   PaymentStatus,
   PaymentType,
+  PaymentWebhookRecord,
   PointsLedgerRecord,
   Rank,
   ReactionType,
@@ -128,6 +138,22 @@ export function toDomainPaymentStatus(
   paymentStatus: PrismaPaymentStatus,
 ): PaymentStatus {
   return paymentStatus;
+}
+
+export function toPrismaLevyTargetType(targetType: LevyTargetType): PrismaLevyTargetType {
+  return targetType;
+}
+
+export function toDomainLevyTargetType(targetType: PrismaLevyTargetType): LevyTargetType {
+  return targetType;
+}
+
+export function toPrismaLevyStatus(status: LevyStatus): PrismaLevyStatus {
+  return status;
+}
+
+export function toDomainLevyStatus(status: PrismaLevyStatus): LevyStatus {
+  return status;
 }
 
 export function toPrismaLedgerReason(reason: LedgerReason): PrismaLedgerReason {
@@ -252,17 +278,80 @@ export function paymentRecordFromPrisma(payment: Payment): PaymentRecord {
   return {
     id: payment.id,
     userId: payment.userId,
+    levyId: payment.levyId,
     reference: payment.reference,
     paymentType: toDomainPaymentType(payment.paymentType),
     amount: toNumber(payment.amount),
     status: toDomainPaymentStatus(payment.status),
     checkoutUrl: payment.checkoutUrl ?? undefined,
     providerReference: payment.providerReference ?? undefined,
+    gatewayProvider: payment.gatewayProvider,
+    gatewayStatus: payment.gatewayStatus ?? undefined,
+    gatewayResponseCode: payment.gatewayResponseCode ?? undefined,
+    gatewayResponseDescription: payment.gatewayResponseDescription ?? undefined,
+    providerPaymentReference: payment.providerPaymentReference ?? undefined,
+    providerRetrievalReferenceNumber:
+      payment.providerRetrievalReferenceNumber ?? undefined,
+    providerTransactionDate: payment.providerTransactionDate?.toISOString() ?? null,
+    lastWebhookEventId: payment.lastWebhookEventId ?? undefined,
+    confirmedAt: payment.confirmedAt?.toISOString() ?? null,
+    failedAt: payment.failedAt?.toISOString() ?? null,
     metadata:
       payment.metadata && typeof payment.metadata === 'object' && !Array.isArray(payment.metadata)
         ? (payment.metadata as Record<string, unknown>)
         : undefined,
     createdAt: payment.createdAt.toISOString(),
     updatedAt: payment.updatedAt.toISOString(),
+  };
+}
+
+export function paymentWebhookRecordFromPrisma(
+  webhook: PaymentWebhook,
+): PaymentWebhookRecord {
+  return {
+    id: webhook.id,
+    paymentId: webhook.paymentId,
+    eventId: webhook.eventId,
+    eventName: webhook.eventName ?? undefined,
+    signature: webhook.signature ?? undefined,
+    isSignatureValid: webhook.isSignatureValid ?? null,
+    processedAt: webhook.processedAt?.toISOString() ?? null,
+    payload:
+      webhook.payload && typeof webhook.payload === 'object' && !Array.isArray(webhook.payload)
+        ? (webhook.payload as Record<string, unknown>)
+        : {},
+    createdAt: webhook.createdAt.toISOString(),
+  };
+}
+
+export function paymentEventRecordFromPrisma(event: PaymentEvent): PaymentEventRecord {
+  return {
+    id: event.id,
+    paymentId: event.paymentId,
+    eventType: event.eventType,
+    status: event.status ? toDomainPaymentStatus(event.status) : undefined,
+    payload:
+      event.payload && typeof event.payload === 'object' && !Array.isArray(event.payload)
+        ? (event.payload as Record<string, unknown>)
+        : undefined,
+    createdAt: event.createdAt.toISOString(),
+  };
+}
+
+export function levyRecordFromPrisma(levy: Levy): LevyRecord {
+  return {
+    id: levy.id,
+    title: levy.title,
+    description: levy.description,
+    levyType: toDomainPaymentType(levy.levyType),
+    amount: toNumber(levy.amount),
+    dueDate: levy.dueDate.toISOString(),
+    targetType: toDomainLevyTargetType(levy.targetType),
+    targetCommunityId: levy.targetCommunityId,
+    targetLgaId: levy.targetLgaId,
+    status: toDomainLevyStatus(levy.status),
+    createdByAdminId: levy.createdByAdminId,
+    createdAt: levy.createdAt.toISOString(),
+    updatedAt: levy.updatedAt.toISOString(),
   };
 }

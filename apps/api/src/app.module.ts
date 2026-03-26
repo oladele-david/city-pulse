@@ -9,6 +9,7 @@ import { RolesGuard } from './common/guards/roles.guard';
 import { IssuesModule } from './issues/issues.module';
 import { InfrastructureModule } from './infrastructure/infrastructure.module';
 import { LeaderboardModule } from './leaderboard/leaderboard.module';
+import { LeviesModule } from './levies/levies.module';
 import { LocationsModule } from './locations/locations.module';
 import { PaymentsModule } from './payments/payments.module';
 import { UsersModule } from './users/users.module';
@@ -23,6 +24,7 @@ import { UsersModule } from './users/users.module';
     AuthModule,
     UsersModule,
     LocationsModule,
+    LeviesModule,
     IssuesModule,
     ActivityModule,
     LeaderboardModule,
