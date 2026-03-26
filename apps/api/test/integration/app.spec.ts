@@ -251,6 +251,50 @@ describe('CityPulse API integration', () => {
     ).toBe(true);
   });
 
+  it('refreshes a cached issue list after a new issue is created', async () => {
+    const firstListResponse = await request(app.getHttpServer())
+      .get('/api/v1/issues?status=open')
+      .expect(200);
+
+    const secondListResponse = await request(app.getHttpServer())
+      .get('/api/v1/issues?status=open')
+      .expect(200);
+
+    expect(secondListResponse.body.data).toHaveLength(firstListResponse.body.data.length);
+
+    const loginResponse = await request(app.getHttpServer())
+      .post('/api/v1/auth/citizen/login')
+      .send({
+        email: 'citizen@citypulse.ng',
+        password: 'CitizenPass123!',
+      })
+      .expect(200);
+
+    const createResponse = await request(app.getHttpServer())
+      .post('/api/v1/issues')
+      .set('Authorization', `Bearer ${loginResponse.body.data.accessToken}`)
+      .send({
+        type: 'roads',
+        title: 'Collapsed roadside drain beside bus stop',
+        description: 'The drain edge has collapsed and is blocking pedestrians.',
+        severity: 'medium',
+        lgaId: 'surulere',
+        communityId: 'adeniran-ogunsanya',
+        streetOrLandmark: 'Bode Thomas Bus Stop',
+        latitude: 6.5052,
+        longitude: 3.3484,
+        photoUrls: ['https://example.com/drain-collapse.jpg'],
+      })
+      .expect(201);
+
+    const refreshedListResponse = await request(app.getHttpServer())
+      .get('/api/v1/issues?status=open')
+      .expect(200);
+
+    expect(refreshedListResponse.body.data).toHaveLength(firstListResponse.body.data.length + 1);
+    expect(refreshedListResponse.body.data[0].id).toBe(createResponse.body.data.id);
+  });
+
   it('initializes payments, exposes status, and handles webhook idempotently', async () => {
     const citizenLogin = await request(app.getHttpServer())
       .post('/api/v1/auth/citizen/login')

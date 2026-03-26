@@ -13,6 +13,7 @@ import { CreateIssueDto } from './dto/create-issue.dto';
 import { UpdateIssueStatusDto } from './dto/update-issue-status.dto';
 import { UpdateReactionDto } from './dto/update-reaction.dto';
 import { CloudinaryMediaService } from './cloudinary-media.service';
+import { IssuesListCacheService } from './issues-list-cache.service';
 import { IssuesRepository } from './issues.repository';
 
 interface IssueMediaFile {
@@ -35,6 +36,7 @@ export class IssuesService {
     private readonly locationsRepository: LocationsRepository,
     private readonly prisma: PrismaService,
     private readonly cloudinaryMediaService: CloudinaryMediaService,
+    private readonly issuesListCacheService: IssuesListCacheService,
   ) {}
 
   async list(filters: {
@@ -43,7 +45,13 @@ export class IssuesService {
     status?: string;
     severity?: string;
   }) {
-    return this.issuesRepository.list(filters);
+    const cachedIssues = this.issuesListCacheService.get(filters);
+    if (cachedIssues) {
+      return cachedIssues;
+    }
+
+    const issues = await this.issuesRepository.list(filters);
+    return this.issuesListCacheService.set(filters, issues);
   }
 
   async getByIdOrThrow(id: string): Promise<IssueRecord> {
@@ -130,13 +138,14 @@ export class IssuesService {
       fixedSignalsCount: 0,
       needsResolutionReview: false,
     });
+    this.issuesListCacheService.invalidateAll();
 
     await this.prisma.pointsLedger.create({
       data: {
-      userId: reporter.id,
-      reason: toPrismaLedgerReason('report_submitted'),
-      pointsDelta: POINTS_BY_REASON.report_submitted,
-      metadata: { issueId: issue.id },
+        userId: reporter.id,
+        reason: toPrismaLedgerReason('report_submitted'),
+        pointsDelta: POINTS_BY_REASON.report_submitted,
+        metadata: { issueId: issue.id },
       },
     });
     await this.usersRepository.recalculateStanding(reporter.id);
