@@ -191,6 +191,33 @@ const MobileHome = () => {
               </p>
             </div>
           </div>
+
+          {isAuthenticated ? (
+            <div className="mt-4 grid grid-cols-2 gap-3">
+              <button
+                onClick={() => navigate("/mobile/levies")}
+                className="rounded-[1.25rem] border border-border/60 bg-background px-4 py-3 text-left shadow-sm"
+              >
+                <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-muted-foreground">
+                  Levies
+                </p>
+                <p className="mt-2 text-sm font-semibold text-foreground">
+                  Pay local civic dues
+                </p>
+              </button>
+              <button
+                onClick={() => navigate("/mobile/payments")}
+                className="rounded-[1.25rem] border border-border/60 bg-background px-4 py-3 text-left shadow-sm"
+              >
+                <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-muted-foreground">
+                  Payments
+                </p>
+                <p className="mt-2 text-sm font-semibold text-foreground">
+                  See receipts and status
+                </p>
+              </button>
+            </div>
+          ) : null}
         </div>
       </div>
 

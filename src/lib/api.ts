@@ -1,15 +1,20 @@
 import {
   ActivityEntry,
+  AdminLevyDashboard,
   AuthResponse,
+  CreateLevyPayload,
   IssueRecord,
   IssueReactionRecord,
   IssueReactionUpdate,
   IssueSeverity,
   IssueStatus,
   LeaderboardEntry,
+  LevyPaymentInitialization,
+  LevyRecord,
   LoginPayload,
   Lga,
   Community,
+  PaymentRecord,
   ReactionType,
   RegisterCitizenPayload,
   ResolvedLocation,
@@ -232,6 +237,120 @@ export const api = {
       method: "PUT",
       token,
       body: JSON.stringify({ reaction }),
+    });
+  },
+
+  listAdminLevies(token: string, status?: LevyRecord["status"]) {
+    const searchParams = new URLSearchParams();
+    if (status) {
+      searchParams.set("status", status);
+    }
+
+    const queryString = searchParams.toString();
+    return request<LevyRecord[]>(`/admin/levies${queryString ? `?${queryString}` : ""}`, {
+      token,
+    });
+  },
+
+  createLevy(payload: CreateLevyPayload, token: string) {
+    return request<LevyRecord>("/admin/levies", {
+      method: "POST",
+      token,
+      body: JSON.stringify(payload),
+    });
+  },
+
+  updateLevy(levyId: string, payload: Partial<CreateLevyPayload>, token: string) {
+    return request<LevyRecord>(`/admin/levies/${levyId}`, {
+      method: "PATCH",
+      token,
+      body: JSON.stringify(payload),
+    });
+  },
+
+  getAdminLevy(levyId: string, token: string) {
+    return request<LevyRecord>(`/admin/levies/${levyId}`, {
+      token,
+    });
+  },
+
+  publishLevy(levyId: string, token: string) {
+    return request<LevyRecord>(`/admin/levies/${levyId}/publish`, {
+      method: "POST",
+      token,
+    });
+  },
+
+  unpublishLevy(levyId: string, token: string) {
+    return request<LevyRecord>(`/admin/levies/${levyId}/unpublish`, {
+      method: "POST",
+      token,
+    });
+  },
+
+  closeLevy(levyId: string, token: string) {
+    return request<LevyRecord>(`/admin/levies/${levyId}/close`, {
+      method: "POST",
+      token,
+    });
+  },
+
+  getLevyDashboard(levyId: string, token: string) {
+    return request<AdminLevyDashboard>(`/admin/levies/${levyId}/dashboard`, {
+      token,
+    });
+  },
+
+  getLevyPayments(levyId: string, token: string, status?: PaymentRecord["status"]) {
+    const searchParams = new URLSearchParams();
+    if (status) {
+      searchParams.set("status", status);
+    }
+
+    const queryString = searchParams.toString();
+    return request<PaymentRecord[]>(
+      `/admin/levies/${levyId}/payments${queryString ? `?${queryString}` : ""}`,
+      {
+        token,
+      },
+    );
+  },
+
+  listMyLevies(token: string) {
+    return request<LevyRecord[]>("/levies/me", {
+      token,
+    });
+  },
+
+  getMyLevy(levyId: string, token: string) {
+    return request<LevyRecord>(`/levies/${levyId}`, {
+      token,
+    });
+  },
+
+  initializeLevyPayment(levyId: string, token: string) {
+    return request<LevyPaymentInitialization>(`/payments/levies/${levyId}/initialize`, {
+      method: "POST",
+      token,
+      body: JSON.stringify({}),
+    });
+  },
+
+  getPaymentStatus(reference: string, token: string) {
+    return request<PaymentRecord>(`/payments/${reference}/status`, {
+      token,
+    });
+  },
+
+  getPaymentReceipt(reference: string, token: string) {
+    return request<PaymentRecord>(`/payments/${reference}/receipt`, {
+      token,
+    });
+  },
+
+  getMyPaymentsHistory(token: string) {
+    return request<PaymentRecord[]>("/payments/me", {
+      token,
     });
   },
 };

@@ -4,6 +4,13 @@ export type IssueSeverity = "low" | "medium" | "high";
 export type IssueStatus = "open" | "in_progress" | "resolved";
 export type ConfidenceBand = "low" | "medium" | "high";
 export type ReactionType = "confirm" | "disagree" | "fixed_signal" | "none";
+export type PaymentType =
+  | "sanitation_levy"
+  | "environmental_fee"
+  | "community_due";
+export type LevyTargetType = "community" | "lga";
+export type LevyStatus = "draft" | "published" | "closed";
+export type PaymentStatus = "pending" | "initialized" | "succeeded" | "failed";
 
 export interface ApiEnvelope<T> {
   data: T;
@@ -156,4 +163,124 @@ export interface ActivityEntry {
   pointsDelta: number;
   metadata?: Record<string, unknown>;
   createdAt: string;
+}
+
+export interface LevyTargetCommunity {
+  id: string;
+  name: string;
+  lgaId: string;
+}
+
+export interface LevyTargetLga {
+  id: string;
+  name: string;
+  stateId: string;
+}
+
+export interface LevyRecord {
+  id: string;
+  title: string;
+  description: string;
+  levyType: PaymentType;
+  amount: number;
+  dueDate: string;
+  targetType: LevyTargetType;
+  targetCommunityId?: string | null;
+  targetLgaId?: string | null;
+  status: LevyStatus;
+  createdByAdminId: string;
+  createdAt: string;
+  updatedAt: string;
+  targetCommunity?: LevyTargetCommunity | null;
+  targetLga?: LevyTargetLga | null;
+  createdByAdmin?: {
+    id: string;
+    fullName: string;
+    email: string;
+  };
+}
+
+export interface CreateLevyPayload {
+  title: string;
+  description: string;
+  levyType: PaymentType;
+  amount: number;
+  dueDate: string;
+  targetType: LevyTargetType;
+  targetCommunityId?: string;
+  targetLgaId?: string;
+}
+
+export interface InterswitchCheckoutConfig {
+  provider: "interswitch";
+  method: "inline";
+  scriptUrl: string;
+  request: {
+    merchant_code: string;
+    pay_item_id: string;
+    pay_item_name: string;
+    txn_ref: string;
+    site_redirect_url: string;
+    amount: number;
+    currency: string;
+    cust_name: string;
+    cust_email: string;
+    cust_id: string;
+    mode: "TEST" | "LIVE";
+  };
+}
+
+export interface PaymentRecord {
+  id: string;
+  userId: string;
+  levyId?: string | null;
+  reference: string;
+  paymentType: PaymentType;
+  amount: number;
+  status: PaymentStatus;
+  checkoutUrl?: string;
+  providerReference?: string;
+  gatewayProvider: string;
+  gatewayStatus?: string;
+  gatewayResponseCode?: string;
+  gatewayResponseDescription?: string;
+  providerPaymentReference?: string;
+  providerRetrievalReferenceNumber?: string;
+  providerTransactionDate?: string | null;
+  lastWebhookEventId?: string;
+  confirmedAt?: string | null;
+  failedAt?: string | null;
+  metadata?: Record<string, unknown>;
+  levy?: LevyRecord;
+  user?: {
+    id: string;
+    fullName: string;
+    email: string;
+    lgaId?: string;
+    communityId?: string;
+  };
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface LevyPaymentInitialization {
+  id: string;
+  userId: string;
+  levyId?: string | null;
+  reference: string;
+  paymentType: PaymentType;
+  amount: number;
+  status: PaymentStatus;
+  createdAt: string;
+  updatedAt: string;
+  levy?: LevyRecord;
+  checkout: InterswitchCheckoutConfig;
+}
+
+export interface AdminLevyDashboard {
+  totalCollectedAmount: number;
+  successfulPaymentCount: number;
+  pendingPaymentCount: number;
+  failedPaymentCount: number;
+  payerCount: number;
 }

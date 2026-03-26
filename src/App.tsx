@@ -9,6 +9,8 @@ import LiveMap from "./pages/dashboard/LiveMap";
 import Issues from "./pages/dashboard/Issues";
 import Analytics from "./pages/dashboard/Analytics";
 import Settings from "./pages/dashboard/Settings";
+import Levies from "./pages/dashboard/Levies";
+import LevyDetail from "./pages/dashboard/LevyDetail";
 import NotFound from "./pages/NotFound";
 import LoginPage from "./pages/auth/LoginPage";
 import { DashboardLayout } from "./components/dashboard/DashboardLayout";
@@ -21,8 +23,13 @@ import MobileActivity from "./pages/mobile/MobileActivity";
 import MobileReport from "./pages/mobile/MobileReport";
 import MobileAuth from "./pages/mobile/MobileAuth";
 import MobileLeaderboard from "./pages/mobile/MobileLeaderboard";
+import MobileLevies from "./pages/mobile/MobileLevies";
+import MobileLevyDetail from "./pages/mobile/MobileLevyDetail";
+import MobilePayments from "./pages/mobile/MobilePayments";
+import MobilePaymentReceipt from "./pages/mobile/MobilePaymentReceipt";
 import { AuthProvider } from "./hooks/use-auth";
 import { ProtectedRoute, PublicOnlyRoute } from "./components/auth/RouteGuards";
+import PaymentCallback from "./pages/PaymentCallback";
 
 const queryClient = new QueryClient();
 
@@ -72,7 +79,48 @@ const App = () => (
                   </ProtectedRoute>
                 }
               />
+              <Route
+                path="levies"
+                element={
+                  <ProtectedRoute role="citizen">
+                    <MobileLevies />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="levies/:levyId"
+                element={
+                  <ProtectedRoute role="citizen">
+                    <MobileLevyDetail />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="payments"
+                element={
+                  <ProtectedRoute role="citizen">
+                    <MobilePayments />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="payments/:reference"
+                element={
+                  <ProtectedRoute role="citizen">
+                    <MobilePaymentReceipt />
+                  </ProtectedRoute>
+                }
+              />
             </Route>
+
+            <Route
+              path="/payment/callback"
+              element={
+                <ProtectedRoute role="citizen">
+                  <PaymentCallback />
+                </ProtectedRoute>
+              }
+            />
 
             {/* Core App Routes */}
             <Route path="/*" element={
@@ -92,6 +140,8 @@ const App = () => (
                     <Route path="/console/dashboard/map" element={<ProtectedRoute><DashboardLayout><LiveMap /></DashboardLayout></ProtectedRoute>} />
                     <Route path="/console/dashboard/issues" element={<ProtectedRoute><DashboardLayout><Issues /></DashboardLayout></ProtectedRoute>} />
                     <Route path="/console/dashboard/analytics" element={<ProtectedRoute><DashboardLayout><Analytics /></DashboardLayout></ProtectedRoute>} />
+                    <Route path="/console/dashboard/levies" element={<ProtectedRoute><DashboardLayout><Levies /></DashboardLayout></ProtectedRoute>} />
+                    <Route path="/console/dashboard/levies/:levyId" element={<ProtectedRoute><DashboardLayout><LevyDetail /></DashboardLayout></ProtectedRoute>} />
                     <Route path="/console/dashboard/settings" element={<ProtectedRoute><DashboardLayout><Settings /></DashboardLayout></ProtectedRoute>} />
                     <Route path="/console/dashboard/*" element={
                       <ProtectedRoute>

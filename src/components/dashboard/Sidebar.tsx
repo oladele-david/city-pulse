@@ -5,6 +5,7 @@ import {
     MapsLocation01Icon,
     Alert02Icon,
     Analytics01Icon,
+    Coins01Icon,
     Settings01Icon,
     SidebarLeft01Icon
 } from "@hugeicons/core-free-icons";
@@ -38,6 +39,11 @@ const navItems = [
         name: "Analytics",
         href: "/console/dashboard/analytics",
         icon: Analytics01Icon,
+    },
+    {
+        name: "Levies",
+        href: "/console/dashboard/levies",
+        icon: Coins01Icon,
     },
     {
         name: "Settings",
