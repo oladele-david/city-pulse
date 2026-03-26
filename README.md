@@ -93,8 +93,11 @@ Important API env values:
 ```env
 DATABASE_URL=postgresql://postgres:postgres@localhost:5432/citypulse
 JWT_SECRET=replace-me
+CORS_ORIGIN=http://localhost:8080,http://127.0.0.1:8080,http://localhost:5173,http://127.0.0.1:5173,https://city-pulse-lyart.vercel.app,https://*.vercel.app
 PERSISTENCE_DRIVER=database
 ```
+
+`CORS_ORIGIN` accepts a comma-separated allowlist. Wildcards such as `https://*.vercel.app` are supported for preview deployments.
 
 The API serves under `/api/v1`, and Swagger is available at `/api/docs` when the Nest app is running.
 
@@ -150,4 +153,3 @@ Evidence in repo history:
 
 - primary history across `apps/api/`
 - commits touching backend tests and supporting documentation
-
