@@ -25,6 +25,10 @@ export const IssueHeader = ({ issue }: IssueHeaderProps) => {
             </div>
             <h2 className="text-xl font-bold leading-tight mb-2">{issue.title}</h2>
             <p className="text-sm text-muted-foreground mb-3">{issue.description}</p>
+            <div className="mb-3 rounded-lg border border-border/50 bg-muted/30 p-3">
+                <p className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">Created</p>
+                <p className="mt-1 text-sm font-medium text-foreground">{issue.createdAtLabel}</p>
+            </div>
             <div className="flex items-center text-xs text-muted-foreground gap-1 bg-muted/50 p-2 rounded-lg">
                 <HugeiconsIcon icon={Location01Icon} className="w-3.5 h-3.5" />
                 <span>{issue.locationName} • {issue.latitude.toFixed(4)}, {issue.longitude.toFixed(4)}</span>

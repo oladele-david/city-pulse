@@ -96,6 +96,14 @@ export const MobileIssueSheet = ({
             </div>
           </div>
 
+          <div className="rounded-2xl border border-border/50 bg-muted/30 p-3">
+            <p className="mb-1 text-[10px] font-bold uppercase tracking-tight text-muted-foreground">
+              Created
+            </p>
+            <p className="text-sm font-bold text-foreground">{issue.createdAtLabel}</p>
+            <p className="mt-1 text-xs text-muted-foreground">{issue.createdAtRelative}</p>
+          </div>
+
           <div className="grid grid-cols-3 gap-3">
             <div className="rounded-2xl border border-emerald-100 bg-emerald-50 p-3">
               <p className="text-[10px] font-bold uppercase tracking-widest text-emerald-700">

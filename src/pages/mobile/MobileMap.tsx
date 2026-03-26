@@ -19,7 +19,12 @@ import {
   useLiveIssues,
 } from "@/hooks/use-live-issues";
 import { LAGOS_DEFAULT_ZOOM } from "@/lib/lagos";
-import { MapIssue, toIssueGeoJson, toMapIssue } from "@/lib/map-issues";
+import {
+  MapIssue,
+  separateOverlappingMapIssues,
+  toIssueGeoJson,
+  toMapIssue,
+} from "@/lib/map-issues";
 import { cn } from "@/lib/utils";
 
 const MAPBOX_TOKEN = import.meta.env.VITE_MAPBOX_TOKEN;
@@ -69,7 +74,7 @@ const MobileMap = () => {
   const selectedReactionQuery = useIssueReaction(selectedIssue?.id ?? null);
 
   const issues = useMemo(
-    () => (issuesQuery.data ?? []).map(toMapIssue),
+    () => separateOverlappingMapIssues((issuesQuery.data ?? []).map(toMapIssue)),
     [issuesQuery.data],
   );
 
@@ -253,8 +258,8 @@ const MobileMap = () => {
           filteredIssues.map((issue) => (
             <Marker
               key={issue.id}
-              latitude={issue.latitude}
-              longitude={issue.longitude}
+              latitude={issue.displayLatitude}
+              longitude={issue.displayLongitude}
               onClick={(event) => {
                 event.originalEvent.stopPropagation();
                 setSelectedIssue(issue);

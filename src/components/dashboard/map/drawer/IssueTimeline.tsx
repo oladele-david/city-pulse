@@ -25,7 +25,7 @@ export const IssueTimeline = ({ issue }: IssueTimelineProps) => {
                 <div className="relative">
                     <div className="absolute -left-[16px] top-1.5 h-2.5 w-2.5 rounded-full bg-primary/50 ring-4 ring-background z-10" />
                     <p className="text-sm font-medium text-muted-foreground">Issue Created</p>
-                    <p className="text-xs text-muted-foreground mt-0.5">3 days ago</p>
+                    <p className="text-xs text-muted-foreground mt-0.5">{issue.createdAtLabel}</p>
                 </div>
             </div>
         </div>

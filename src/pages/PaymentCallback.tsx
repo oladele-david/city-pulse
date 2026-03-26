@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
+import { ArrowLeft, ReceiptText } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useCitizenAuth } from "@/hooks/use-auth";
@@ -73,11 +74,27 @@ const PaymentCallback = () => {
           )}
 
           <div className="flex flex-wrap gap-3">
-            <Button asChild>
+            <Button asChild className="rounded-full bg-slate-950 text-white hover:bg-slate-800">
               <Link to="/mobile/payments">View payment history</Link>
             </Button>
-            <Button asChild variant="outline">
+            {paymentQuery.data?.status === "succeeded" ? (
+              <Button asChild variant="outline" className="rounded-full border-slate-300">
+                <Link to={`/mobile/payments/${reference}`}>
+                  <ReceiptText className="mr-2 h-4 w-4" />
+                  Open receipt
+                </Link>
+              </Button>
+            ) : null}
+            <Button asChild variant="outline" className="rounded-full border-slate-300">
               <Link to="/mobile/levies">Back to levies</Link>
+            </Button>
+            <Button
+              variant="ghost"
+              className="rounded-full px-4 text-slate-600"
+              onClick={() => navigate(-1)}
+            >
+              <ArrowLeft className="mr-2 h-4 w-4" />
+              Previous page
             </Button>
           </div>
         </CardContent>

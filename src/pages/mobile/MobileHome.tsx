@@ -396,6 +396,7 @@ const MobileHome = () => {
               </span>
             </div>
             <div className="mt-3 flex items-center gap-2 text-xs text-muted-foreground">
+              <span>{issue.createdAtLabel}</span>
               <span>{issue.confirmationsCount} agree</span>
               <span>{issue.disagreementsCount} disagree</span>
               <span>{issue.photoUrls.length > 0 || issue.videoUrl ? "media attached" : "text only"}</span>

@@ -6,7 +6,7 @@ import { MapFilters } from "./MapFilters";
 import { IssueDrawer } from "./IssueDrawer";
 import { api } from "@/lib/api";
 import { LAGOS_CENTER, LAGOS_DEFAULT_ZOOM } from "@/lib/lagos";
-import { MapIssue, toMapIssue } from "@/lib/map-issues";
+import { MapIssue, separateOverlappingMapIssues, toMapIssue } from "@/lib/map-issues";
 
 export const LiveMapComponent = () => {
   const [selectedIssue, setSelectedIssue] = useState<MapIssue | null>(null);
@@ -19,7 +19,7 @@ export const LiveMapComponent = () => {
   });
 
   const issues = useMemo(
-    () => (issuesQuery.data ?? []).map(toMapIssue),
+    () => separateOverlappingMapIssues((issuesQuery.data ?? []).map(toMapIssue)),
     [issuesQuery.data],
   );
 
@@ -74,8 +74,8 @@ export const LiveMapComponent = () => {
         {filteredIssues.map((issue) => (
           <Marker
             key={issue.id}
-            longitude={issue.longitude}
-            latitude={issue.latitude}
+            longitude={issue.displayLongitude}
+            latitude={issue.displayLatitude}
             anchor="bottom"
             onClick={(event) => {
               event.originalEvent.stopPropagation();
