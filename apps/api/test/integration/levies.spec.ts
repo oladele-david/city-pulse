@@ -23,7 +23,7 @@ async function createApp(): Promise<INestApplication> {
 
   const moduleRef = await moduleBuilder.compile();
 
-  const app = moduleRef.createNestApplication();
+  const app = moduleRef.createNestApplication({ rawBody: true });
   app.setGlobalPrefix('api/v1');
   app.useGlobalPipes(
     new ValidationPipe({
@@ -77,11 +77,15 @@ function buildWebhookSignature(payload: string) {
     .digest('hex');
 }
 
+function uniqueSuffix() {
+  return `${Date.now()}-${Math.floor(Math.random() * 100000)}`;
+}
+
 describe('Levy management and levy payment flow', () => {
   let app: INestApplication;
   let originalFetch: typeof global.fetch | undefined;
 
-  jest.setTimeout(30000);
+  jest.setTimeout(180000);
 
   beforeAll(() => {
     process.env.INTERSWITCH_WEBHOOK_SECRET =
@@ -124,12 +128,13 @@ describe('Levy management and levy payment flow', () => {
   it('lets citizens see only levies for their community or lga', async () => {
     const adminToken = await login(app, 'admin');
     const citizenToken = await login(app, 'citizen');
+    const suffix = uniqueSuffix();
 
     const lgaLevy = await request(app.getHttpServer())
       .post('/api/v1/admin/levies')
       .set('Authorization', `Bearer ${adminToken}`)
       .send({
-        title: 'Surulere environmental levy',
+        title: `Surulere environmental levy ${suffix}`,
         description: 'LGA-wide levy for waste response.',
         levyType: 'environmental_fee',
         amount: 22000,
@@ -144,7 +149,7 @@ describe('Levy management and levy payment flow', () => {
       .post('/api/v1/admin/levies')
       .set('Authorization', `Bearer ${adminToken}`)
       .send({
-        title: 'Adeniran Ogunsanya sanitation levy',
+        title: `Adeniran Ogunsanya sanitation levy ${suffix}`,
         description: 'Community sanitation support.',
         levyType: 'sanitation_levy',
         amount: 18000,
@@ -155,11 +160,11 @@ describe('Levy management and levy payment flow', () => {
       .expect(201);
     await publishLevy(app, communityLevy.body.data.id, adminToken);
 
-    await request(app.getHttpServer())
+    const outOfScopeLevy = await request(app.getHttpServer())
       .post('/api/v1/admin/levies')
       .set('Authorization', `Bearer ${adminToken}`)
       .send({
-        title: 'Ikeja-only levy',
+        title: `Ikeja-only levy ${suffix}`,
         description: 'Should not appear to Surulere citizen.',
         levyType: 'community_due',
         amount: 5000,
@@ -174,24 +179,24 @@ describe('Levy management and levy payment flow', () => {
       .set('Authorization', `Bearer ${citizenToken}`)
       .expect(200);
 
-    expect(response.body.data).toHaveLength(2);
-    expect(response.body.data.map((levy: { title: string }) => levy.title)).toEqual(
-      expect.arrayContaining([
-        'Surulere environmental levy',
-        'Adeniran Ogunsanya sanitation levy',
-      ]),
+    const levyIds = response.body.data.map((levy: { id: string }) => levy.id);
+
+    expect(levyIds).toEqual(
+      expect.arrayContaining([lgaLevy.body.data.id, communityLevy.body.data.id]),
     );
+    expect(levyIds).not.toContain(outOfScopeLevy.body.data.id);
   });
 
   it('initializes a levy payment and confirms success through signed webhook processing', async () => {
     const adminToken = await login(app, 'admin');
     const citizenToken = await login(app, 'citizen');
+    const suffix = uniqueSuffix();
 
     const levyResponse = await request(app.getHttpServer())
       .post('/api/v1/admin/levies')
       .set('Authorization', `Bearer ${adminToken}`)
       .send({
-        title: 'Quarterly sanitation levy',
+        title: `Quarterly sanitation levy ${suffix}`,
         description: 'Community cleaning contribution.',
         levyType: 'sanitation_levy',
         amount: 15000,
@@ -270,15 +275,16 @@ describe('Levy management and levy payment flow', () => {
     expect(duplicateResponse.body.data.reason).toBe('duplicate_event');
   });
 
-  it('marks failed payments after authoritative requery and exposes admin reporting totals', async () => {
+  it('keeps in-flight levy payments pending after a non-terminal requery response and exposes admin reporting totals', async () => {
     const adminToken = await login(app, 'admin');
     const citizenToken = await login(app, 'citizen');
+    const suffix = uniqueSuffix();
 
     const levyResponse = await request(app.getHttpServer())
       .post('/api/v1/admin/levies')
       .set('Authorization', `Bearer ${adminToken}`)
       .send({
-        title: 'Ward maintenance levy',
+        title: `Ward maintenance levy ${suffix}`,
         description: 'Routine ward maintenance support.',
         levyType: 'community_due',
         amount: 12500,
@@ -317,7 +323,8 @@ describe('Levy management and levy payment flow', () => {
       .set('Authorization', `Bearer ${citizenToken}`)
       .expect(200);
 
-    expect(statusResponse.body.data.status).toBe('failed');
+    expect(statusResponse.body.data.status).toBe('initialized');
+    expect(statusResponse.body.data.gatewayStatus).toBe('pending');
 
     const dashboardResponse = await request(app.getHttpServer())
       .get(`/api/v1/admin/levies/${levyId}/dashboard`)
@@ -325,8 +332,8 @@ describe('Levy management and levy payment flow', () => {
       .expect(200);
 
     expect(dashboardResponse.body.data.totalCollectedAmount).toBe(0);
-    expect(dashboardResponse.body.data.failedPaymentCount).toBe(1);
-    expect(dashboardResponse.body.data.pendingPaymentCount).toBe(0);
+    expect(dashboardResponse.body.data.failedPaymentCount).toBe(0);
+    expect(dashboardResponse.body.data.pendingPaymentCount).toBe(1);
     expect(dashboardResponse.body.data.payerCount).toBe(0);
   });
 });

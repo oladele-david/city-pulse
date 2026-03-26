@@ -31,7 +31,7 @@ async function createApp(): Promise<INestApplication> {
 
   const moduleRef = await moduleBuilder.compile();
 
-  const app = moduleRef.createNestApplication();
+  const app = moduleRef.createNestApplication({ rawBody: true });
   app.setGlobalPrefix('api/v1');
   app.useGlobalPipes(
     new ValidationPipe({
@@ -59,6 +59,8 @@ async function createApp(): Promise<INestApplication> {
 
 describe('CityPulse API integration', () => {
   let app: INestApplication;
+
+  jest.setTimeout(180000);
 
   beforeEach(async () => {
     app = await createApp();

@@ -347,15 +347,19 @@ export class PaymentsService {
     );
     const merchantReferenceMatches =
       !response.MerchantReference || response.MerchantReference === payment.reference;
-    const shouldStayPending =
-      source === 'status_lookup' &&
-      (!merchantReferenceMatches || this.interswitchService.isPendingResponse(response));
-    const status = isSuccessful && merchantReferenceMatches
-      ? 'succeeded'
-      : shouldStayPending
-        ? payment.status
-        : 'failed';
-    const gatewayStatus = shouldStayPending ? 'pending' : status;
+    const isPendingResponse = this.interswitchService.isPendingResponse(response);
+    const shouldLeaveStatusUnchanged = !merchantReferenceMatches || isPendingResponse;
+    const status =
+      isSuccessful && merchantReferenceMatches
+        ? 'succeeded'
+        : shouldLeaveStatusUnchanged
+          ? payment.status
+          : 'failed';
+    const gatewayStatus = !merchantReferenceMatches
+      ? 'reference_mismatch'
+      : isPendingResponse
+        ? 'pending'
+        : status;
 
     await this.paymentsRepository.update(payment.id, {
       status,
@@ -374,7 +378,7 @@ export class PaymentsService {
       failedAt:
         status === 'failed'
           ? new Date().toISOString()
-          : shouldStayPending
+          : shouldLeaveStatusUnchanged
             ? payment.failedAt?.toISOString?.() ?? null
             : null,
       metadata: this.buildUpdatedMetadata(payment.metadata, response, webhookPayload),
@@ -387,6 +391,9 @@ export class PaymentsService {
       payload: {
         responseCode: response.ResponseCode,
         responseDescription: response.ResponseDescription,
+        merchantReference: response.MerchantReference,
+        merchantReferenceMatches,
+        source,
       },
     });
 

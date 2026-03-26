@@ -4,6 +4,7 @@ import {
   Get,
   Headers,
   HttpCode,
+  InternalServerErrorException,
   Param,
   Post,
   Req,
@@ -74,9 +75,17 @@ export class PaymentsController {
     @Req() req: Request & { rawBody?: Buffer },
     @Headers('x-interswitch-signature') signature?: string,
   ) {
-    const rawBody =
-      req.rawBody?.toString('utf8') ??
-      (typeof payload === 'string' ? payload : JSON.stringify(payload));
+    if (!req.rawBody) {
+      throw new InternalServerErrorException({
+        error: {
+          code: 'webhook_raw_body_unavailable',
+          message: 'Webhook raw body is unavailable for signature verification',
+          details: [],
+        },
+      });
+    }
+
+    const rawBody = req.rawBody.toString('utf8');
 
     return this.paymentsService.processWebhook(payload, rawBody, signature);
   }

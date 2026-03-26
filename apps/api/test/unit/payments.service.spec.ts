@@ -187,4 +187,81 @@ describe('PaymentsService', () => {
     expect(result.status).toBe('initialized');
     expect(result.gatewayStatus).toBe('pending');
   });
+
+  it('does not mark a payment as failed when requery returns a different merchant reference', async () => {
+    const { service, paymentsRepository, interswitchService } = createService();
+    paymentsRepository.findByReference
+      .mockResolvedValueOnce({
+        id: 'payment-1',
+        userId: 'citizen-1',
+        reference: 'CP-LEVY-1',
+        amount: 15000,
+        status: 'initialized',
+        paymentType: 'sanitation_levy',
+        checkoutUrl: null,
+        providerReference: null,
+        gatewayProvider: 'interswitch',
+        gatewayStatus: 'initialized',
+        gatewayResponseCode: null,
+        gatewayResponseDescription: null,
+        providerPaymentReference: null,
+        providerRetrievalReferenceNumber: null,
+        providerTransactionDate: null,
+        lastWebhookEventId: null,
+        confirmedAt: null,
+        failedAt: null,
+        metadata: {},
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        levy: null,
+        user: { id: 'citizen-1', fullName: 'Demo Citizen', email: 'citizen@citypulse.ng' },
+      })
+      .mockResolvedValueOnce({
+        id: 'payment-1',
+        userId: 'citizen-1',
+        reference: 'CP-LEVY-1',
+        amount: 15000,
+        status: 'initialized',
+        paymentType: 'sanitation_levy',
+        checkoutUrl: null,
+        providerReference: null,
+        gatewayProvider: 'interswitch',
+        gatewayStatus: 'reference_mismatch',
+        gatewayResponseCode: '00',
+        gatewayResponseDescription: 'Approved by Financial Institution',
+        providerPaymentReference: 'other-payment-ref',
+        providerRetrievalReferenceNumber: '000106923855',
+        providerTransactionDate: new Date('2026-04-01T12:00:00.000Z'),
+        lastWebhookEventId: null,
+        confirmedAt: null,
+        failedAt: null,
+        metadata: {},
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        levy: null,
+        user: { id: 'citizen-1', fullName: 'Demo Citizen', email: 'citizen@citypulse.ng' },
+      });
+    interswitchService.requery.mockResolvedValue({
+      MerchantReference: 'CP-LEVY-OTHER',
+      PaymentReference: 'other-payment-ref',
+      RetrievalReferenceNumber: '000106923855',
+      TransactionDate: '2026-04-01T12:00:00.000Z',
+      ResponseCode: '00',
+      ResponseDescription: 'Approved by Financial Institution',
+      Amount: 1500000,
+    });
+    interswitchService.isSuccessfulResponse.mockReturnValue(true);
+    interswitchService.isPendingResponse.mockReturnValue(false);
+    paymentsRepository.update.mockResolvedValue(undefined);
+    paymentsRepository.createEvent.mockResolvedValue(undefined);
+
+    const result = await service.getStatus('CP-LEVY-1', {
+      sub: 'citizen-1',
+      email: 'citizen@citypulse.ng',
+      role: 'citizen',
+    });
+
+    expect(result.status).toBe('initialized');
+    expect(result.gatewayStatus).toBe('reference_mismatch');
+  });
 });
