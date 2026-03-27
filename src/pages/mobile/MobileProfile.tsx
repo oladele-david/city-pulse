@@ -48,12 +48,12 @@ const MobileProfile = () => {
   ];
 
   return (
-    <div className="mt-4 flex h-full flex-col bg-background">
+    <div className="flex h-full flex-col bg-background">
       <div className="px-4 py-8">
-        <div className="rounded-[2rem] border border-border/50 bg-[linear-gradient(135deg,#fff7ed_0%,#ffffff_50%,#f8fafc_100%)] p-5 shadow-sm">
-          <div className="flex items-center gap-5">
+        <div className="rounded-3xl border border-border/50 p-5">
+          <div className="flex items-center gap-2">
             <div className="relative">
-              <div className="h-20 w-20 overflow-hidden rounded-full border-4 border-accent/50 bg-background shadow-sm ring-1 ring-border/30">
+              <div className="h-20 w-20 overflow-hidden rounded-full border-4 border-accent/50 bg-background ring-1 ring-border/30">
                 <img
                   src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(session?.user.fullName ?? "CityPulse")}`}
                   alt={session?.user.fullName ?? "CityPulse Citizen"}

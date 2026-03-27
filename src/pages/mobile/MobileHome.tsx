@@ -4,16 +4,24 @@ import Map, { Layer, MapRef, Marker, Source, type LayerProps } from "react-map-g
 import "mapbox-gl/dist/mapbox-gl.css";
 import { HugeiconsIcon } from "@hugeicons/react";
 import {
-  Add01Icon,
-  Award01Icon,
   ArrowRight01Icon,
+  Award01Icon,
   CheckmarkBadge01Icon,
+  Invoice03Icon,
   LocationUser03Icon,
-  MapsLocation01Icon,
-  Notification01Icon,
   TemperatureIcon,
+  Wallet01Icon,
 } from "@hugeicons/core-free-icons";
 import { toast } from "@/components/ui/sonner";
+import { Skeleton } from "@/components/ui/skeleton";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
 import { MobileIssueSheet } from "@/components/mobile/sheets/MobileIssueSheet";
 import { useCitizenAuth } from "@/hooks/use-auth";
 import {
@@ -62,9 +70,11 @@ const MobileHome = () => {
   const navigate = useNavigate();
   const { session, isAuthenticated } = useCitizenAuth();
   const mapRef = useRef<MapRef>(null);
+  const scrollRef = useRef<HTMLDivElement>(null);
   const [selectedIssue, setSelectedIssue] = useState<MapIssue | null>(null);
   const [isSheetOpen, setIsSheetOpen] = useState(false);
-  const [showHeatmap, setShowHeatmap] = useState(false);
+  const [showHeatmap, setShowHeatmap] = useState(true);
+  const [isScrolled, setIsScrolled] = useState(false);
   const location = useCitizenLocation();
   const issuesQuery = useLiveIssues("mobile-home");
   const reactionMutation = useIssueReactionMutation();
@@ -97,6 +107,15 @@ const MobileHome = () => {
     });
   }, [location.coordinates.latitude, location.coordinates.longitude, location.source]);
 
+  // Scroll detection for sticky header
+  useEffect(() => {
+    const el = scrollRef.current?.closest(".mobile-main-content");
+    if (!el) return;
+    const handler = () => setIsScrolled(el.scrollTop > 20);
+    el.addEventListener("scroll", handler, { passive: true });
+    return () => el.removeEventListener("scroll", handler);
+  }, []);
+
   const handleReaction = async (reaction: "confirm" | "disagree") => {
     if (!selectedIssue) return;
     if (!isAuthenticated) {
@@ -126,165 +145,105 @@ const MobileHome = () => {
   const locationMessage = getLocationErrorMessage(location.permissionState);
 
   return (
-    <div className="flex flex-col bg-[radial-gradient(circle_at_top,#fff7ed,transparent_36%),linear-gradient(180deg,#fffdf8_0%,#f8fafc_55%,#ffffff_100%)] pb-40">
-      <div className="px-4 pb-3 pt-6">
-        <div className="rounded-[2rem] border border-white/70 bg-white/90 p-5 shadow-[0_20px_60px_-30px_rgba(15,23,42,0.45)] backdrop-blur">
-          <div className="flex items-start justify-between gap-4">
-            <div>
-              <span className="text-[12px] font-medium text-muted-foreground">
-                {isAuthenticated ? "Welcome back," : "Citizen access"}
-              </span>
-              <h1 className="mt-1 text-2xl font-bold text-foreground">
-                {session?.user.fullName?.split(" ")[0] ?? "CityPulse"}
-              </h1>
-              <p className="mt-2 max-w-[16rem] text-sm leading-6 text-muted-foreground">
-                Track live reports near you, verify what is real, and help Lagos teams respond faster.
-              </p>
-            </div>
-
-            {isAuthenticated ? (
-              <button className="relative flex h-11 w-11 items-center justify-center rounded-full border bg-background shadow-sm transition-transform active:scale-95">
-                <HugeiconsIcon
-                  icon={Notification01Icon}
-                  className="h-5 w-5 text-foreground"
-                />
-                <span className="absolute right-2 top-2 h-2 w-2 rounded-full border-2 border-background bg-primary" />
-              </button>
-            ) : (
-              <button
-                onClick={() => navigate("/mobile/auth")}
-                className="rounded-full border border-border/60 bg-background px-4 py-2 text-[11px] font-bold text-primary shadow-sm"
-              >
-                Sign In
-              </button>
-            )}
-          </div>
-
-          <div className="mt-5 grid grid-cols-2 gap-3">
-            <div className="rounded-[1.5rem] bg-primary px-4 py-4 text-white">
-              <p className="text-[10px] font-bold text-white/70">
-                Live issues
-              </p>
-              <p className="mt-2 text-2xl font-bold">{issues.length}</p>
-              <p className="mt-1 text-xs text-white/75">Across Lagos right now</p>
-            </div>
-            <div className="rounded-[1.5rem] bg-amber-50 px-4 py-4 text-amber-950">
-              <div className="flex items-start justify-between gap-3">
-                <div className="flex items-center gap-2">
-                  <HugeiconsIcon icon={Award01Icon} className="h-4 w-4 text-amber-700" />
-                  <p className="text-[10px] font-bold text-amber-700">
-                    Community rank
-                  </p>
-                </div>
-                <button
-                  onClick={() => navigate("/mobile/leaderboard")}
-                  className="rounded-full border border-amber-200 bg-white/70 px-3 py-1 text-[9px] font-bold text-amber-700"
-                >
-                  See More
-                </button>
-              </div>
-              <p className="mt-2 text-2xl font-bold">
-                {leaderboard.spotlightRank ? `#${leaderboard.spotlightRank}` : "--"}
-              </p>
-              <p className="mt-1 text-xs text-amber-900/70">
-                {leaderboard.spotlightEntry?.communityName ?? "Waiting for leaderboard"}
-              </p>
-            </div>
-          </div>
-
-          {isAuthenticated ? (
-            <div className="mt-4 grid grid-cols-2 gap-3">
-              <button
-                onClick={() => navigate("/mobile/levies")}
-                className="rounded-[1.25rem] border border-border/60 bg-background px-4 py-3 text-left shadow-sm"
-              >
-                <p className="text-[10px] font-bold text-muted-foreground">
-                  Levies
-                </p>
-                <p className="mt-2 text-sm font-semibold text-foreground">
-                  Pay local civic dues
-                </p>
-              </button>
-              <button
-                onClick={() => navigate("/mobile/payments")}
-                className="rounded-[1.25rem] border border-border/60 bg-background px-4 py-3 text-left shadow-sm"
-              >
-                <p className="text-[10px] font-bold text-muted-foreground">
-                  Payments
-                </p>
-                <p className="mt-2 text-sm font-semibold text-foreground">
-                  See receipts and status
-                </p>
-              </button>
-            </div>
-          ) : null}
+    <div ref={scrollRef} className="flex flex-col bg-white pb-40">
+      {/* Sticky header */}
+      <div
+        className={cn(
+          "sticky top-0 z-30 px-4 py-3 flex items-center justify-between transition-all duration-300",
+          isScrolled
+            ? "bg-background/80 backdrop-blur-xl border-b border-border/30 shadow-sm"
+            : "bg-transparent",
+        )}
+      >
+        <div>
+          <span className="text-[11px] font-medium text-muted-foreground">
+            {isAuthenticated ? "Welcome back," : "Citizen access"}
+          </span>
+          <h1 className="text-lg font-bold text-foreground leading-tight">
+            {session?.user.fullName?.split(" ")[0] ?? "CityPulse"}
+          </h1>
         </div>
-      </div>
 
-      <div className="space-y-4 px-4 pb-1">
-        {!location.hasPrompted && (
-          <div className="rounded-[1.5rem] border border-border/50 bg-primary/5 p-4 shadow-sm">
-            <p className="text-sm font-bold text-foreground">
-              Use your location for nearby Lagos reports
-            </p>
-            <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
-              CityPulse can center the map around you so nearby incidents and report pins start in the right place.
-            </p>
-            <div className="mt-3 flex gap-2">
-              <button
-                onClick={location.requestLocation}
-                className="rounded-full bg-primary px-4 py-2 text-[11px] font-bold text-white"
-              >
-                Use My Location
-              </button>
-              <button
-                onClick={location.dismissPrompt}
-                className="rounded-full border border-border/60 px-4 py-2 text-[11px] font-bold text-foreground"
-              >
-                Not Now
-              </button>
-            </div>
+        {isAuthenticated ? (
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => navigate("/mobile/levies")}
+              className="relative flex h-10 w-10 items-center justify-center rounded-full border bg-background transition-transform active:scale-95"
+            >
+              <HugeiconsIcon icon={Invoice03Icon} className="h-5 w-5 text-foreground" />
+              <span className="absolute -right-0.5 -top-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-primary text-[8px] font-bold text-white">
+                !
+              </span>
+            </button>
+            <button
+              onClick={() => navigate("/mobile/payments")}
+              className="relative flex h-10 w-10 items-center justify-center rounded-full border bg-background transition-transform active:scale-95"
+            >
+              <HugeiconsIcon icon={Wallet01Icon} className="h-5 w-5 text-foreground" />
+              <span className="absolute -right-0.5 -top-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-amber-500 text-[8px] font-bold text-white">
+                !
+              </span>
+            </button>
           </div>
-        )}
-
-        {locationMessage && (
-          <div className="rounded-[1.5rem] border border-amber-200 bg-amber-50 px-4 py-3 text-xs font-medium leading-relaxed text-amber-900">
-            {locationMessage}
-          </div>
+        ) : (
+          <button
+            onClick={() => navigate("/mobile/auth")}
+            className="rounded-full border border-border/60 bg-background px-4 py-2 text-[11px] font-bold text-primary"
+          >
+            Sign In
+          </button>
         )}
       </div>
 
+      {/* Location request modal */}
+      <Dialog open={!location.hasPrompted} onOpenChange={(open) => { if (!open) location.dismissPrompt(); }}>
+        <DialogContent className="max-w-[calc(100%-2rem)] rounded-2xl sm:max-w-sm">
+          <DialogHeader>
+            <DialogTitle>Use your location?</DialogTitle>
+            <DialogDescription>
+              CityPulse will center the map on you so nearby reports load first.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="flex gap-2 pt-2">
+            <Button className="flex-1 rounded-xl" onClick={location.requestLocation}>
+              Allow
+            </Button>
+            <Button variant="outline" className="flex-1 rounded-xl" onClick={location.dismissPrompt}>
+              Not Now
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {locationMessage && (
+        <div className="mx-4 mb-2 rounded-xl border border-amber-200 bg-amber-50 px-3 py-2 text-xs font-medium text-amber-900">
+          {locationMessage}
+        </div>
+      )}
+
+      {/* Map preview */}
       <div className="mb-6 px-4">
-        <div className="relative aspect-[4/5] overflow-hidden rounded-[2rem] border bg-muted shadow-inner-lg ring-1 ring-border/30">
+        <div className="relative aspect-[4/5] overflow-hidden rounded-[2rem] border bg-muted ring-1 ring-border/30">
+          {/* Top overlay: Community rank pill */}
           <div className="pointer-events-none absolute left-0 right-0 top-0 z-20 p-3">
-            <div className="pointer-events-auto flex items-center gap-2">
-              <div className="flex h-11 min-w-0 flex-1 items-center gap-3 rounded-2xl border border-white/50 bg-background/92 px-4 shadow-xl backdrop-blur-md">
-                <HugeiconsIcon
-                  icon={MapsLocation01Icon}
-                  className="h-4 w-4 shrink-0 text-muted-foreground"
-                />
-                <span className="truncate text-xs font-bold text-muted-foreground">
-                  {issuesQuery.isFetching ? "Syncing live Lagos reports" : "Lagos issue map"}
-                </span>
-              </div>
-
+            <div className="pointer-events-auto flex items-center justify-end">
               <button
-                onClick={() => {
-                  setShowHeatmap((previous) => !previous);
-                  toast.info(showHeatmap ? "Map markers visible" : "Heatmap enabled");
-                }}
-                className={cn(
-                  "flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl border shadow-xl transition-all active:scale-95",
-                  showHeatmap
-                    ? "border-primary bg-primary text-white"
-                    : "border-white/50 bg-background/92 text-foreground backdrop-blur-md",
-                )}
+                onClick={() => navigate("/mobile/leaderboard")}
+                className="flex h-10 items-center gap-1.5 rounded-full border border-amber-200 bg-amber-50/92 px-3 shadow-xl backdrop-blur-md transition-all active:scale-95"
               >
-                <HugeiconsIcon icon={TemperatureIcon} className="h-4 w-4" />
+                <HugeiconsIcon icon={Award01Icon} className="h-4 w-4 text-amber-700" />
+                <span className="text-xs font-bold text-amber-800">
+                  {leaderboard.spotlightRank ? `#${leaderboard.spotlightRank}` : "--"}
+                </span>
+                <HugeiconsIcon
+                  icon={ArrowRight01Icon}
+                  className="h-3.5 w-3.5 text-amber-600 animate-[bounceX_1.5s_ease-in-out_infinite]"
+                />
               </button>
             </div>
           </div>
 
+          {/* Map */}
           <Map
             ref={mapRef}
             initialViewState={{
@@ -318,91 +277,95 @@ const MobileHome = () => {
               </Marker>
             )}
 
-            {issues.length > 0 && (
+            {showHeatmap && issues.length > 0 && (
               <Source id="issues" type="geojson" data={geojsonData}>
                 <Layer {...heatmapLayer} />
               </Source>
             )}
           </Map>
 
-          <button
-            onClick={() => navigate("/mobile/report")}
-            className="absolute bottom-24 right-4 z-20 flex h-12 w-12 items-center justify-center rounded-full border border-white/20 bg-primary text-white shadow-2xl shadow-primary/40 transition-all active:scale-90"
-          >
-            <HugeiconsIcon icon={Add01Icon} className="h-6 w-6" />
-          </button>
-
-          <div className="absolute bottom-6 left-6 right-6 rounded-2xl border border-white/20 bg-background/90 p-4 shadow-xl backdrop-blur-md">
-            <div className="flex items-center justify-between gap-4">
-              <div>
-                <span className="text-xs font-bold text-foreground">
-                  {issuesQuery.isLoading
-                    ? "Loading live Lagos issues"
-                    : issues.length > 0
-                      ? `${issues.length} live issues synced`
-                      : "No live issues yet"}
-                </span>
-                <p className="mt-1 text-xs text-muted-foreground">
-                  Reports added by other users will appear here automatically.
-                </p>
-              </div>
+          {/* Bottom overlay: live issues pill (left) + heatmap toggle (right) */}
+          <div className="absolute bottom-4 right-4 left-4 z-20 flex items-center justify-between">
+            {/* Live issues pill — bottom left */}
+            {issuesQuery.isLoading || issuesQuery.isFetching ? (
+              <Skeleton className="h-8 w-28 rounded-full" />
+            ) : (
               <button
                 onClick={() => navigate("/mobile/map")}
-                className="flex h-11 w-11 items-center justify-center rounded-full border border-border/50 bg-background"
+                className="flex items-center gap-1.5 rounded-full border border-white/40 bg-background/90 px-3 py-1.5 shadow-lg backdrop-blur-md transition-all active:scale-95"
               >
-                <HugeiconsIcon icon={ArrowRight01Icon} className="h-5 w-5" />
+                <span className="relative flex h-2 w-2">
+                  <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" />
+                  <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-500" />
+                </span>
+                <span className="text-[11px] font-bold text-foreground">
+                  {issues.length} live {issues.length === 1 ? "issue" : "issues"}
+                </span>
               </button>
-            </div>
+            )}
+
+            {/* Heatmap toggle — bottom right */}
+            <button
+              onClick={() => {
+                setShowHeatmap((prev) => !prev);
+                toast.info(!showHeatmap ? "Heatmap enabled" : "Heatmap disabled");
+              }}
+              className={cn(
+                "flex h-10 w-10 shrink-0 items-center justify-center rounded-full border shadow-lg transition-all active:scale-90",
+                showHeatmap
+                  ? "border-primary bg-primary text-white"
+                  : "border-white/40 bg-background/90 text-foreground backdrop-blur-md",
+              )}
+            >
+              <HugeiconsIcon icon={TemperatureIcon} className="h-4 w-4" />
+            </button>
           </div>
         </div>
       </div>
 
-      <div className="space-y-3 px-4">
-        <div className="flex items-center justify-between">
-          <div>
-            <p className="text-[10px] font-bold text-muted-foreground">
-              Recent issue movement
-            </p>
-            <h2 className="mt-1 text-lg font-bold text-foreground">
-              What neighbors are reporting now
-            </h2>
-          </div>
+      {/* Recent reports */}
+      <div className="px-4">
+        <div className="flex items-center justify-between mb-3">
+          <h2 className="text-base font-bold text-foreground">Recent reports</h2>
           {leaderboard.spotlightEntry && (
-            <div className="inline-flex items-center gap-2 rounded-full border border-amber-200 bg-amber-50 px-3 py-2 text-[10px] font-bold text-amber-700">
-              <HugeiconsIcon icon={CheckmarkBadge01Icon} className="h-4 w-4" />
+            <div className="inline-flex items-center gap-1.5 rounded-full border border-amber-200 bg-amber-50 px-2.5 py-1.5 text-[10px] font-bold text-amber-700">
+              <HugeiconsIcon icon={CheckmarkBadge01Icon} className="h-3.5 w-3.5" />
               Score {leaderboard.spotlightEntry.score}
             </div>
           )}
         </div>
 
-        {recentIssues.map((issue) => (
-          <button
-            key={issue.id}
-            onClick={() => {
-              setSelectedIssue(issue);
-              setIsSheetOpen(true);
-            }}
-            className="w-full rounded-[1.75rem] border border-border/60 bg-white/90 p-4 text-left shadow-sm"
-          >
-            <div className="flex items-start justify-between gap-3">
-              <div className="min-w-0">
-                <p className="truncate text-base font-bold text-foreground">{issue.title}</p>
-                <p className="mt-1 text-sm text-muted-foreground">
-                  {issue.locationName}
-                </p>
+        <div className="divide-y divide-border/60">
+          {recentIssues.map((issue) => (
+            <button
+              key={issue.id}
+              onClick={() => {
+                setSelectedIssue(issue);
+                setIsSheetOpen(true);
+              }}
+              className="w-full py-3.5 text-left first:pt-0 last:pb-0"
+            >
+              <div className="flex items-start justify-between gap-3">
+                <div className="min-w-0">
+                  <p className="truncate text-sm font-semibold text-foreground">{issue.title}</p>
+                  <p className="mt-0.5 text-xs text-muted-foreground">
+                    {issue.locationName}
+                  </p>
+                </div>
+                <span className="shrink-0 rounded-full bg-muted px-2.5 py-1 text-[10px] font-bold text-muted-foreground">
+                  {issue.status.replace("_", " ")}
+                </span>
               </div>
-              <span className="rounded-full bg-muted px-3 py-1 text-[10px] font-bold text-muted-foreground">
-                {issue.status.replace("_", " ")}
-              </span>
-            </div>
-            <div className="mt-3 flex items-center gap-2 text-xs text-muted-foreground">
-              <span>{issue.createdAtLabel}</span>
-              <span>{issue.confirmationsCount} agree</span>
-              <span>{issue.disagreementsCount} disagree</span>
-              <span>{issue.photoUrls.length > 0 || issue.videoUrl ? "media attached" : "text only"}</span>
-            </div>
-          </button>
-        ))}
+              <div className="mt-2 flex items-center gap-2 text-[11px] text-muted-foreground">
+                <span>{issue.createdAtLabel}</span>
+                <span>·</span>
+                <span>{issue.confirmationsCount} agree</span>
+                <span>·</span>
+                <span>{issue.disagreementsCount} disagree</span>
+              </div>
+            </button>
+          ))}
+        </div>
       </div>
 
       <MobileIssueSheet
@@ -415,6 +378,13 @@ const MobileHome = () => {
         canReact={isAuthenticated}
         isSubmittingReaction={reactionMutation.isPending}
       />
+
+      <style>{`
+        @keyframes bounceX {
+          0%, 100% { transform: translateX(0); }
+          50% { transform: translateX(3px); }
+        }
+      `}</style>
     </div>
   );
 };

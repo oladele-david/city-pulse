@@ -148,7 +148,7 @@ const MobileAuth = () => {
   return (
     <div className="flex flex-col min-h-screen bg-background max-w-md mx-auto border-x shadow-2xl">
       {/* Header with gradient */}
-      <div className="bg-gradient-to-b from-primary via-primary/80 to-background px-5 pt-10 pb-10">
+      <div className="bg-gradient-to-b from-primary via-primary/80 to-background px-5 pt-7 pb-10">
         <div className="flex items-center justify-between">
           <Link
             to="/mobile"
@@ -159,11 +159,11 @@ const MobileAuth = () => {
           <img src="/assets/logo-inverse.svg" alt="CityPulse" className="h-7 w-auto" />
         </div>
 
-        <div className="mt-10">
+        <div className="mt-8">
           <h1 className="text-2xl font-semibold text-white">
             {activeTab === "login" ? "Welcome back" : "Create your account"}
           </h1>
-          <p className="mt-1 text-sm text-white/70">
+          <p className="mt-0 text-sm text-white/70">
             {activeTab === "login"
               ? "Sign in to report and track issues."
               : "Join CityPulse to start reporting."}
@@ -199,7 +199,7 @@ const MobileAuth = () => {
                       <FormControl>
                         <div className="relative">
                           <HugeiconsIcon icon={Mail02Icon} className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
-                          <Input {...field} type="email" placeholder="citizen@citypulse.ng" className="h-10 rounded-xl pl-9" />
+                          <Input {...field} type="email" placeholder="citizen@citypulse.ng" className="h-10 rounded-xl pl-9 text-xs placeholder:text-xs" />
                         </div>
                       </FormControl>
                       <FormMessage />
@@ -216,7 +216,7 @@ const MobileAuth = () => {
                       <FormControl>
                         <div className="relative">
                           <HugeiconsIcon icon={LockIcon} className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
-                          <Input {...field} type="password" placeholder="Enter your password" className="h-10 rounded-xl pl-9" />
+                          <Input {...field} type="password" placeholder="Enter your password" className="h-10 rounded-xl pl-9 text-xs placeholder:text-xs" />
                         </div>
                       </FormControl>
                       <FormMessage />
@@ -278,7 +278,7 @@ const MobileAuth = () => {
                       <FormControl>
                         <div className="relative">
                           <HugeiconsIcon icon={UserIcon} className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
-                          <Input {...field} placeholder="Aisha Bello" className="h-10 rounded-xl pl-9" />
+                          <Input {...field} placeholder="Aisha Bello" className="h-10 rounded-xl pl-9 text-xs placeholder:text-xs" />
                         </div>
                       </FormControl>
                       <FormMessage />
@@ -296,7 +296,7 @@ const MobileAuth = () => {
                         <FormControl>
                           <div className="relative">
                             <HugeiconsIcon icon={Mail02Icon} className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
-                            <Input {...field} type="email" placeholder="aisha@example.com" className="h-10 rounded-xl pl-9" />
+                            <Input {...field} type="email" placeholder="aisha@example.com" className="h-10 rounded-xl pl-9 text-xs placeholder:text-xs" />
                           </div>
                         </FormControl>
                         <FormMessage />
@@ -311,7 +311,7 @@ const MobileAuth = () => {
                       <FormItem>
                         <FormLabel className="text-xs">Street / Area</FormLabel>
                         <FormControl>
-                          <Input {...field} placeholder="Obafemi Awolowo Way" className="h-10 rounded-xl" />
+                          <Input {...field} placeholder="Obafemi Awolowo Way" className="h-10 rounded-xl text-xs placeholder:text-xs" />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -329,7 +329,7 @@ const MobileAuth = () => {
                         <FormControl>
                           <div className="relative">
                             <HugeiconsIcon icon={LockIcon} className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
-                            <Input {...field} type="password" placeholder="StrongPass123!" className="h-10 rounded-xl pl-9" />
+                            <Input {...field} type="password" placeholder="StrongPass123!" className="h-10 rounded-xl pl-9 text-xs placeholder:text-xs" />
                           </div>
                         </FormControl>
                         <FormMessage />
@@ -346,7 +346,7 @@ const MobileAuth = () => {
                         <FormControl>
                           <div className="relative">
                             <HugeiconsIcon icon={LockIcon} className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
-                            <Input {...field} type="password" placeholder="Repeat password" className="h-10 rounded-xl pl-9" />
+                            <Input {...field} type="password" placeholder="Repeat password" className="h-10 rounded-xl pl-9 text-xs placeholder:text-xs" />
                           </div>
                         </FormControl>
                         <FormMessage />
