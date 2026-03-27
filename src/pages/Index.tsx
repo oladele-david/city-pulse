@@ -13,9 +13,9 @@ import {
   SecurityLockIcon,
   UserIcon,
 } from "@hugeicons/core-free-icons";
+import GlobeDemo from "@/components/globe-demo";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Globe } from "@/components/ui/globe";
 import { cn } from "@/lib/utils";
 
 const Index = () => {
@@ -131,7 +131,7 @@ const Index = () => {
 
           {/* Globe — half visible, peeking from bottom */}
           <div className="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-[40%] w-[140vw] max-w-[900px] sm:w-[90vw] sm:max-w-[800px]">
-            <Globe />
+            <GlobeDemo />
           </div>
         </div>
       </section>
