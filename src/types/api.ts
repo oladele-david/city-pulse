@@ -284,3 +284,21 @@ export interface AdminLevyDashboard {
   failedPaymentCount: number;
   payerCount: number;
 }
+
+export interface AnalyticsOverview {
+  issues: {
+    total: number;
+    open: number;
+    inProgress: number;
+    resolved: number;
+  };
+  payments: {
+    total: number;
+    succeeded: number;
+    pending: number;
+  };
+  users: {
+    citizens: number;
+    admins: number;
+  };
+}

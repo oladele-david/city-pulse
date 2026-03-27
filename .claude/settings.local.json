@@ -3,7 +3,8 @@
     "allow": [
       "Bash(grep -r \"openai\\\\|anthropic\\\\|google.*ai\\\\|groq\" /c/Users/murewa/city-pulse/apps/api/src --include=*.ts --include=*.tsx -i)",
       "Bash(npx tsc:*)",
-      "Bash(npx vite:*)"
+      "Bash(npx vite:*)",
+      "Bash(npx eslint:*)"
     ]
   }
 }

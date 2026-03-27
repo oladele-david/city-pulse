@@ -353,4 +353,10 @@ export const api = {
       token,
     });
   },
+
+  getAnalyticsOverview(token: string) {
+    return request<import("@/types/api").AnalyticsOverview>("/analytics/overview", {
+      token,
+    });
+  },
 };
