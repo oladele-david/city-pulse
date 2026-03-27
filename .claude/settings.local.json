@@ -4,7 +4,12 @@
       "Bash(grep -r \"openai\\\\|anthropic\\\\|google.*ai\\\\|groq\" /c/Users/murewa/city-pulse/apps/api/src --include=*.ts --include=*.tsx -i)",
       "Bash(npx tsc:*)",
       "Bash(npx vite:*)",
-      "Bash(npx eslint:*)"
+      "Bash(npx eslint:*)",
+      "Bash(npm install:*)",
+      "Bash(node -e \"require\\(''cobe''\\); console.log\\(''cobe OK''\\)\")",
+      "Bash(node -e \"require\\(''motion''\\); console.log\\(''motion OK''\\)\")",
+      "Bash(npx tailwindcss:*)",
+      "Bash(node -e \"require\\(''three''\\); console.log\\(''three OK''\\)\")"
     ]
   }
 }

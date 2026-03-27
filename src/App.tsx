@@ -122,28 +122,31 @@ const App = () => (
               }
             />
 
-            {/* Core App Routes */}
-            <Route path="/*" element={
+            {/* Landing page — responsive, all screen sizes */}
+            <Route path="/" element={<Index />} />
+
+            {/* Legacy redirects */}
+            <Route path="/login" element={<Navigate to="/console/login" replace />} />
+            <Route path="/dashboard" element={<Navigate to="/console/dashboard" replace />} />
+            <Route path="/dashboard/map" element={<Navigate to="/console/dashboard/map" replace />} />
+            <Route path="/dashboard/issues" element={<Navigate to="/console/dashboard/issues" replace />} />
+            <Route path="/dashboard/analytics" element={<Navigate to="/console/dashboard/analytics" replace />} />
+            <Route path="/dashboard/settings" element={<Navigate to="/console/dashboard/settings" replace />} />
+
+            {/* Admin Console — desktop only */}
+            <Route path="/console/*" element={
               <>
-                {/* Desktop View */}
                 <div className="hidden lg:block">
                   <Routes>
-                    <Route path="/" element={<Index />} />
-                    <Route path="/login" element={<Navigate to="/console/login" replace />} />
-                    <Route path="/dashboard" element={<Navigate to="/console/dashboard" replace />} />
-                    <Route path="/dashboard/map" element={<Navigate to="/console/dashboard/map" replace />} />
-                    <Route path="/dashboard/issues" element={<Navigate to="/console/dashboard/issues" replace />} />
-                    <Route path="/dashboard/analytics" element={<Navigate to="/console/dashboard/analytics" replace />} />
-                    <Route path="/dashboard/settings" element={<Navigate to="/console/dashboard/settings" replace />} />
-                    <Route path="/console/login" element={<PublicOnlyRoute><LoginPage /></PublicOnlyRoute>} />
-                    <Route path="/console/dashboard" element={<ProtectedRoute><DashboardLayout><Dashboard /></DashboardLayout></ProtectedRoute>} />
-                    <Route path="/console/dashboard/map" element={<ProtectedRoute><DashboardLayout><LiveMap /></DashboardLayout></ProtectedRoute>} />
-                    <Route path="/console/dashboard/issues" element={<ProtectedRoute><DashboardLayout><Issues /></DashboardLayout></ProtectedRoute>} />
-                    <Route path="/console/dashboard/analytics" element={<ProtectedRoute><DashboardLayout><Analytics /></DashboardLayout></ProtectedRoute>} />
-                    <Route path="/console/dashboard/levies" element={<ProtectedRoute><DashboardLayout><Levies /></DashboardLayout></ProtectedRoute>} />
-                    <Route path="/console/dashboard/levies/:levyId" element={<ProtectedRoute><DashboardLayout><LevyDetail /></DashboardLayout></ProtectedRoute>} />
-                    <Route path="/console/dashboard/settings" element={<ProtectedRoute><DashboardLayout><Settings /></DashboardLayout></ProtectedRoute>} />
-                    <Route path="/console/dashboard/*" element={
+                    <Route path="login" element={<PublicOnlyRoute><LoginPage /></PublicOnlyRoute>} />
+                    <Route path="dashboard" element={<ProtectedRoute><DashboardLayout><Dashboard /></DashboardLayout></ProtectedRoute>} />
+                    <Route path="dashboard/map" element={<ProtectedRoute><DashboardLayout><LiveMap /></DashboardLayout></ProtectedRoute>} />
+                    <Route path="dashboard/issues" element={<ProtectedRoute><DashboardLayout><Issues /></DashboardLayout></ProtectedRoute>} />
+                    <Route path="dashboard/analytics" element={<ProtectedRoute><DashboardLayout><Analytics /></DashboardLayout></ProtectedRoute>} />
+                    <Route path="dashboard/levies" element={<ProtectedRoute><DashboardLayout><Levies /></DashboardLayout></ProtectedRoute>} />
+                    <Route path="dashboard/levies/:levyId" element={<ProtectedRoute><DashboardLayout><LevyDetail /></DashboardLayout></ProtectedRoute>} />
+                    <Route path="dashboard/settings" element={<ProtectedRoute><DashboardLayout><Settings /></DashboardLayout></ProtectedRoute>} />
+                    <Route path="dashboard/*" element={
                       <ProtectedRoute>
                         <DashboardLayout>
                           <Routes>
@@ -155,13 +158,13 @@ const App = () => (
                     <Route path="*" element={<NotFound />} />
                   </Routes>
                 </div>
-
-                {/* Mobile Block View for Admin/Dashboard (Except /mobile) */}
                 <div className="lg:hidden">
                   <MobileBlocker />
                 </div>
               </>
             } />
+
+            <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>
       </TooltipProvider>

@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import Map, { Layer, MapRef, Marker, Source } from "react-map-gl/mapbox";
+import Map, { Layer, MapRef, Marker, Source, type LayerProps } from "react-map-gl/mapbox";
 import "mapbox-gl/dist/mapbox-gl.css";
 import { HugeiconsIcon } from "@hugeicons/react";
 import {
@@ -29,7 +29,7 @@ import { cn } from "@/lib/utils";
 
 const MAPBOX_TOKEN = import.meta.env.VITE_MAPBOX_TOKEN;
 
-const heatmapLayer = {
+const heatmapLayer: LayerProps = {
   id: "heatmap-layer",
   type: "heatmap",
   paint: {
@@ -141,29 +141,6 @@ const MobileMap = () => {
     <div className="relative h-full w-full overflow-hidden bg-background">
       <div className="pointer-events-none fixed left-0 right-0 top-6 z-40 px-4">
         <div className="pointer-events-auto mx-auto flex max-w-[380px] flex-col gap-3">
-          {!location.hasPrompted && (
-            <div className="rounded-2xl border border-border/50 bg-background/95 p-4 shadow-xl backdrop-blur-md">
-              <p className="text-sm font-bold text-foreground">Center the map around you</p>
-              <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
-                Allow location to jump to nearby Lagos issues. If you skip, the map stays centered on Lagos.
-              </p>
-              <div className="mt-3 flex gap-2">
-                <button
-                  onClick={location.requestLocation}
-                  className="rounded-full bg-primary px-4 py-2 text-[11px] font-bold text-white"
-                >
-                  Use My Location
-                </button>
-                <button
-                  onClick={location.dismissPrompt}
-                  className="rounded-full border border-border/60 px-4 py-2 text-[11px] font-bold text-foreground"
-                >
-                  Not Now
-                </button>
-              </div>
-            </div>
-          )}
-
           {location.locationErrorMessage && (
             <div className="rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-xs font-medium text-amber-900 shadow-lg">
               {location.locationErrorMessage}
