@@ -134,7 +134,7 @@ const MobileHome = () => {
               <span className="text-[12px] font-medium text-muted-foreground">
                 {isAuthenticated ? "Welcome back," : "Citizen access"}
               </span>
-              <h1 className="mt-1 text-2xl font-bold tracking-tight text-foreground">
+              <h1 className="mt-1 text-2xl font-bold text-foreground">
                 {session?.user.fullName?.split(" ")[0] ?? "CityPulse"}
               </h1>
               <p className="mt-2 max-w-[16rem] text-sm leading-6 text-muted-foreground">
@@ -153,7 +153,7 @@ const MobileHome = () => {
             ) : (
               <button
                 onClick={() => navigate("/mobile/auth")}
-                className="rounded-full border border-border/60 bg-background px-4 py-2 text-[11px] font-bold uppercase tracking-[0.18em] text-primary shadow-sm"
+                className="rounded-full border border-border/60 bg-background px-4 py-2 text-[11px] font-bold text-primary shadow-sm"
               >
                 Sign In
               </button>
@@ -162,7 +162,7 @@ const MobileHome = () => {
 
           <div className="mt-5 grid grid-cols-2 gap-3">
             <div className="rounded-[1.5rem] bg-primary px-4 py-4 text-white">
-              <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-white/70">
+              <p className="text-[10px] font-bold text-white/70">
                 Live issues
               </p>
               <p className="mt-2 text-2xl font-bold">{issues.length}</p>
@@ -172,13 +172,13 @@ const MobileHome = () => {
               <div className="flex items-start justify-between gap-3">
                 <div className="flex items-center gap-2">
                   <HugeiconsIcon icon={Award01Icon} className="h-4 w-4 text-amber-700" />
-                  <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-amber-700">
+                  <p className="text-[10px] font-bold text-amber-700">
                     Community rank
                   </p>
                 </div>
                 <button
                   onClick={() => navigate("/mobile/leaderboard")}
-                  className="rounded-full border border-amber-200 bg-white/70 px-3 py-1 text-[9px] font-bold uppercase tracking-widest text-amber-700"
+                  className="rounded-full border border-amber-200 bg-white/70 px-3 py-1 text-[9px] font-bold text-amber-700"
                 >
                   See More
                 </button>
@@ -198,7 +198,7 @@ const MobileHome = () => {
                 onClick={() => navigate("/mobile/levies")}
                 className="rounded-[1.25rem] border border-border/60 bg-background px-4 py-3 text-left shadow-sm"
               >
-                <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-muted-foreground">
+                <p className="text-[10px] font-bold text-muted-foreground">
                   Levies
                 </p>
                 <p className="mt-2 text-sm font-semibold text-foreground">
@@ -209,7 +209,7 @@ const MobileHome = () => {
                 onClick={() => navigate("/mobile/payments")}
                 className="rounded-[1.25rem] border border-border/60 bg-background px-4 py-3 text-left shadow-sm"
               >
-                <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-muted-foreground">
+                <p className="text-[10px] font-bold text-muted-foreground">
                   Payments
                 </p>
                 <p className="mt-2 text-sm font-semibold text-foreground">
@@ -233,13 +233,13 @@ const MobileHome = () => {
             <div className="mt-3 flex gap-2">
               <button
                 onClick={location.requestLocation}
-                className="rounded-full bg-primary px-4 py-2 text-[11px] font-bold uppercase tracking-[0.16em] text-white"
+                className="rounded-full bg-primary px-4 py-2 text-[11px] font-bold text-white"
               >
                 Use My Location
               </button>
               <button
                 onClick={location.dismissPrompt}
-                className="rounded-full border border-border/60 px-4 py-2 text-[11px] font-bold uppercase tracking-[0.16em] text-foreground"
+                className="rounded-full border border-border/60 px-4 py-2 text-[11px] font-bold text-foreground"
               >
                 Not Now
               </button>
@@ -335,7 +335,7 @@ const MobileHome = () => {
           <div className="absolute bottom-6 left-6 right-6 rounded-2xl border border-white/20 bg-background/90 p-4 shadow-xl backdrop-blur-md">
             <div className="flex items-center justify-between gap-4">
               <div>
-                <span className="text-xs font-bold uppercase tracking-wide text-foreground">
+                <span className="text-xs font-bold text-foreground">
                   {issuesQuery.isLoading
                     ? "Loading live Lagos issues"
                     : issues.length > 0
@@ -360,15 +360,15 @@ const MobileHome = () => {
       <div className="space-y-3 px-6">
         <div className="flex items-center justify-between">
           <div>
-            <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground">
+            <p className="text-[10px] font-bold text-muted-foreground">
               Recent issue movement
             </p>
-            <h2 className="mt-1 text-lg font-bold tracking-tight text-foreground">
+            <h2 className="mt-1 text-lg font-bold text-foreground">
               What neighbors are reporting now
             </h2>
           </div>
           {leaderboard.spotlightEntry && (
-            <div className="inline-flex items-center gap-2 rounded-full border border-amber-200 bg-amber-50 px-3 py-2 text-[10px] font-bold uppercase tracking-widest text-amber-700">
+            <div className="inline-flex items-center gap-2 rounded-full border border-amber-200 bg-amber-50 px-3 py-2 text-[10px] font-bold text-amber-700">
               <HugeiconsIcon icon={CheckmarkBadge01Icon} className="h-4 w-4" />
               Score {leaderboard.spotlightEntry.score}
             </div>
@@ -391,7 +391,7 @@ const MobileHome = () => {
                   {issue.locationName}
                 </p>
               </div>
-              <span className="rounded-full bg-muted px-3 py-1 text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
+              <span className="rounded-full bg-muted px-3 py-1 text-[10px] font-bold text-muted-foreground">
                 {issue.status.replace("_", " ")}
               </span>
             </div>

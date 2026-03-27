@@ -66,7 +66,7 @@ const PaymentCallback = () => {
                 }`}
               >
                 Current status:{" "}
-                <span className="font-semibold uppercase">
+                <span className="font-semibold capitalize">
                   {paymentQuery.data?.status ?? "unknown"}
                 </span>
               </div>

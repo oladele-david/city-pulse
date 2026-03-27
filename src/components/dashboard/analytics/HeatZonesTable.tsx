@@ -33,10 +33,10 @@ export const HeatZonesTable = ({ className }: HeatZonesTableProps) => {
                     <table className="w-full">
                         <thead className="sticky top-0 bg-card z-10">
                             <tr className="border-b">
-                                <th className="text-left py-3 px-2 text-xs font-semibold text-muted-foreground uppercase tracking-wider">Zone</th>
-                                <th className="text-center py-3 px-2 text-xs font-semibold text-muted-foreground uppercase tracking-wider">Issues</th>
-                                <th className="text-center py-3 px-2 text-xs font-semibold text-muted-foreground uppercase tracking-wider">Avg Time</th>
-                                <th className="text-center py-3 px-2 text-xs font-semibold text-muted-foreground uppercase tracking-wider">Trend</th>
+                                <th className="text-left py-3 px-2 text-xs font-semibold text-muted-foreground">Zone</th>
+                                <th className="text-center py-3 px-2 text-xs font-semibold text-muted-foreground">Issues</th>
+                                <th className="text-center py-3 px-2 text-xs font-semibold text-muted-foreground">Avg Time</th>
+                                <th className="text-center py-3 px-2 text-xs font-semibold text-muted-foreground">Trend</th>
                             </tr>
                         </thead>
                         <tbody>

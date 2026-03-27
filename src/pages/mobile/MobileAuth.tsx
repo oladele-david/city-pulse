@@ -187,12 +187,12 @@ const MobileAuth = () => {
             </div>
 
             <div className="mt-5 space-y-3">
-              <div className="inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-2 text-[11px] font-bold uppercase tracking-[0.2em]">
+              <div className="inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-2 text-[11px] font-bold">
                 <HugeiconsIcon icon={LocationUser03Icon} className="h-4 w-4" />
                 Citizen Access
               </div>
               <div>
-                <h1 className="text-3xl font-semibold tracking-tight">
+                <h1 className="text-3xl font-semibold">
                   Sign in to report and follow issues in your area.
                 </h1>
                 <p className="mt-2 text-sm leading-6 text-primary-foreground/75">

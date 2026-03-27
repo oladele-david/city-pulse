@@ -92,7 +92,7 @@ const LevyDetail = () => {
   return (
     <div className="space-y-6 animate-in fade-in duration-500">
       <div className="flex flex-col gap-2">
-        <h1 className="text-3xl font-bold tracking-tight">{levy.title}</h1>
+        <h1 className="text-3xl font-bold">{levy.title}</h1>
         <p className="text-muted-foreground">
           {levy.status} levy for{" "}
           {levy.targetType === "community"
@@ -165,7 +165,7 @@ const LevyDetail = () => {
               </div>
               <div className="text-right">
                 <div className="font-semibold">NGN {payment.amount.toLocaleString()}</div>
-                <div className="text-sm uppercase text-muted-foreground">
+                <div className="text-sm text-muted-foreground">
                   {payment.status}
                 </div>
               </div>

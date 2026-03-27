@@ -58,7 +58,7 @@ const MobilePaymentReceipt = () => {
           <ArrowLeft className="mr-2 h-4 w-4" />
           Back
         </Button>
-        <Badge variant="outline" className={`rounded-full px-3 py-1 uppercase tracking-[0.18em] ${statusTone}`}>
+        <Badge variant="outline" className={`rounded-full px-3 py-1 ${statusTone}`}>
           {payment.status}
         </Badge>
       </div>
@@ -78,13 +78,13 @@ const MobilePaymentReceipt = () => {
           </div>
           <div className="grid grid-cols-2 gap-3">
             <div className="rounded-2xl bg-slate-50 p-4">
-              <div className="text-xs uppercase tracking-[0.18em] text-muted-foreground">
+              <div className="text-xs text-muted-foreground">
                 Amount
               </div>
               <div className="mt-2 font-semibold">NGN {payment.amount.toLocaleString()}</div>
             </div>
             <div className="rounded-2xl bg-slate-50 p-4">
-              <div className="text-xs uppercase tracking-[0.18em] text-muted-foreground">
+              <div className="text-xs text-muted-foreground">
                 Date
               </div>
               <div className="mt-2 font-semibold">

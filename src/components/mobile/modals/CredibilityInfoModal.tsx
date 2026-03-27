@@ -28,7 +28,7 @@ export const CredibilityInfoModal = ({ isOpen, onClose }: CredibilityInfoModalPr
                         <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
                             <HugeiconsIcon icon={CheckmarkBadge01Icon} className="w-5 h-5 text-primary" />
                         </div>
-                        <DialogTitle className="text-lg font-bold tracking-tight">Credibility System</DialogTitle>
+                        <DialogTitle className="text-lg font-bold">Credibility System</DialogTitle>
                     </div>
                     <DialogDescription className="text-[13px] leading-relaxed text-muted-foreground font-medium">
                         CityPulse uses a trust-based algorithm to verify civic reports. Your credibility level determines the weight of your reports.

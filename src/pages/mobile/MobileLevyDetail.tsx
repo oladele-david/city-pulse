@@ -52,7 +52,7 @@ const MobileLevyDetail = () => {
       <Card className="rounded-[2rem] border-white/70 shadow-sm">
         <CardHeader className="space-y-3">
           <div className="flex items-center justify-between gap-3">
-            <Badge variant="outline" className="rounded-full border-amber-200 bg-amber-50 px-3 py-1 uppercase tracking-[0.18em] text-amber-800">
+            <Badge variant="outline" className="rounded-full border-amber-200 bg-amber-50 px-3 py-1 text-amber-800">
               {levy.targetType}
             </Badge>
             <Button
@@ -70,7 +70,7 @@ const MobileLevyDetail = () => {
         <CardContent className="space-y-4">
           <div className="grid grid-cols-2 gap-3">
             <div className="rounded-2xl bg-slate-50 p-4">
-              <div className="text-xs uppercase tracking-[0.18em] text-muted-foreground">
+              <div className="text-xs text-muted-foreground">
                 Amount
               </div>
               <div className="mt-2 text-xl font-semibold">
@@ -78,7 +78,7 @@ const MobileLevyDetail = () => {
               </div>
             </div>
             <div className="rounded-2xl bg-slate-50 p-4">
-              <div className="text-xs uppercase tracking-[0.18em] text-muted-foreground">
+              <div className="text-xs text-muted-foreground">
                 Due Date
               </div>
               <div className="mt-2 text-lg font-semibold">
@@ -105,7 +105,7 @@ const MobileLevyDetail = () => {
               </div>
               <Badge
                 variant="outline"
-                className="shrink-0 rounded-full border-sky-200 bg-white/80 px-3 py-1 uppercase tracking-[0.18em] text-sky-700"
+                className="shrink-0 rounded-full border-sky-200 bg-white/80 px-3 py-1 text-sky-700"
               >
                 Demo Only
               </Badge>
@@ -113,13 +113,13 @@ const MobileLevyDetail = () => {
 
             <div className="mt-4 grid gap-3 sm:grid-cols-2">
               <div className="rounded-2xl bg-white/80 p-3">
-                <div className="text-[11px] uppercase tracking-[0.18em] text-muted-foreground">
+                <div className="text-[11px] text-muted-foreground">
                   Card Type
                 </div>
                 <div className="mt-1 font-semibold text-slate-900">Mastercard</div>
               </div>
               <div className="rounded-2xl bg-white/80 p-3">
-                <div className="text-[11px] uppercase tracking-[0.18em] text-muted-foreground">
+                <div className="text-[11px] text-muted-foreground">
                   Card Number
                 </div>
                 <div className="mt-1 break-all font-semibold text-slate-900">
@@ -127,25 +127,25 @@ const MobileLevyDetail = () => {
                 </div>
               </div>
               <div className="rounded-2xl bg-white/80 p-3">
-                <div className="text-[11px] uppercase tracking-[0.18em] text-muted-foreground">
+                <div className="text-[11px] text-muted-foreground">
                   Expiry
                 </div>
                 <div className="mt-1 font-semibold text-slate-900">01/39</div>
               </div>
               <div className="rounded-2xl bg-white/80 p-3">
-                <div className="text-[11px] uppercase tracking-[0.18em] text-muted-foreground">
+                <div className="text-[11px] text-muted-foreground">
                   CVV
                 </div>
                 <div className="mt-1 font-semibold text-slate-900">100</div>
               </div>
               <div className="rounded-2xl bg-white/80 p-3">
-                <div className="text-[11px] uppercase tracking-[0.18em] text-muted-foreground">
+                <div className="text-[11px] text-muted-foreground">
                   PIN
                 </div>
                 <div className="mt-1 font-semibold text-slate-900">1111</div>
               </div>
               <div className="rounded-2xl bg-white/80 p-3">
-                <div className="text-[11px] uppercase tracking-[0.18em] text-muted-foreground">
+                <div className="text-[11px] text-muted-foreground">
                   OTP
                 </div>
                 <div className="mt-1 font-semibold text-slate-900">123456</div>

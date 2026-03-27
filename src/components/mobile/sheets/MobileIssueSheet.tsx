@@ -58,7 +58,7 @@ export const MobileIssueSheet = ({
           <div className="mb-2 flex items-center gap-2">
             <span
               className={cn(
-                "rounded-full border px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider",
+                "rounded-full border px-2 py-0.5 text-[10px] font-bold",
                 issue.severity === "high"
                   ? "border-red-200 bg-red-50 text-red-700"
                   : issue.severity === "medium"
@@ -81,7 +81,7 @@ export const MobileIssueSheet = ({
         <div className="space-y-6 p-6">
           <div className="grid grid-cols-2 gap-4">
             <div className="rounded-2xl border border-border/50 bg-muted/30 p-3">
-              <p className="mb-1 text-[10px] font-bold uppercase tracking-tight text-muted-foreground">
+              <p className="mb-1 text-[10px] font-bold text-muted-foreground">
                 Status
               </p>
               <p className="text-sm font-bold capitalize">
@@ -89,7 +89,7 @@ export const MobileIssueSheet = ({
               </p>
             </div>
             <div className="rounded-2xl border border-border/50 bg-muted/30 p-3">
-              <p className="mb-1 text-[10px] font-bold uppercase tracking-tight text-muted-foreground">
+              <p className="mb-1 text-[10px] font-bold text-muted-foreground">
                 Community Signals
               </p>
               <p className="text-sm font-bold">{issue.reportsCount} reports</p>
@@ -97,7 +97,7 @@ export const MobileIssueSheet = ({
           </div>
 
           <div className="rounded-2xl border border-border/50 bg-muted/30 p-3">
-            <p className="mb-1 text-[10px] font-bold uppercase tracking-tight text-muted-foreground">
+            <p className="mb-1 text-[10px] font-bold text-muted-foreground">
               Created
             </p>
             <p className="text-sm font-bold text-foreground">{issue.createdAtLabel}</p>
@@ -106,7 +106,7 @@ export const MobileIssueSheet = ({
 
           <div className="grid grid-cols-3 gap-3">
             <div className="rounded-2xl border border-emerald-100 bg-emerald-50 p-3">
-              <p className="text-[10px] font-bold uppercase tracking-widest text-emerald-700">
+              <p className="text-[10px] font-bold text-emerald-700">
                 Agree
               </p>
               <p className="mt-1 text-lg font-bold text-emerald-900">
@@ -114,7 +114,7 @@ export const MobileIssueSheet = ({
               </p>
             </div>
             <div className="rounded-2xl border border-rose-100 bg-rose-50 p-3">
-              <p className="text-[10px] font-bold uppercase tracking-widest text-rose-700">
+              <p className="text-[10px] font-bold text-rose-700">
                 Disagree
               </p>
               <p className="mt-1 text-lg font-bold text-rose-900">
@@ -122,7 +122,7 @@ export const MobileIssueSheet = ({
               </p>
             </div>
             <div className="rounded-2xl border border-sky-100 bg-sky-50 p-3">
-              <p className="text-[10px] font-bold uppercase tracking-widest text-sky-700">
+              <p className="text-[10px] font-bold text-sky-700">
                 Fixed
               </p>
               <p className="mt-1 text-lg font-bold text-sky-900">
@@ -150,7 +150,7 @@ export const MobileIssueSheet = ({
 
           {(issue.photoUrls.length > 0 || issue.videoUrl) && (
             <div className="space-y-3">
-              <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground">
+              <p className="text-[10px] font-bold text-muted-foreground">
                 Evidence
               </p>
               {issue.photoUrls.length > 0 && (
@@ -202,7 +202,7 @@ export const MobileIssueSheet = ({
                 </p>
                 <div
                   className={cn(
-                    "inline-flex rounded-full border px-3 py-1 text-[10px] font-bold uppercase tracking-widest",
+                    "inline-flex rounded-full border px-3 py-1 text-[10px] font-bold",
                     userReaction === "confirm"
                       ? "border-emerald-200 bg-emerald-50 text-emerald-700"
                       : userReaction === "disagree"

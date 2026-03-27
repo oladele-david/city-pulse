@@ -150,13 +150,13 @@ const MobileMap = () => {
               <div className="mt-3 flex gap-2">
                 <button
                   onClick={location.requestLocation}
-                  className="rounded-full bg-primary px-4 py-2 text-[11px] font-bold uppercase tracking-[0.16em] text-white"
+                  className="rounded-full bg-primary px-4 py-2 text-[11px] font-bold text-white"
                 >
                   Use My Location
                 </button>
                 <button
                   onClick={location.dismissPrompt}
-                  className="rounded-full border border-border/60 px-4 py-2 text-[11px] font-bold uppercase tracking-[0.16em] text-foreground"
+                  className="rounded-full border border-border/60 px-4 py-2 text-[11px] font-bold text-foreground"
                 >
                   Not Now
                 </button>

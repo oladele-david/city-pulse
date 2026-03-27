@@ -24,7 +24,7 @@ export const CategoryStep = ({
     return (
         <div className="flex flex-col gap-6 px-4 pt-4 animate-in fade-in slide-in-from-bottom-4 duration-500">
             <div className="space-y-1">
-                <h2 className="text-2xl font-bold tracking-tight text-foreground">What's the issue?</h2>
+                <h2 className="text-2xl font-bold text-foreground">What's the issue?</h2>
                 <p className="text-sm text-muted-foreground font-medium">Select a category that best describes the problem.</p>
             </div>
 

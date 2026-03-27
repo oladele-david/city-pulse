@@ -48,10 +48,10 @@ const Index = () => {
             <div className="flex items-center gap-3">
               <img src="/assets/logo.svg" alt="CityPulse" className="h-10 w-auto" />
               <div>
-                <p className="text-[11px] font-bold uppercase tracking-[0.22em] text-primary/70">
+                <p className="text-[11px] font-bold text-primary/70">
                   Lagos Hackathon Demo
                 </p>
-                <h1 className="text-lg font-semibold tracking-tight text-foreground">
+                <h1 className="text-lg font-semibold text-foreground">
                   CityPulse
                 </h1>
               </div>
@@ -71,13 +71,13 @@ const Index = () => {
         <main className="grid flex-1 gap-5 py-5 lg:grid-cols-[1.05fr_0.95fr]">
           <section className="space-y-5">
             <div className="rounded-[32px] border border-border/60 bg-white p-6 shadow-sm lg:p-7">
-              <div className="mb-5 inline-flex items-center gap-2 rounded-full bg-primary/5 px-3 py-2 text-[11px] font-bold uppercase tracking-[0.2em] text-primary">
+              <div className="mb-5 inline-flex items-center gap-2 rounded-full bg-primary/5 px-3 py-2 text-[11px] font-bold text-primary">
                 <HugeiconsIcon icon={LocationUser03Icon} className="h-4 w-4" />
                 Citizen Entry
               </div>
 
               <div className="space-y-4">
-                <h2 className="max-w-2xl text-4xl font-semibold tracking-tight text-foreground lg:text-5xl">
+                <h2 className="max-w-2xl text-4xl font-semibold text-foreground lg:text-5xl">
                   A calmer way for residents to raise complaints and local concerns.
                 </h2>
                 <p className="max-w-2xl text-base leading-7 text-muted-foreground lg:text-lg">
@@ -130,7 +130,7 @@ const Index = () => {
                       <HugeiconsIcon icon={card.icon} className="h-5 w-5" />
                     </div>
                     <div>
-                      <h3 className="text-base font-semibold tracking-tight text-foreground">
+                      <h3 className="text-base font-semibold text-foreground">
                         {card.title}
                       </h3>
                       <p className="mt-2 text-sm leading-6 text-muted-foreground">
@@ -147,10 +147,10 @@ const Index = () => {
             <div className="rounded-[32px] border border-border/60 bg-primary p-5 text-primary-foreground shadow-sm lg:p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-[11px] font-bold uppercase tracking-[0.22em] text-primary-foreground/65">
+                  <p className="text-[11px] font-bold text-primary-foreground/65">
                     CityPulse Overview
                   </p>
-                  <h3 className="mt-2 text-2xl font-semibold tracking-tight">
+                  <h3 className="mt-2 text-2xl font-semibold">
                     Public reporting with clear routing.
                   </h3>
                 </div>
@@ -166,7 +166,7 @@ const Index = () => {
                       <div className="h-2.5 w-2.5 rounded-full bg-emerald-400" />
                       <div className="absolute inset-0 h-2.5 w-2.5 rounded-full bg-emerald-300 animate-ping" />
                     </div>
-                    <span className="text-xs font-bold uppercase tracking-[0.18em]">
+                    <span className="text-xs font-bold">
                       Citizen Flow Active
                     </span>
                   </div>
@@ -181,10 +181,10 @@ const Index = () => {
                       key={item.label}
                       className="rounded-[22px] bg-white px-4 py-4 text-slate-900"
                     >
-                      <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-500">
+                      <p className="text-[10px] font-bold text-slate-500">
                         {item.label}
                       </p>
-                      <p className="mt-2 text-sm font-semibold tracking-tight text-slate-900">
+                      <p className="mt-2 text-sm font-semibold text-slate-900">
                         {item.value}
                       </p>
                     </div>
@@ -199,10 +199,10 @@ const Index = () => {
                   <HugeiconsIcon icon={CustomerSupportIcon} className="h-5 w-5" />
                 </div>
                 <div>
-                  <p className="text-[11px] font-bold uppercase tracking-[0.22em] text-muted-foreground">
+                  <p className="text-[11px] font-bold text-muted-foreground">
                     What Citizens Can Raise
                   </p>
-                  <h3 className="text-lg font-semibold tracking-tight text-foreground">
+                  <h3 className="text-lg font-semibold text-foreground">
                     Broader than infrastructure-only complaints
                   </h3>
                 </div>

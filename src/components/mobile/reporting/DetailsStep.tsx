@@ -86,7 +86,7 @@ export const DetailsStep = ({
   return (
     <div className="flex flex-col gap-6 px-6 pt-4 animate-in fade-in slide-in-from-right-4 duration-500">
       <div className="space-y-1">
-        <h2 className="text-2xl font-bold tracking-tight text-foreground">
+        <h2 className="text-2xl font-bold text-foreground">
           Add details
         </h2>
         <p className="text-sm font-medium text-muted-foreground">
@@ -150,7 +150,7 @@ export const DetailsStep = ({
         {imagePreviews.length > 0 && (
           <div className="space-y-2">
             <div className="flex items-center justify-between px-1">
-              <span className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
+              <span className="text-[10px] font-bold text-muted-foreground">
                 Images
               </span>
               <button
@@ -162,7 +162,7 @@ export const DetailsStep = ({
                     imageInputRef.current.value = "";
                   }
                 }}
-                className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground"
+                className="text-[10px] font-bold text-muted-foreground"
               >
                 Clear
               </button>
@@ -187,7 +187,7 @@ export const DetailsStep = ({
         {videoPreview && (
           <div className="space-y-2">
             <div className="flex items-center justify-between px-1">
-              <span className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
+              <span className="text-[10px] font-bold text-muted-foreground">
                 Video
               </span>
               <button
@@ -199,7 +199,7 @@ export const DetailsStep = ({
                     videoInputRef.current.value = "";
                   }
                 }}
-                className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground"
+                className="text-[10px] font-bold text-muted-foreground"
               >
                 Remove
               </button>
@@ -217,7 +217,7 @@ export const DetailsStep = ({
         <div className="space-y-2">
           <div className="mb-1 flex items-center gap-2 px-1">
             <HugeiconsIcon icon={Note01Icon} className="h-4 w-4 text-primary" />
-            <span className="text-xs font-bold uppercase tracking-widest text-muted-foreground">
+            <span className="text-xs font-bold text-muted-foreground">
               Additional Notes
             </span>
           </div>
@@ -233,7 +233,7 @@ export const DetailsStep = ({
             </span>
             <span
               className={cn(
-                "text-[10px] font-bold uppercase tracking-widest",
+                "text-[10px] font-bold",
                 note.length >= 200 ? "text-amber-500" : "text-muted-foreground/40",
               )}
             >
@@ -244,7 +244,7 @@ export const DetailsStep = ({
 
         <div className="space-y-3">
           <div className="flex items-center justify-between px-1">
-            <span className="text-xs font-bold uppercase tracking-widest text-muted-foreground">
+            <span className="text-xs font-bold text-muted-foreground">
               Severity
             </span>
             <span className="text-[10px] text-muted-foreground">

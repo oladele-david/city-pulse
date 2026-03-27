@@ -57,7 +57,7 @@ const MobilePayments = () => {
   return (
     <div className="min-h-full space-y-5 bg-[linear-gradient(180deg,#f8fafc_0%,#ffffff_100%)] px-4 pb-[calc(9rem+env(safe-area-inset-bottom))] pt-6">
       <div>
-        <h1 className="text-2xl font-bold tracking-tight">Payments</h1>
+        <h1 className="text-2xl font-bold">Payments</h1>
         <p className="mt-2 text-sm text-muted-foreground">
           Track payment outcomes and open receipts after backend confirmation.
         </p>
@@ -67,7 +67,7 @@ const MobilePayments = () => {
         <CardContent className="grid grid-cols-3 gap-3 p-5">
           {groupedPayments.map((group) => (
             <div key={group.key} className="rounded-3xl border border-white/10 bg-white/10 px-3 py-4 text-center">
-              <div className="text-xs uppercase tracking-[0.18em] text-white/60 [text-wrap:balance]">
+              <div className="text-xs text-white/60 [text-wrap:balance]">
                 {group.title}
               </div>
               <div className="mt-2 text-2xl font-semibold">{group.items.length}</div>
@@ -111,7 +111,7 @@ const MobilePayments = () => {
                         </div>
                         <Badge
                           variant="outline"
-                          className={`w-fit shrink-0 rounded-full px-3 py-1 text-[11px] uppercase tracking-[0.18em] ${group.accent}`}
+                          className={`w-fit shrink-0 rounded-full px-3 py-1 text-[11px] ${group.accent}`}
                         >
                           {payment.status}
                         </Badge>
@@ -120,7 +120,7 @@ const MobilePayments = () => {
                     <CardContent className="space-y-4">
                       <div className="grid gap-3 rounded-2xl bg-slate-50 px-4 py-3">
                         <div className="min-w-0">
-                          <div className="text-xs uppercase tracking-[0.18em] text-muted-foreground">
+                          <div className="text-xs text-muted-foreground">
                             Amount
                           </div>
                           <div className="mt-2 text-lg font-semibold">

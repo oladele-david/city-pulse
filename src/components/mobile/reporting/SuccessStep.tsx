@@ -19,7 +19,7 @@ export const SuccessStep = ({ onReset, issueId, locationLabel }: SuccessStepProp
             </div>
 
             <div className="space-y-2 mb-12">
-                <h2 className="text-2xl font-bold tracking-tight text-foreground">Report Submitted!</h2>
+                <h2 className="text-2xl font-bold text-foreground">Report Submitted!</h2>
                 <p className="text-muted-foreground font-medium leading-relaxed px-4">
                     Your Lagos report is now in the live system and ready for operator review.
                 </p>
@@ -32,18 +32,18 @@ export const SuccessStep = ({ onReset, issueId, locationLabel }: SuccessStepProp
                             <span className="text-sm font-bold text-primary">+3</span>
                         </div>
                         <div className="text-left">
-                            <p className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Score Preview</p>
+                            <p className="text-xs font-bold text-muted-foreground">Score Preview</p>
                             <p className="text-sm font-semibold text-foreground">{issueId ? `Issue ${issueId.slice(0, 8).toUpperCase()}` : "Community Points"}</p>
                         </div>
                     </div>
-                    <span className="text-[10px] font-bold text-accent bg-accent/5 px-2 py-1 rounded-full uppercase tracking-widest border border-accent/20">
+                    <span className="text-[10px] font-bold text-accent bg-accent/5 px-2 py-1 rounded-full border border-accent/20">
                         Pending
                     </span>
                 </div>
 
                 {locationLabel && (
                     <div className="rounded-[2rem] border border-border/50 bg-background px-5 py-4 text-left shadow-sm">
-                        <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Location</p>
+                        <p className="text-[10px] font-bold text-muted-foreground">Location</p>
                         <p className="mt-1 text-sm font-semibold text-foreground">{locationLabel}</p>
                     </div>
                 )}

@@ -35,10 +35,10 @@ const MobileLeaderboard = () => {
             </button>
 
             <div className="min-w-0 flex-1 text-right">
-              <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground">
+              <p className="text-[10px] font-bold text-muted-foreground">
                 Lagos Leaderboard
               </p>
-              <h1 className="mt-1 text-2xl font-bold tracking-tight text-foreground">
+              <h1 className="mt-1 text-2xl font-bold text-foreground">
                 Community Rankings
               </h1>
               <p className="mt-2 text-sm leading-6 text-muted-foreground">
@@ -50,7 +50,7 @@ const MobileLeaderboard = () => {
           <div className="mt-5 rounded-[1.75rem] border border-amber-200 bg-amber-50 p-4">
             <div className="flex items-center gap-2">
               <HugeiconsIcon icon={Award01Icon} className="h-4 w-4 text-amber-700" />
-              <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-amber-700">
+              <p className="text-[10px] font-bold text-amber-700">
                 Spotlight
               </p>
             </div>
@@ -69,7 +69,7 @@ const MobileLeaderboard = () => {
               </div>
 
               <div className="rounded-2xl border border-amber-200/80 bg-white/70 px-4 py-3 text-right">
-                <p className="text-[10px] font-bold uppercase tracking-widest text-amber-700">
+                <p className="text-[10px] font-bold text-amber-700">
                   Score
                 </p>
                 <p className="mt-1 text-xl font-bold text-amber-950">
@@ -93,7 +93,7 @@ const MobileLeaderboard = () => {
                   : "border-border/50 bg-white/90",
               )}
             >
-              <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
+              <p className="text-[10px] font-bold text-muted-foreground">
                 #{index + 1}
               </p>
               <p className="mt-3 line-clamp-2 text-sm font-bold text-foreground">
@@ -112,15 +112,15 @@ const MobileLeaderboard = () => {
       <div className="mt-6 px-6">
         <div className="mb-4 flex items-center justify-between">
           <div>
-            <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground">
+            <p className="text-[10px] font-bold text-muted-foreground">
               All Communities
             </p>
-            <h2 className="mt-1 text-lg font-bold tracking-tight text-foreground">
+            <h2 className="mt-1 text-lg font-bold text-foreground">
               Full leaderboard standings
             </h2>
           </div>
           {leaderboard.communityEntry && (
-            <div className="inline-flex items-center gap-2 rounded-full border border-primary/15 bg-primary/5 px-3 py-2 text-[10px] font-bold uppercase tracking-widest text-primary">
+            <div className="inline-flex items-center gap-2 rounded-full border border-primary/15 bg-primary/5 px-3 py-2 text-[10px] font-bold text-primary">
               <HugeiconsIcon icon={CheckmarkBadge01Icon} className="h-4 w-4" />
               Your community
             </div>
@@ -171,7 +171,7 @@ const MobileLeaderboard = () => {
                             {entry.communityName}
                           </p>
                           {isCurrentCommunity && (
-                            <span className="rounded-full bg-primary px-2 py-1 text-[9px] font-bold uppercase tracking-widest text-white">
+                            <span className="rounded-full bg-primary px-2 py-1 text-[9px] font-bold text-white">
                               You
                             </span>
                           )}
@@ -185,7 +185,7 @@ const MobileLeaderboard = () => {
                     </div>
 
                     <div className="shrink-0 text-right">
-                      <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
+                      <p className="text-[10px] font-bold text-muted-foreground">
                         Score
                       </p>
                       <p className="mt-1 text-xl font-bold text-foreground">{entry.score}</p>
@@ -203,7 +203,7 @@ const MobileLeaderboard = () => {
             className="mt-5 flex w-full items-center justify-between rounded-[1.75rem] border border-border/60 bg-white/90 px-4 py-4 text-left shadow-sm transition-transform active:scale-[0.99]"
           >
             <div>
-              <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground">
+              <p className="text-[10px] font-bold text-muted-foreground">
                 Improve Rank
               </p>
               <p className="mt-1 text-sm font-semibold text-foreground">

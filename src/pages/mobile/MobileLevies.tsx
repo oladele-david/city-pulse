@@ -62,7 +62,7 @@ const MobileLevies = () => {
   return (
     <div className="space-y-5 bg-[linear-gradient(180deg,#fff9ef_0%,#f8fbff_45%,#ffffff_100%)] px-4 pb-28 pt-6">
       <div>
-        <h1 className="text-2xl font-bold tracking-tight">My Levies</h1>
+        <h1 className="text-2xl font-bold">My Levies</h1>
         <p className="mt-2 text-sm text-muted-foreground">
           Published levies for your community and LGA appear here.
         </p>
@@ -72,7 +72,7 @@ const MobileLevies = () => {
         <CardContent className="space-y-5 p-6">
           <div className="flex items-start justify-between gap-4">
             <div>
-              <div className="text-xs uppercase tracking-[0.32em] text-white/70">
+              <div className="text-xs text-white/70">
                 Levy overview
               </div>
               <div className="mt-3 text-3xl font-semibold">
@@ -90,7 +90,7 @@ const MobileLevies = () => {
           <div className="grid grid-cols-2 gap-3">
             {groupedLevies.map((group) => (
               <div key={group.key} className="rounded-3xl border border-white/10 bg-white/10 px-4 py-3 backdrop-blur">
-                <div className="text-xs uppercase tracking-[0.18em] text-white/60">
+                <div className="text-xs text-white/60">
                   {group.title}
                 </div>
                 <div className="mt-2 text-2xl font-semibold">{group.items.length}</div>
@@ -102,7 +102,7 @@ const MobileLevies = () => {
 
       <div className="space-y-3">
         <div>
-          <h2 className="text-sm font-semibold uppercase tracking-[0.18em] text-slate-500">
+          <h2 className="text-sm font-semibold text-slate-500">
             Show levies by target
           </h2>
           <p className="mt-1 text-sm text-muted-foreground">
@@ -163,7 +163,7 @@ const MobileLevies = () => {
                       <CardHeader className="space-y-4">
                         <div className="grid gap-4 md:grid-cols-[minmax(0,1fr)_auto] md:items-start">
                           <div className="space-y-3 min-w-0">
-                            <Badge variant="outline" className="rounded-full border-slate-300 bg-slate-50 px-3 py-1 uppercase tracking-[0.18em]">
+                            <Badge variant="outline" className="rounded-full border-slate-300 bg-slate-50 px-3 py-1">
                               {levy.targetType}
                             </Badge>
                             <div>
@@ -172,7 +172,7 @@ const MobileLevies = () => {
                             </div>
                           </div>
                           <div className="rounded-3xl bg-slate-950 px-4 py-3 text-left text-white md:min-w-[170px] md:text-right">
-                            <div className="text-xs uppercase tracking-[0.18em] text-white/55">
+                            <div className="text-xs text-white/55">
                               Amount
                             </div>
                             <div className="mt-2 text-lg font-semibold">
@@ -184,7 +184,7 @@ const MobileLevies = () => {
                       <CardContent className="space-y-4">
                         <div className="grid gap-3 sm:grid-cols-2">
                           <div className="rounded-2xl bg-slate-50 px-4 py-3">
-                            <div className="text-xs uppercase tracking-[0.18em] text-muted-foreground">
+                            <div className="text-xs text-muted-foreground">
                               Due date
                             </div>
                             <div className="mt-2 font-semibold text-slate-900">
@@ -192,7 +192,7 @@ const MobileLevies = () => {
                             </div>
                           </div>
                           <div className="rounded-2xl bg-slate-50 px-4 py-3">
-                            <div className="flex items-center gap-2 text-xs uppercase tracking-[0.18em] text-muted-foreground">
+                            <div className="flex items-center gap-2 text-xs text-muted-foreground">
                               <MapPinned className="h-3.5 w-3.5" />
                               Applies to
                             </div>

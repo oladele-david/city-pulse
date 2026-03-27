@@ -35,7 +35,7 @@ export const MobileBlocker = () => {
                 </div>
 
                 <div className="pt-4 border-t border-slate-100">
-                    <p className="text-[10px] text-slate-400 uppercase tracking-widest font-bold">
+                    <p className="text-[10px] text-slate-400 font-bold">
                         Requires 1024px+ Screen Width
                     </p>
                 </div>

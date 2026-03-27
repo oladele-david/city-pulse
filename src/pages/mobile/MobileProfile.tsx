@@ -69,14 +69,14 @@ const MobileProfile = () => {
               <p className="mt-1 text-sm text-muted-foreground">
                 {session?.user.email ?? "citizen@citypulse.ng"}
               </p>
-              <p className="mt-1 flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-muted-foreground">
+              <p className="mt-1 flex items-center gap-1.5 text-xs font-bold text-muted-foreground">
                 <HugeiconsIcon
                   icon={CheckmarkBadge01Icon}
                   className="h-5 w-5 text-accent"
                 />
                 {session?.user.rank ?? "Citizen"} Citizen
               </p>
-              <p className="mt-2 text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
+              <p className="mt-2 text-xs font-semibold text-muted-foreground">
                 {session?.user.streetOrArea ?? "Lagos"} • {initials}
               </p>
             </div>
@@ -86,13 +86,13 @@ const MobileProfile = () => {
             <div className="flex items-start justify-between gap-3">
               <div className="flex items-center gap-2">
                 <HugeiconsIcon icon={Award01Icon} className="h-4 w-4 text-amber-700" />
-                <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-amber-700">
+                <p className="text-[10px] font-bold text-amber-700">
                   Community standing
                 </p>
               </div>
               <button
                 onClick={() => navigate("/mobile/leaderboard")}
-                className="rounded-full border border-amber-200 bg-white/70 px-3 py-1 text-[9px] font-bold uppercase tracking-widest text-amber-700"
+                className="rounded-full border border-amber-200 bg-white/70 px-3 py-1 text-[9px] font-bold text-amber-700"
               >
                 See More
               </button>
@@ -118,7 +118,7 @@ const MobileProfile = () => {
                 <HugeiconsIcon icon={stat.icon} className="h-4.5 w-4.5" />
               </div>
               <span className="text-base font-bold text-foreground">{stat.value}</span>
-              <span className="mt-0.5 text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
+              <span className="mt-0.5 text-[10px] font-bold text-muted-foreground">
                 {stat.label}
               </span>
             </div>
@@ -131,7 +131,7 @@ const MobileProfile = () => {
       </div>
 
       <div className="mt-8 space-y-2.5 px-6 pb-24">
-        <p className="mb-4 ml-1 text-[10px] font-bold uppercase tracking-[0.25em] text-muted-foreground">
+        <p className="mb-4 ml-1 text-[10px] font-bold text-muted-foreground">
           Account & Governance
         </p>
         {menuItems.map((item) => (
