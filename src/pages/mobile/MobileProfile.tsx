@@ -49,7 +49,7 @@ const MobileProfile = () => {
 
   return (
     <div className="mt-4 flex h-full flex-col bg-background">
-      <div className="px-6 py-8">
+      <div className="px-4 py-8">
         <div className="rounded-[2rem] border border-border/50 bg-[linear-gradient(135deg,#fff7ed_0%,#ffffff_50%,#f8fafc_100%)] p-5 shadow-sm">
           <div className="flex items-center gap-5">
             <div className="relative">
@@ -107,7 +107,7 @@ const MobileProfile = () => {
         </div>
       </div>
 
-      <div className="px-6">
+      <div className="px-4">
         <div className="grid grid-cols-3 gap-3">
           {stats.map((stat) => (
             <div
@@ -126,11 +126,11 @@ const MobileProfile = () => {
         </div>
       </div>
 
-      <div className="mt-8 px-6">
+      <div className="mt-8 px-4">
         <div className="h-px w-full bg-border/40" />
       </div>
 
-      <div className="mt-8 space-y-2.5 px-6 pb-24">
+      <div className="mt-8 space-y-2.5 px-4 pb-24">
         <p className="mb-4 ml-1 text-[10px] font-bold text-muted-foreground">
           Account & Governance
         </p>

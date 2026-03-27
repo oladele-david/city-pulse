@@ -127,7 +127,7 @@ const MobileHome = () => {
 
   return (
     <div className="flex flex-col bg-[radial-gradient(circle_at_top,#fff7ed,transparent_36%),linear-gradient(180deg,#fffdf8_0%,#f8fafc_55%,#ffffff_100%)] pb-40">
-      <div className="px-6 pb-3 pt-6">
+      <div className="px-4 pb-3 pt-6">
         <div className="rounded-[2rem] border border-white/70 bg-white/90 p-5 shadow-[0_20px_60px_-30px_rgba(15,23,42,0.45)] backdrop-blur">
           <div className="flex items-start justify-between gap-4">
             <div>
@@ -221,7 +221,7 @@ const MobileHome = () => {
         </div>
       </div>
 
-      <div className="space-y-4 px-6 pb-1">
+      <div className="space-y-4 px-4 pb-1">
         {!location.hasPrompted && (
           <div className="rounded-[1.5rem] border border-border/50 bg-primary/5 p-4 shadow-sm">
             <p className="text-sm font-bold text-foreground">
@@ -254,7 +254,7 @@ const MobileHome = () => {
         )}
       </div>
 
-      <div className="mb-6 px-6">
+      <div className="mb-6 px-4">
         <div className="relative aspect-[4/5] overflow-hidden rounded-[2rem] border bg-muted shadow-inner-lg ring-1 ring-border/30">
           <div className="pointer-events-none absolute left-0 right-0 top-0 z-20 p-3">
             <div className="pointer-events-auto flex items-center gap-2">
@@ -357,7 +357,7 @@ const MobileHome = () => {
         </div>
       </div>
 
-      <div className="space-y-3 px-6">
+      <div className="space-y-3 px-4">
         <div className="flex items-center justify-between">
           <div>
             <p className="text-[10px] font-bold text-muted-foreground">
