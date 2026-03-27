@@ -1,14 +1,17 @@
 import { useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { format } from "date-fns";
 import { ArrowRight } from "lucide-react";
+import { HugeiconsIcon } from "@hugeicons/react";
+import { ArrowLeft01Icon } from "@hugeicons/core-free-icons";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useCitizenAuth } from "@/hooks/use-auth";
 import { api } from "@/lib/api";
 
 const MobileLevies = () => {
+  const navigate = useNavigate();
   const { session } = useCitizenAuth();
   const [targetFilter, setTargetFilter] = useState<"community" | "lga" | "all">("community");
 
@@ -34,31 +37,39 @@ const MobileLevies = () => {
   }, [levies, targetFilter]);
 
   return (
-    <div className="bg-white px-4 pb-28 pt-6 space-y-5">
+    <div className="bg-white px-4 pb-28 pt-6 space-y-6">
       {/* Header */}
-      <div>
-        <h1 className="text-xl font-bold">My Levies</h1>
-        <p className="mt-1 text-xs text-muted-foreground">Published levies for your area.</p>
+      <div className="flex items-center gap-3">
+        <button
+          onClick={() => navigate(-1)}
+          className="flex h-9 w-9 items-center justify-center rounded-full border transition-transform active:scale-95"
+        >
+          <HugeiconsIcon icon={ArrowLeft01Icon} className="h-4 w-4" />
+        </button>
+        <div>
+          <h1 className="text-xl font-bold">My Levies</h1>
+          <p className="text-xs text-muted-foreground">Published levies for your area.</p>
+        </div>
       </div>
 
       {/* Summary card — activity-page style */}
-      <div className="rounded-2xl bg-gradient-to-br from-slate-900 to-slate-800 p-4 text-white">
-        <div className="flex items-center justify-between">
-          <div>
-            <p className="text-[10px] text-white/60">Total due</p>
-            <p className="mt-1 text-2xl font-bold">₦{totalAmountDue.toLocaleString()}</p>
-          </div>
-          <div className="flex gap-2">
-            <div className="rounded-xl bg-white/10 px-3 py-2 text-center">
-              <p className="text-lg font-bold">{communityCount}</p>
-              <p className="text-[9px] text-white/60">Community</p>
+      <div className="relative overflow-hidden rounded-3xl border border-white/10 bg-primary p-4 text-white">
+        <div className="relative z-10">
+          <p className="text-[10px] font-bold text-white/60">Total due</p>
+          <p className="mt-1 text-3xl font-semibold">₦{totalAmountDue.toLocaleString()}</p>
+
+          <div className="mt-4 grid grid-cols-2 gap-3">
+            <div className="rounded-2xl border border-white/5 bg-white/10 p-3">
+              <span className="block text-[9px] font-bold text-white/60">Community</span>
+              <span className="text-lg font-semibold">{communityCount}</span>
             </div>
-            <div className="rounded-xl bg-white/10 px-3 py-2 text-center">
-              <p className="text-lg font-bold">{lgaCount}</p>
-              <p className="text-[9px] text-white/60">LGA</p>
+            <div className="rounded-2xl border border-white/5 bg-white/10 p-3">
+              <span className="block text-[9px] font-bold text-white/60">LGA</span>
+              <span className="text-lg font-semibold">{lgaCount}</span>
             </div>
           </div>
         </div>
+        <div className="absolute -bottom-16 -right-16 h-48 w-48 rounded-full bg-white/10 blur-3xl" />
       </div>
 
       {/* Filter tabs */}

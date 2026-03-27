@@ -39,41 +39,54 @@ const MobileLeaderboard = () => {
       </div>
 
       {/* Spotlight card — activity-page style */}
-      <div className="rounded-2xl bg-gradient-to-br from-amber-50 to-amber-100/50 border border-amber-200 p-4">
-        <div className="flex items-center justify-between">
-          <div>
-            <div className="flex items-center gap-1.5">
-              <HugeiconsIcon icon={Award01Icon} className="h-4 w-4 text-amber-700" />
-              <p className="text-[10px] font-bold text-amber-700">Your community</p>
+      <div className="relative overflow-hidden rounded-3xl border border-white/10 bg-primary p-4 text-white">
+        <div className="relative z-10">
+          <div className="flex w-fit items-center gap-2 rounded-full border border-white/10 bg-white/10 px-3 py-1.5">
+            <HugeiconsIcon icon={Award01Icon} className="h-3.5 w-3.5" />
+            <span className="text-[10px] font-bold">Your community</span>
+          </div>
+
+          <div className="mt-4 mb-5 space-y-1">
+            <span className="text-[10px] font-bold text-white/60">Rank</span>
+            <div className="flex items-baseline gap-2">
+              <h1 className="text-3xl font-semibold">
+                {leaderboard.spotlightRank ? `#${leaderboard.spotlightRank}` : "--"}
+              </h1>
             </div>
-            <p className="mt-2 text-2xl font-bold text-amber-950">
-              {leaderboard.spotlightRank ? `#${leaderboard.spotlightRank}` : "--"}
-            </p>
-            <p className="mt-0.5 text-sm font-semibold text-amber-900">
+            <p className="text-sm font-semibold text-white/80">
               {leaderboard.spotlightEntry?.communityName ?? "Waiting for data"}
             </p>
           </div>
-          <div className="text-right">
-            <p className="text-[10px] text-amber-700">Score</p>
-            <p className="text-xl font-bold text-amber-950">{leaderboard.spotlightEntry?.score ?? 0}</p>
+
+          <div className="grid grid-cols-2 gap-3">
+            <div className="rounded-2xl border border-white/5 bg-white/10 p-3">
+              <span className="block text-[9px] font-bold text-white/60">Score</span>
+              <span className="text-lg font-semibold">{leaderboard.spotlightEntry?.score ?? 0}</span>
+            </div>
+            <div className="rounded-2xl border border-white/5 bg-white/10 p-3">
+              <span className="block text-[9px] font-bold text-white/60">Resolved</span>
+              <span className="text-lg font-semibold">{leaderboard.spotlightEntry?.resolvedIssueCount ?? 0}</span>
+            </div>
           </div>
         </div>
+        <div className="absolute -bottom-16 -right-16 h-48 w-48 rounded-full bg-white/10 blur-3xl" />
       </div>
 
-      {/* Top 3 podium */}
+      {/* Top 3 — horizontally scrollable */}
       {topThree.length > 0 && (
-        <div className="grid grid-cols-3 gap-2">
+        <div className="flex gap-3 overflow-x-auto pb-2 -mx-4 px-4 scrollbar-none">
           {topThree.map((entry, index) => (
             <div
               key={entry.communityId}
               className={cn(
-                "rounded-xl border p-3 text-center",
+                "shrink-0 w-[44%] rounded-xl border p-3.5",
                 index === 0 ? "border-amber-200 bg-amber-50" : "border-border/50",
               )}
             >
               <p className="text-[10px] font-bold text-muted-foreground">#{index + 1}</p>
-              <p className="mt-1 line-clamp-2 text-xs font-bold text-foreground">{entry.communityName}</p>
-              <div className="mt-2 flex items-center justify-center gap-1 text-xs font-bold">
+              <p className="mt-2 text-sm font-bold text-foreground leading-snug break-words">{entry.communityName}</p>
+              <p className="mt-1 text-[11px] text-muted-foreground">{entry.lgaName}</p>
+              <div className="mt-3 flex items-center gap-1 text-sm font-bold">
                 <HugeiconsIcon icon={Medal02Icon} className="h-3.5 w-3.5 text-amber-600" />
                 {entry.score}
               </div>
@@ -152,9 +165,7 @@ const MobileLeaderboard = () => {
           onClick={() => navigate("/mobile/report")}
           className="flex w-full items-center justify-between rounded-xl border py-3 px-4 text-left transition-transform active:scale-[0.99]"
         >
-          <div>
-            <p className="text-xs font-semibold text-foreground">Report an issue to improve your rank</p>
-          </div>
+          <p className="text-xs font-semibold text-foreground">Report an issue to improve your rank</p>
           <HugeiconsIcon icon={ArrowUpRight01Icon} className="h-4 w-4 text-primary shrink-0" />
         </button>
       )}
