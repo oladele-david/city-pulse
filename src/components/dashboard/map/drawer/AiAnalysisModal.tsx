@@ -31,7 +31,7 @@ export const AiAnalysisModal = ({
         <Dialog open={isOpen} onOpenChange={onClose}>
             <DialogContent className="sm:max-w-[550px] max-h-[80vh] flex flex-col p-0 overflow-hidden border bg-background shadow-xl rounded-xl">
                 <DialogHeader className="p-4 pl-8 border-b">
-                    <DialogTitle className="text-xl font-semibold tracking-tight">Technical Analysis Report</DialogTitle>
+                    <DialogTitle className="text-xl font-semibold">Technical Analysis Report</DialogTitle>
                     <DialogDescription className="text-sm text-muted-foreground">
                         Predictive insights and strategic response recommendations
                     </DialogDescription>

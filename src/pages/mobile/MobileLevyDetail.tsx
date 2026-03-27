@@ -1,11 +1,12 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useNavigate, useParams } from "react-router-dom";
 import { format } from "date-fns";
-import { ArrowLeft, ArrowRight, Wallet } from "lucide-react";
+import { Wallet } from "lucide-react";
+import { HugeiconsIcon } from "@hugeicons/react";
+import { ArrowLeft01Icon } from "@hugeicons/core-free-icons";
 import { toast } from "@/components/ui/sonner";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Skeleton } from "@/components/ui/skeleton";
 import { useCitizenAuth } from "@/hooks/use-auth";
 import { api, ApiError } from "@/lib/api";
 import { openInterswitchCheckout } from "@/lib/interswitch";
@@ -38,141 +39,120 @@ const MobileLevyDetail = () => {
   });
 
   if (levyQuery.isLoading) {
-    return <div className="px-4 py-8 text-sm text-muted-foreground">Loading levy...</div>;
+    return (
+      <div className="bg-white px-4 pt-6 pb-28 space-y-5">
+        <Skeleton className="h-9 w-9 rounded-full" />
+        <Skeleton className="h-6 w-48" />
+        <div className="space-y-3">
+          {Array.from({ length: 4 }).map((_, i) => (
+            <Skeleton key={i} className="h-10 w-full" />
+          ))}
+        </div>
+      </div>
+    );
   }
 
   if (!levyQuery.data) {
-    return <div className="px-4 py-8 text-sm text-muted-foreground">Levy not found.</div>;
+    return (
+      <div className="bg-white px-4 pt-6 pb-28">
+        <button onClick={() => navigate(-1)} className="flex h-9 w-9 items-center justify-center rounded-full border mb-4">
+          <HugeiconsIcon icon={ArrowLeft01Icon} className="h-4 w-4" />
+        </button>
+        <p className="text-sm text-muted-foreground">Levy not found.</p>
+      </div>
+    );
   }
 
   const levy = levyQuery.data;
+  const targetName = levy.targetType === "community"
+    ? levy.targetCommunity?.name ?? levy.targetCommunityId
+    : levy.targetLga?.name ?? levy.targetLgaId;
 
   return (
-    <div className="space-y-5 bg-[linear-gradient(180deg,#fff7ed_0%,#ffffff_70%)] px-4 pb-28 pt-6">
-      <Card className="rounded-[2rem] border-white/70 shadow-sm">
-        <CardHeader className="space-y-3">
-          <div className="flex items-center justify-between gap-3">
-            <Badge variant="outline" className="rounded-full border-amber-200 bg-amber-50 px-3 py-1 uppercase tracking-[0.18em] text-amber-800">
-              {levy.targetType}
-            </Badge>
-            <Button
-              variant="ghost"
-              className="rounded-full px-3 text-slate-600"
-              onClick={() => navigate(-1)}
-            >
-              <ArrowLeft className="mr-2 h-4 w-4" />
-              Back
-            </Button>
-          </div>
-          <CardTitle className="text-2xl">{levy.title}</CardTitle>
-          <CardDescription>{levy.description}</CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="grid grid-cols-2 gap-3">
-            <div className="rounded-2xl bg-slate-50 p-4">
-              <div className="text-xs uppercase tracking-[0.18em] text-muted-foreground">
-                Amount
-              </div>
-              <div className="mt-2 text-xl font-semibold">
-                NGN {levy.amount.toLocaleString()}
-              </div>
-            </div>
-            <div className="rounded-2xl bg-slate-50 p-4">
-              <div className="text-xs uppercase tracking-[0.18em] text-muted-foreground">
-                Due Date
-              </div>
-              <div className="mt-2 text-lg font-semibold">
-                {format(new Date(levy.dueDate), "dd MMM yyyy")}
-              </div>
-            </div>
-          </div>
+    <div className="bg-white px-4 pt-6 pb-28 space-y-5">
+      {/* Header */}
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          <button
+            onClick={() => navigate(-1)}
+            className="flex h-9 w-9 items-center justify-center rounded-full border transition-transform active:scale-95"
+          >
+            <HugeiconsIcon icon={ArrowLeft01Icon} className="h-4 w-4" />
+          </button>
+          <h1 className="text-xl font-bold">Levy</h1>
+        </div>
+        <span className="rounded-full bg-amber-50 border border-amber-200 px-2.5 py-1 text-[11px] font-bold text-amber-800 capitalize">
+          {levy.targetType}
+        </span>
+      </div>
 
-          <div className="rounded-2xl border border-slate-200 px-4 py-3 text-sm text-muted-foreground">
-            Applies to{" "}
-            {levy.targetType === "community"
-              ? levy.targetCommunity?.name ?? levy.targetCommunityId
-              : levy.targetLga?.name ?? levy.targetLgaId}
-            .
-          </div>
+      {/* Title + description */}
+      <div>
+        <h2 className="text-lg font-bold text-foreground">{levy.title}</h2>
+        <p className="mt-1 text-sm text-muted-foreground">{levy.description}</p>
+      </div>
 
-          <div className="rounded-[1.75rem] border border-sky-200 bg-[linear-gradient(135deg,#eff6ff_0%,#f8fafc_100%)] p-4 shadow-sm">
-            <div className="flex items-start justify-between gap-3">
-              <div>
-                <p className="text-sm font-semibold text-slate-900">Demo payment card</p>
-                <p className="mt-1 text-xs leading-relaxed text-slate-600">
-                  Use these test details on the Interswitch screen for this demo build.
-                </p>
-              </div>
-              <Badge
-                variant="outline"
-                className="shrink-0 rounded-full border-sky-200 bg-white/80 px-3 py-1 uppercase tracking-[0.18em] text-sky-700"
-              >
-                Demo Only
-              </Badge>
-            </div>
+      {/* Details — dashed lines */}
+      <div className="space-y-0">
+        <div className="flex items-center justify-between py-3 border-b border-dashed">
+          <span className="text-xs text-muted-foreground">Amount</span>
+          <span className="text-base font-bold">₦{levy.amount.toLocaleString()}</span>
+        </div>
+        <div className="flex items-center justify-between py-3 border-b border-dashed">
+          <span className="text-xs text-muted-foreground">Due date</span>
+          <span className="text-sm font-medium">{format(new Date(levy.dueDate), "dd MMM yyyy")}</span>
+        </div>
+        <div className="flex items-center justify-between py-3 border-b border-dashed">
+          <span className="text-xs text-muted-foreground">Applies to</span>
+          <span className="text-sm font-medium">{targetName}</span>
+        </div>
+        <div className="flex items-center justify-between py-3 border-b border-dashed">
+          <span className="text-xs text-muted-foreground">Type</span>
+          <span className="text-sm font-medium capitalize">{levy.levyType.replace(/_/g, " ")}</span>
+        </div>
+      </div>
 
-            <div className="mt-4 grid gap-3 sm:grid-cols-2">
-              <div className="rounded-2xl bg-white/80 p-3">
-                <div className="text-[11px] uppercase tracking-[0.18em] text-muted-foreground">
-                  Card Type
-                </div>
-                <div className="mt-1 font-semibold text-slate-900">Mastercard</div>
-              </div>
-              <div className="rounded-2xl bg-white/80 p-3">
-                <div className="text-[11px] uppercase tracking-[0.18em] text-muted-foreground">
-                  Card Number
-                </div>
-                <div className="mt-1 break-all font-semibold text-slate-900">
-                  5123450000000008
-                </div>
-              </div>
-              <div className="rounded-2xl bg-white/80 p-3">
-                <div className="text-[11px] uppercase tracking-[0.18em] text-muted-foreground">
-                  Expiry
-                </div>
-                <div className="mt-1 font-semibold text-slate-900">01/39</div>
-              </div>
-              <div className="rounded-2xl bg-white/80 p-3">
-                <div className="text-[11px] uppercase tracking-[0.18em] text-muted-foreground">
-                  CVV
-                </div>
-                <div className="mt-1 font-semibold text-slate-900">100</div>
-              </div>
-              <div className="rounded-2xl bg-white/80 p-3">
-                <div className="text-[11px] uppercase tracking-[0.18em] text-muted-foreground">
-                  PIN
-                </div>
-                <div className="mt-1 font-semibold text-slate-900">1111</div>
-              </div>
-              <div className="rounded-2xl bg-white/80 p-3">
-                <div className="text-[11px] uppercase tracking-[0.18em] text-muted-foreground">
-                  OTP
-                </div>
-                <div className="mt-1 font-semibold text-slate-900">123456</div>
-              </div>
-            </div>
+      {/* Demo card info */}
+      <div className="rounded-xl border border-sky-200 bg-sky-50/50 p-3 space-y-2">
+        <div className="flex items-center justify-between">
+          <p className="text-xs font-semibold text-slate-900">Demo test card</p>
+          <span className="rounded-full border border-sky-200 bg-white/80 px-2 py-0.5 text-[10px] font-bold text-sky-700">Demo</span>
+        </div>
+        <div className="grid grid-cols-3 gap-2 text-[11px]">
+          <div>
+            <p className="text-muted-foreground">Card</p>
+            <p className="font-semibold">5123 4500 0000 0008</p>
           </div>
+          <div>
+            <p className="text-muted-foreground">Expiry</p>
+            <p className="font-semibold">01/39</p>
+          </div>
+          <div>
+            <p className="text-muted-foreground">CVV</p>
+            <p className="font-semibold">100</p>
+          </div>
+          <div>
+            <p className="text-muted-foreground">PIN</p>
+            <p className="font-semibold">1111</p>
+          </div>
+          <div>
+            <p className="text-muted-foreground">OTP</p>
+            <p className="font-semibold">123456</p>
+          </div>
+        </div>
+      </div>
 
-          <div className="grid gap-3 sm:grid-cols-[minmax(0,1fr)_auto]">
-            <Button
-              className="h-12 rounded-full bg-slate-950 text-white hover:bg-slate-800"
-              onClick={() => payMutation.mutate()}
-              disabled={payMutation.isPending}
-            >
-              <Wallet className="mr-2 h-4 w-4" />
-              {payMutation.isPending ? "Preparing checkout..." : "Pay with Interswitch"}
-              {!payMutation.isPending ? <ArrowRight className="ml-2 h-4 w-4" /> : null}
-            </Button>
-            <Button
-              variant="outline"
-              className="h-12 rounded-full border-slate-300 px-5"
-              onClick={() => navigate("/mobile/payments")}
-            >
-              Payments
-            </Button>
-          </div>
-        </CardContent>
-      </Card>
+      {/* CTA */}
+      <div className="pt-1">
+        <Button
+          className="w-full h-10 rounded-xl text-sm gap-2"
+          onClick={() => payMutation.mutate()}
+          disabled={payMutation.isPending}
+        >
+          <Wallet className="h-4 w-4" />
+          {payMutation.isPending ? "Preparing..." : "Pay now"}
+        </Button>
+      </div>
     </div>
   );
 };

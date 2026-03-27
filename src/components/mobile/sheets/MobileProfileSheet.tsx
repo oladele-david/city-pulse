@@ -150,7 +150,7 @@ export const MobileProfileSheet = ({ type, isOpen, onClose, session }: MobilePro
                         <div key={idx} className="flex items-center justify-between p-4 bg-muted/20 border rounded-2xl hover:bg-muted/30 transition-colors">
                             <div className="flex items-center gap-3">
                                 {item.icon && <HugeiconsIcon icon={item.icon} className="w-4 h-4 text-muted-foreground" />}
-                                <span className="text-xs font-bold text-muted-foreground uppercase tracking-wider">{item.label}</span>
+                                <span className="text-xs font-bold text-muted-foreground">{item.label}</span>
                             </div>
                             {item.isToggle ? (
                                 <div className="flex items-center gap-3">

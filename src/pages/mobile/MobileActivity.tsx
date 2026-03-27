@@ -52,31 +52,31 @@ const MobileActivity = () => {
 
           <div className="relative z-10">
             <div className="mb-4 flex w-fit items-center gap-2 rounded-full border border-white/10 bg-white/10 px-3 py-1.5">
-              <span className="text-[10px] font-bold uppercase tracking-wider">
+              <span className="text-[10px] font-bold">
                 {rankLabel}
               </span>
               <HugeiconsIcon icon={CheckmarkBadge01Icon} className="h-3.5 w-3.5" />
             </div>
 
             <div className="mb-5 space-y-1">
-              <span className="text-[10px] font-bold uppercase tracking-widest text-white/60">
+              <span className="text-[10px] font-bold text-white/60">
                 Total Points Earned
               </span>
               <div className="flex items-baseline gap-2">
-                <h1 className="text-3xl font-semibold tracking-tighter">{totalPoints}</h1>
+                <h1 className="text-3xl font-semibold">{totalPoints}</h1>
                 <HugeiconsIcon icon={Medal02Icon} className="h-6 w-6 text-white/30" />
               </div>
             </div>
 
             <div className="grid grid-cols-2 gap-3">
               <div className="rounded-2xl border border-white/5 bg-white/10 p-3">
-                <span className="block text-[9px] font-bold uppercase text-white/60">
+                <span className="block text-[9px] font-bold text-white/60">
                   Contributions
                 </span>
                 <span className="text-lg font-semibold">{contributions.length}</span>
               </div>
               <div className="rounded-2xl border border-white/5 bg-white/10 p-3">
-                <span className="block text-[9px] font-bold uppercase text-white/60">
+                <span className="block text-[9px] font-bold text-white/60">
                   Resolved
                 </span>
                 <span className="text-lg font-semibold">{resolvedCount}</span>
@@ -90,7 +90,7 @@ const MobileActivity = () => {
 
       <div className="px-6">
         <div className="mb-6 flex items-center justify-between px-1">
-          <h2 className="text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground italic">
+          <h2 className="text-[10px] font-bold text-muted-foreground italic">
             Contribution History
           </h2>
           <HugeiconsIcon icon={Calendar01Icon} className="h-4 w-4 text-muted-foreground/90" />
@@ -133,13 +133,13 @@ const MobileActivity = () => {
                   <div className="flex items-start justify-between gap-4">
                     <div className="min-w-0 flex-1">
                       <div className="mb-1 flex items-center gap-2">
-                        <span className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground/60">
+                        <span className="text-[10px] font-semibold text-muted-foreground/60">
                           {item.timestamp}
                         </span>
                         <div className="h-1 w-1 rounded-full bg-border" />
                         <span
                           className={cn(
-                            "text-[10px] font-semibold uppercase",
+                            "text-[10px] font-semibold",
                             item.status === "resolved"
                               ? "text-green-600"
                               : item.status === "verified"

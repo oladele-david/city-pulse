@@ -24,7 +24,7 @@ export const ReportProgress = ({ step, totalSteps = 3 }: ReportProgressProps) =>
                     );
                 })}
             </div>
-            <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest italic">
+            <span className="text-[10px] font-bold text-muted-foreground italic">
                 Step {step} of {totalSteps}
             </span>
         </div>

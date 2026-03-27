@@ -64,26 +64,18 @@ export function getLocationErrorMessage(state: LocationPermissionState) {
 }
 
 export function useCitizenLocation() {
-  const [coordinates, setCoordinates] = useState<Coordinates>(LAGOS_CENTER);
-  const [source, setSource] = useState<"lagos" | "user">("lagos");
+  const storedInit = readStoredLocationState();
+  const [coordinates, setCoordinates] = useState<Coordinates>(
+    storedInit?.coordinates ?? LAGOS_CENTER,
+  );
+  const [source, setSource] = useState<"lagos" | "user">(
+    storedInit?.coordinates ? "user" : "lagos",
+  );
   const [permissionState, setPermissionState] =
-    useState<LocationPermissionState>("idle");
-  const [hasPrompted, setHasPrompted] = useState(false);
-
-  useEffect(() => {
-    const storedState = readStoredLocationState();
-    if (!storedState) {
-      return;
-    }
-
-    setHasPrompted(storedState.hasPrompted);
-    setPermissionState(storedState.permissionState);
-
-    if (storedState.coordinates) {
-      setCoordinates(storedState.coordinates);
-      setSource("user");
-    }
-  }, []);
+    useState<LocationPermissionState>(storedInit?.permissionState ?? "idle");
+  const [hasPrompted, setHasPrompted] = useState(
+    storedInit?.hasPrompted ?? false,
+  );
 
   const persistState = (nextState: StoredLocationState) => {
     setHasPrompted(nextState.hasPrompted);

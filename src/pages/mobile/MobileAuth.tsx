@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Link,
   useLocation,
@@ -12,7 +12,6 @@ import { HugeiconsIcon } from "@hugeicons/react";
 import {
   ArrowLeft01Icon,
   ArrowRight01Icon,
-  LocationUser03Icon,
   LockIcon,
   Mail02Icon,
   MapsLocation01Icon,
@@ -90,10 +89,7 @@ const MobileAuth = () => {
 
   const loginForm = useForm<z.infer<typeof citizenLoginSchema>>({
     resolver: zodResolver(citizenLoginSchema),
-    defaultValues: {
-      email: "",
-      password: "",
-    },
+    defaultValues: { email: "", password: "" },
   });
 
   const registerForm = useForm<z.infer<typeof citizenRegisterSchema>>({
@@ -124,18 +120,11 @@ const MobileAuth = () => {
     mutationFn: api.loginCitizen,
     onSuccess: (session) => {
       login(session);
-      toast({
-        title: "Welcome to CityPulse",
-        description: "Your citizen account is now connected.",
-      });
+      toast({ title: "Welcome back", description: "You're signed in." });
       navigate(redirectTo, { replace: true });
     },
     onError: (error) => {
-      toast({
-        title: "Sign in failed",
-        description: getApiErrorMessage(error),
-        variant: "destructive",
-      });
+      toast({ title: "Sign in failed", description: getApiErrorMessage(error), variant: "destructive" });
     },
   });
 
@@ -143,18 +132,11 @@ const MobileAuth = () => {
     mutationFn: api.registerCitizen,
     onSuccess: (session) => {
       login(session);
-      toast({
-        title: "Account created",
-        description: "Your citizen profile is ready and signed in.",
-      });
+      toast({ title: "Account created", description: "You're signed in." });
       navigate(redirectTo, { replace: true });
     },
     onError: (error) => {
-      toast({
-        title: "Registration failed",
-        description: getApiErrorMessage(error),
-        variant: "destructive",
-      });
+      toast({ title: "Registration failed", description: getApiErrorMessage(error), variant: "destructive" });
     },
   });
 
@@ -162,370 +144,301 @@ const MobileAuth = () => {
   const communityOptions = communitiesQuery.data ?? [];
   const isLoadingLocations = lgasQuery.isLoading || lgasQuery.isFetching;
   const locationError = lgasQuery.isError || communitiesQuery.isError;
-  const infoCopy = useMemo(
-    () => [
-      "Track your own reports and profile standing.",
-      "Keep reporting tied to your Lagos location.",
-      "Use the same account across report, activity, and profile.",
-    ],
-    [],
-  );
 
   return (
-    <div className="min-h-screen bg-slate-50 px-4 py-6 text-foreground">
-      <div className="mx-auto flex min-h-[calc(100vh-3rem)] max-w-md flex-col justify-center">
-        <div className="overflow-hidden rounded-[32px] border border-border/60 bg-white shadow-xl">
-          <div className="bg-primary px-6 py-6 text-primary-foreground">
-            <div className="flex items-center justify-between">
-              <Link
-                to="/"
-                className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-white/10 bg-white/10"
-              >
-                <HugeiconsIcon icon={ArrowLeft01Icon} className="h-5 w-5" />
-              </Link>
-              <img src="/assets/logo-inverse.svg" alt="CityPulse" className="h-8 w-auto" />
-            </div>
-
-            <div className="mt-5 space-y-3">
-              <div className="inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-2 text-[11px] font-bold uppercase tracking-[0.2em]">
-                <HugeiconsIcon icon={LocationUser03Icon} className="h-4 w-4" />
-                Citizen Access
-              </div>
-              <div>
-                <h1 className="text-3xl font-semibold tracking-tight">
-                  Sign in to report and follow issues in your area.
-                </h1>
-                <p className="mt-2 text-sm leading-6 text-primary-foreground/75">
-                  CityPulse keeps the public flow citizen-first. Create an account
-                  or sign in to submit reports, track your impact, and manage your
-                  local profile.
-                </p>
-              </div>
-            </div>
-          </div>
-
-          <div className="space-y-6 px-5 py-6">
-            <div className="grid gap-3 rounded-[28px] bg-muted/20 p-4">
-              {infoCopy.map((item) => (
-                <div key={item} className="flex items-start gap-3">
-                  <div className="mt-1 h-2.5 w-2.5 rounded-full bg-primary" />
-                  <p className="text-sm leading-6 text-muted-foreground">{item}</p>
-                </div>
-              ))}
-            </div>
-
-            <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-5">
-              <TabsList className="grid h-12 w-full grid-cols-2 rounded-2xl bg-muted/30 p-1">
-                <TabsTrigger value="login" className="rounded-xl text-sm font-semibold">
-                  Citizen Login
-                </TabsTrigger>
-                <TabsTrigger value="register" className="rounded-xl text-sm font-semibold">
-                  Register
-                </TabsTrigger>
-              </TabsList>
-
-              <TabsContent value="login" className="mt-0">
-                <Form {...loginForm}>
-                  <form
-                    onSubmit={loginForm.handleSubmit((values) =>
-                      loginMutation.mutate(values),
-                    )}
-                    className="space-y-5"
-                  >
-                    <FormField
-                      control={loginForm.control}
-                      name="email"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Email Address</FormLabel>
-                          <FormControl>
-                            <div className="relative">
-                              <HugeiconsIcon
-                                icon={Mail02Icon}
-                                className="absolute left-3 top-3 h-5 w-5 text-muted-foreground"
-                              />
-                              <Input
-                                {...field}
-                                type="email"
-                                placeholder="citizen@citypulse.ng"
-                                className="h-12 rounded-2xl border-border/70 pl-10"
-                              />
-                            </div>
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-
-                    <FormField
-                      control={loginForm.control}
-                      name="password"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Password</FormLabel>
-                          <FormControl>
-                            <div className="relative">
-                              <HugeiconsIcon
-                                icon={LockIcon}
-                                className="absolute left-3 top-3 h-5 w-5 text-muted-foreground"
-                              />
-                              <Input
-                                {...field}
-                                type="password"
-                                placeholder="Enter your password"
-                                className="h-12 rounded-2xl border-border/70 pl-10"
-                              />
-                            </div>
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-
-                    <Button
-                      type="submit"
-                      disabled={loginMutation.isPending}
-                      className="h-12 w-full rounded-2xl text-base font-semibold"
-                    >
-                      {loginMutation.isPending ? "Signing in..." : "Continue to CityPulse"}
-                      {!loginMutation.isPending && (
-                        <HugeiconsIcon icon={ArrowRight01Icon} className="h-5 w-5" />
-                      )}
-                    </Button>
-
-                    <div className="rounded-2xl border border-primary/10 bg-primary/5 px-4 py-3 text-sm text-muted-foreground">
-                      Demo citizen: <span className="font-semibold text-foreground">citizen@citypulse.ng</span> /{" "}
-                      <span className="font-semibold text-foreground">CitizenPass123!</span>
-                    </div>
-                  </form>
-                </Form>
-              </TabsContent>
-
-              <TabsContent value="register" className="mt-0">
-                <Form {...registerForm}>
-                  <form
-                    onSubmit={registerForm.handleSubmit((values) => {
-                      const { confirmPassword: _confirmPassword, ...payload } = values;
-                      registerMutation.mutate(payload);
-                    })}
-                    className="space-y-5"
-                  >
-                    <FormField
-                      control={registerForm.control}
-                      name="fullName"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Full Name</FormLabel>
-                          <FormControl>
-                            <div className="relative">
-                              <HugeiconsIcon
-                                icon={UserIcon}
-                                className="absolute left-3 top-3 h-5 w-5 text-muted-foreground"
-                              />
-                              <Input
-                                {...field}
-                                placeholder="Aisha Bello"
-                                className="h-12 rounded-2xl border-border/70 pl-10"
-                              />
-                            </div>
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-
-                    <div className="grid gap-5 sm:grid-cols-2">
-                      <FormField
-                        control={registerForm.control}
-                        name="email"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Email Address</FormLabel>
-                            <FormControl>
-                              <div className="relative">
-                                <HugeiconsIcon
-                                  icon={Mail02Icon}
-                                  className="absolute left-3 top-3 h-5 w-5 text-muted-foreground"
-                                />
-                                <Input
-                                  {...field}
-                                  type="email"
-                                  placeholder="aisha@example.com"
-                                  className="h-12 rounded-2xl border-border/70 pl-10"
-                                />
-                              </div>
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-
-                      <FormField
-                        control={registerForm.control}
-                        name="streetOrArea"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Street or Area</FormLabel>
-                            <FormControl>
-                              <Input
-                                {...field}
-                                placeholder="Obafemi Awolowo Way"
-                                className="h-12 rounded-2xl border-border/70"
-                              />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                    </div>
-
-                    <div className="grid gap-5 sm:grid-cols-2">
-                      <FormField
-                        control={registerForm.control}
-                        name="password"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Password</FormLabel>
-                            <FormControl>
-                              <div className="relative">
-                                <HugeiconsIcon
-                                  icon={LockIcon}
-                                  className="absolute left-3 top-3 h-5 w-5 text-muted-foreground"
-                                />
-                                <Input
-                                  {...field}
-                                  type="password"
-                                  placeholder="StrongPass123!"
-                                  className="h-12 rounded-2xl border-border/70 pl-10"
-                                />
-                              </div>
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-
-                      <FormField
-                        control={registerForm.control}
-                        name="confirmPassword"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Confirm Password</FormLabel>
-                            <FormControl>
-                              <div className="relative">
-                                <HugeiconsIcon
-                                  icon={LockIcon}
-                                  className="absolute left-3 top-3 h-5 w-5 text-muted-foreground"
-                                />
-                                <Input
-                                  {...field}
-                                  type="password"
-                                  placeholder="Repeat password"
-                                  className="h-12 rounded-2xl border-border/70 pl-10"
-                                />
-                              </div>
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                    </div>
-
-                    <div className="grid gap-5 sm:grid-cols-2">
-                      <FormField
-                        control={registerForm.control}
-                        name="lgaId"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>LGA</FormLabel>
-                            <Select
-                              value={field.value}
-                              onValueChange={field.onChange}
-                              disabled={isLoadingLocations || lgasQuery.isError}
-                            >
-                              <FormControl>
-                                <SelectTrigger className="h-12 rounded-2xl border-border/70">
-                                  <div className="flex items-center gap-2">
-                                    <HugeiconsIcon
-                                      icon={MapsLocation01Icon}
-                                      className="h-4 w-4 text-muted-foreground"
-                                    />
-                                    <SelectValue placeholder="Select your LGA" />
-                                  </div>
-                                </SelectTrigger>
-                              </FormControl>
-                              <SelectContent>
-                                {lgaOptions.map((lga) => (
-                                  <SelectItem key={lga.id} value={lga.id}>
-                                    {lga.name}
-                                  </SelectItem>
-                                ))}
-                              </SelectContent>
-                            </Select>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-
-                      <FormField
-                        control={registerForm.control}
-                        name="communityId"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Community</FormLabel>
-                            <Select
-                              value={field.value}
-                              onValueChange={field.onChange}
-                              disabled={!selectedLgaId || communitiesQuery.isLoading}
-                            >
-                              <FormControl>
-                                <SelectTrigger className="h-12 rounded-2xl border-border/70">
-                                  <SelectValue
-                                    placeholder={
-                                      selectedLgaId
-                                        ? "Select your community"
-                                        : "Choose an LGA first"
-                                    }
-                                  />
-                                </SelectTrigger>
-                              </FormControl>
-                              <SelectContent>
-                                {communityOptions.map((community) => (
-                                  <SelectItem key={community.id} value={community.id}>
-                                    {community.name}
-                                  </SelectItem>
-                                ))}
-                              </SelectContent>
-                            </Select>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                    </div>
-
-                    {locationError && (
-                      <div className="rounded-2xl border border-destructive/20 bg-destructive/5 px-4 py-3 text-sm text-destructive">
-                        We could not load Lagos location options. Check that the API is
-                        running and try again.
-                      </div>
-                    )}
-
-                    <Button
-                      type="submit"
-                      disabled={registerMutation.isPending || isLoadingLocations}
-                      className="h-12 w-full rounded-2xl text-base font-semibold"
-                    >
-                      {registerMutation.isPending ? "Creating account..." : "Create Citizen Account"}
-                      {!registerMutation.isPending && (
-                        <HugeiconsIcon icon={ArrowRight01Icon} className="h-5 w-5" />
-                      )}
-                    </Button>
-                  </form>
-                </Form>
-              </TabsContent>
-            </Tabs>
-          </div>
+    <div className="flex flex-col min-h-screen bg-background max-w-md mx-auto border-x shadow-2xl">
+      {/* Header with gradient */}
+      <div className="bg-gradient-to-b from-primary via-primary/80 to-background px-5 pt-7 pb-10">
+        <div className="flex items-center justify-between">
+          <Link
+            to="/mobile"
+            className="inline-flex h-9 w-9 items-center justify-center rounded-full bg-white/15"
+          >
+            <HugeiconsIcon icon={ArrowLeft01Icon} className="h-4 w-4 text-white" />
+          </Link>
+          <img src="/assets/logo-inverse.svg" alt="CityPulse" className="h-7 w-auto" />
         </div>
+
+        <div className="mt-8">
+          <h1 className="text-2xl font-semibold text-white">
+            {activeTab === "login" ? "Welcome back" : "Create your account"}
+          </h1>
+          <p className="mt-0 text-sm text-white/70">
+            {activeTab === "login"
+              ? "Sign in to report and track issues."
+              : "Join CityPulse to start reporting."}
+          </p>
+        </div>
+      </div>
+
+      {/* Form area */}
+      <div className="flex-1 px-5 -mt-4">
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-5">
+          <TabsList className="grid h-11 w-full grid-cols-2 rounded-2xl bg-muted/40 p-1">
+            <TabsTrigger value="login" className="rounded-xl text-sm font-semibold">
+              Sign In
+            </TabsTrigger>
+            <TabsTrigger value="register" className="rounded-xl text-sm font-semibold">
+              Register
+            </TabsTrigger>
+          </TabsList>
+
+          {/* Login Tab */}
+          <TabsContent value="login" className="mt-0">
+            <Form {...loginForm}>
+              <form
+                onSubmit={loginForm.handleSubmit((values) => loginMutation.mutate(values))}
+                className="space-y-4"
+              >
+                <FormField
+                  control={loginForm.control}
+                  name="email"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-xs">Email</FormLabel>
+                      <FormControl>
+                        <div className="relative">
+                          <HugeiconsIcon icon={Mail02Icon} className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
+                          <Input {...field} type="email" placeholder="citizen@citypulse.ng" className="h-10 rounded-xl pl-9 text-xs placeholder:text-xs" />
+                        </div>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={loginForm.control}
+                  name="password"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-xs">Password</FormLabel>
+                      <FormControl>
+                        <div className="relative">
+                          <HugeiconsIcon icon={LockIcon} className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
+                          <Input {...field} type="password" placeholder="Enter your password" className="h-10 rounded-xl pl-9 text-xs placeholder:text-xs" />
+                        </div>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <Button
+                  type="submit"
+                  disabled={loginMutation.isPending}
+                  className="h-11 w-full rounded-xl text-sm font-semibold"
+                >
+                  {loginMutation.isPending ? "Signing in..." : "Sign In"}
+                  {!loginMutation.isPending && (
+                    <HugeiconsIcon icon={ArrowRight01Icon} className="ml-1 h-4 w-4" />
+                  )}
+                </Button>
+
+                {/* OR divider */}
+                <div className="flex items-center gap-3">
+                  <div className="h-px flex-1 bg-border" />
+                  <span className="text-xs text-muted-foreground">OR</span>
+                  <div className="h-px flex-1 bg-border" />
+                </div>
+
+                <Button
+                  type="button"
+                  variant="outline"
+                  className="h-11 w-full rounded-xl text-sm font-semibold"
+                  disabled={loginMutation.isPending}
+                  onClick={() => {
+                    loginForm.setValue("email", "citizen@citypulse.ng");
+                    loginForm.setValue("password", "CitizenPass123!");
+                    loginForm.handleSubmit((values) => loginMutation.mutate(values))();
+                  }}
+                >
+                  Use Demo Account
+                </Button>
+              </form>
+            </Form>
+          </TabsContent>
+
+          {/* Register Tab */}
+          <TabsContent value="register" className="mt-0">
+            <Form {...registerForm}>
+              <form
+                onSubmit={registerForm.handleSubmit((values) => {
+                  const { confirmPassword: _confirmPassword, ...payload } = values;
+                  registerMutation.mutate(payload);
+                })}
+                className="space-y-4"
+              >
+                <FormField
+                  control={registerForm.control}
+                  name="fullName"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-xs">Full Name</FormLabel>
+                      <FormControl>
+                        <div className="relative">
+                          <HugeiconsIcon icon={UserIcon} className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
+                          <Input {...field} placeholder="Aisha Bello" className="h-10 rounded-xl pl-9 text-xs placeholder:text-xs" />
+                        </div>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <div className="grid gap-4 grid-cols-2">
+                  <FormField
+                    control={registerForm.control}
+                    name="email"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="text-xs">Email</FormLabel>
+                        <FormControl>
+                          <div className="relative">
+                            <HugeiconsIcon icon={Mail02Icon} className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
+                            <Input {...field} type="email" placeholder="aisha@example.com" className="h-10 rounded-xl pl-9 text-xs placeholder:text-xs" />
+                          </div>
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={registerForm.control}
+                    name="streetOrArea"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="text-xs">Street / Area</FormLabel>
+                        <FormControl>
+                          <Input {...field} placeholder="Obafemi Awolowo Way" className="h-10 rounded-xl text-xs placeholder:text-xs" />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+
+                <div className="grid gap-4 grid-cols-2">
+                  <FormField
+                    control={registerForm.control}
+                    name="password"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="text-xs">Password</FormLabel>
+                        <FormControl>
+                          <div className="relative">
+                            <HugeiconsIcon icon={LockIcon} className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
+                            <Input {...field} type="password" placeholder="StrongPass123!" className="h-10 rounded-xl pl-9 text-xs placeholder:text-xs" />
+                          </div>
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={registerForm.control}
+                    name="confirmPassword"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="text-xs">Confirm Password</FormLabel>
+                        <FormControl>
+                          <div className="relative">
+                            <HugeiconsIcon icon={LockIcon} className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
+                            <Input {...field} type="password" placeholder="Repeat password" className="h-10 rounded-xl pl-9 text-xs placeholder:text-xs" />
+                          </div>
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+
+                {/* LGA + Community on the same row */}
+                <div className="grid gap-4 grid-cols-2">
+                  <FormField
+                    control={registerForm.control}
+                    name="lgaId"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="text-xs">LGA</FormLabel>
+                        <Select
+                          value={field.value}
+                          onValueChange={field.onChange}
+                          disabled={isLoadingLocations || lgasQuery.isError}
+                        >
+                          <FormControl>
+                            <SelectTrigger className="h-10 rounded-xl">
+                              <div className="flex items-center gap-2">
+                                <HugeiconsIcon icon={MapsLocation01Icon} className="h-3.5 w-3.5 text-muted-foreground" />
+                                <SelectValue placeholder="Select LGA" />
+                              </div>
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent>
+                            {lgaOptions.map((lga) => (
+                              <SelectItem key={lga.id} value={lga.id}>
+                                {lga.name}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={registerForm.control}
+                    name="communityId"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="text-xs">Community</FormLabel>
+                        <Select
+                          value={field.value}
+                          onValueChange={field.onChange}
+                          disabled={!selectedLgaId || communitiesQuery.isLoading}
+                        >
+                          <FormControl>
+                            <SelectTrigger className="h-10 rounded-xl">
+                              <SelectValue placeholder={selectedLgaId ? "Select community" : "Select LGA first"} />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent>
+                            {communityOptions.map((community) => (
+                              <SelectItem key={community.id} value={community.id}>
+                                {community.name}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+
+                {locationError && (
+                  <div className="rounded-xl border border-destructive/20 bg-destructive/5 px-3 py-2.5 text-xs text-destructive">
+                    Could not load location options. Check that the API is running.
+                  </div>
+                )}
+
+                <Button
+                  type="submit"
+                  disabled={registerMutation.isPending || isLoadingLocations}
+                  className="h-11 w-full rounded-xl text-sm font-semibold"
+                >
+                  {registerMutation.isPending ? "Creating account..." : "Create Account"}
+                  {!registerMutation.isPending && (
+                    <HugeiconsIcon icon={ArrowRight01Icon} className="ml-1 h-4 w-4" />
+                  )}
+                </Button>
+              </form>
+            </Form>
+          </TabsContent>
+        </Tabs>
       </div>
     </div>
   );

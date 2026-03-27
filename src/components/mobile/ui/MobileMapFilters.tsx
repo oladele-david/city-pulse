@@ -52,7 +52,7 @@ export const MobileMapFilters = ({ isOpen, onClose, activeFilters, onFilterChang
             />
             <div className="absolute top-[88px] left-4 right-4 z-30 bg-background/95 backdrop-blur-md border border-border/50 rounded-2xl shadow-2xl p-5 space-y-5 animate-in fade-in slide-in-from-top-2 duration-200 ring-1 ring-black/5">
                 <div>
-                    <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest mb-3 px-1">Severity Level</p>
+                    <p className="text-[10px] font-bold text-muted-foreground mb-3 px-1">Severity Level</p>
                     <div className="flex flex-wrap gap-2">
                         {SEVERITY_FILTERS.map((f) => (
                             <button
@@ -72,7 +72,7 @@ export const MobileMapFilters = ({ isOpen, onClose, activeFilters, onFilterChang
                 </div>
 
                 <div className="border-t border-border/50 pt-4">
-                    <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest mb-3 px-1">Issue Category</p>
+                    <p className="text-[10px] font-bold text-muted-foreground mb-3 px-1">Issue Category</p>
                     <div className="grid grid-cols-2 gap-2">
                         {TYPE_FILTERS.map((f) => (
                             <button

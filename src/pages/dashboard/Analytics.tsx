@@ -7,7 +7,7 @@ const Analytics = () => {
         <div className="space-y-3">
             {/* Header */}
             <div>
-                <h1 className="text-3xl font-bold tracking-tight">Analytics</h1>
+                <h1 className="text-3xl font-bold">Analytics</h1>
                 <p className="text-muted-foreground mt-1">Insights and trends across civic infrastructure</p>
             </div>
 

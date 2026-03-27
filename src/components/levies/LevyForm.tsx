@@ -86,40 +86,44 @@ export function LevyForm({
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-5">
-      <div className="grid gap-5 md:grid-cols-2">
-        <div className="space-y-2 md:col-span-2">
-          <Label htmlFor="levy-title">Title</Label>
+    <form onSubmit={handleSubmit} className="space-y-4">
+      <div className="grid gap-4 md:grid-cols-2">
+        {/* Title — full width */}
+        <div className="space-y-1.5 md:col-span-2">
+          <Label htmlFor="levy-title" className="text-xs">Title</Label>
           <Input
             id="levy-title"
             value={title}
             onChange={(event) => setTitle(event.target.value)}
             placeholder="Quarterly sanitation levy"
+            className="h-9 text-sm rounded-xl"
             required
           />
         </div>
 
-        <div className="space-y-2 md:col-span-2">
-          <Label htmlFor="levy-description">Description</Label>
+        {/* Description — full width */}
+        <div className="space-y-1.5 md:col-span-2">
+          <Label htmlFor="levy-description" className="text-xs">Description</Label>
           <Textarea
             id="levy-description"
             value={description}
             onChange={(event) => setDescription(event.target.value)}
             placeholder="Describe what this levy covers and who it applies to."
-            className="min-h-28"
+            className="min-h-20 text-sm rounded-xl"
             required
           />
         </div>
 
-        <div className="space-y-2">
-          <Label>Levy Type</Label>
+        {/* Levy Type */}
+        <div className="space-y-1.5">
+          <Label className="text-xs">Levy Type</Label>
           <Select
             value={levyType}
             onValueChange={(value) =>
               setLevyType(value as CreateLevyPayload["levyType"])
             }
           >
-            <SelectTrigger>
+            <SelectTrigger className="h-9 text-sm rounded-xl">
               <SelectValue placeholder="Select levy type" />
             </SelectTrigger>
             <SelectContent>
@@ -130,8 +134,9 @@ export function LevyForm({
           </Select>
         </div>
 
-        <div className="space-y-2">
-          <Label htmlFor="levy-amount">Amount (NGN)</Label>
+        {/* Amount */}
+        <div className="space-y-1.5">
+          <Label htmlFor="levy-amount" className="text-xs">Amount (NGN)</Label>
           <Input
             id="levy-amount"
             type="number"
@@ -139,30 +144,34 @@ export function LevyForm({
             step="0.01"
             value={amount}
             onChange={(event) => setAmount(event.target.value)}
+            className="h-9 text-sm rounded-xl"
             required
           />
         </div>
 
-        <div className="space-y-2">
-          <Label htmlFor="levy-due-date">Due Date</Label>
+        {/* Due Date */}
+        <div className="space-y-1.5">
+          <Label htmlFor="levy-due-date" className="text-xs">Due Date</Label>
           <Input
             id="levy-due-date"
             type="date"
             value={dueDate}
             onChange={(event) => setDueDate(event.target.value)}
+            className="h-9 text-sm rounded-xl"
             required
           />
         </div>
 
-        <div className="space-y-2">
-          <Label>Target Type</Label>
+        {/* Target Type */}
+        <div className="space-y-1.5">
+          <Label className="text-xs">Target Type</Label>
           <Select
             value={targetType}
             onValueChange={(value) =>
               setTargetType(value as CreateLevyPayload["targetType"])
             }
           >
-            <SelectTrigger>
+            <SelectTrigger className="h-9 text-sm rounded-xl">
               <SelectValue placeholder="Select target" />
             </SelectTrigger>
             <SelectContent>
@@ -172,8 +181,9 @@ export function LevyForm({
           </Select>
         </div>
 
-        <div className="space-y-2">
-          <Label>{targetType === "community" ? "Community LGA" : "Target LGA"}</Label>
+        {/* LGA + Community on the same row */}
+        <div className="space-y-1.5">
+          <Label className="text-xs">{targetType === "community" ? "LGA" : "Target LGA"}</Label>
           <Select
             value={targetType === "community" ? selectedLgaId : targetLgaId || selectedLgaId}
             onValueChange={(value) => {
@@ -184,7 +194,7 @@ export function LevyForm({
               }
             }}
           >
-            <SelectTrigger>
+            <SelectTrigger className="h-9 text-sm rounded-xl">
               <SelectValue
                 placeholder={lgasQuery.isLoading ? "Loading LGAs..." : "Select LGA"}
               />
@@ -200,15 +210,17 @@ export function LevyForm({
         </div>
 
         {targetType === "community" && (
-          <div className="space-y-2 md:col-span-2">
-            <Label>Target Community</Label>
+          <div className="space-y-1.5">
+            <Label className="text-xs">Community</Label>
             <Select value={targetCommunityId} onValueChange={setTargetCommunityId}>
-              <SelectTrigger>
+              <SelectTrigger className="h-9 text-sm rounded-xl">
                 <SelectValue
                   placeholder={
-                    communitiesQuery.isLoading
-                      ? "Loading communities..."
-                      : "Select community"
+                    !selectedLgaId
+                      ? "Select LGA first"
+                      : communitiesQuery.isLoading
+                        ? "Loading..."
+                        : "Select community"
                   }
                 />
               </SelectTrigger>
@@ -224,13 +236,13 @@ export function LevyForm({
         )}
       </div>
 
-      <div className="flex flex-wrap items-center justify-end gap-3">
-        {onCancel ? (
-          <Button type="button" variant="outline" onClick={onCancel}>
+      <div className="flex items-center justify-end gap-3 pt-2">
+        {onCancel && (
+          <Button type="button" variant="outline" onClick={onCancel} className="rounded-xl">
             Cancel
           </Button>
-        ) : null}
-        <Button type="submit" disabled={isSubmitting}>
+        )}
+        <Button type="submit" disabled={isSubmitting} className="rounded-xl">
           {isSubmitting ? "Saving..." : submitLabel}
         </Button>
       </div>

@@ -22,14 +22,6 @@ const MobileProfile = () => {
   const [activeSheet, setActiveSheet] = useState<string | null>(null);
   const leaderboard = useCommunityLeaderboardSpotlight(session?.user.communityId);
 
-  const initials =
-    session?.user.fullName
-      .split(" ")
-      .map((part) => part[0])
-      .join("")
-      .slice(0, 2)
-      .toUpperCase() ?? "CP";
-
   const stats = [
     { label: "Points", value: String(session?.user.points ?? 0), icon: Medal02Icon },
     { label: "Rank", value: session?.user.rank ?? "New", icon: Task01Icon },
@@ -48,121 +40,100 @@ const MobileProfile = () => {
   ];
 
   return (
-    <div className="mt-4 flex h-full flex-col bg-background">
-      <div className="px-6 py-8">
-        <div className="rounded-[2rem] border border-border/50 bg-[linear-gradient(135deg,#fff7ed_0%,#ffffff_50%,#f8fafc_100%)] p-5 shadow-sm">
-          <div className="flex items-center gap-5">
-            <div className="relative">
-              <div className="h-20 w-20 overflow-hidden rounded-full border-4 border-accent/50 bg-background shadow-sm ring-1 ring-border/30">
-                <img
-                  src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(session?.user.fullName ?? "CityPulse")}`}
-                  alt={session?.user.fullName ?? "CityPulse Citizen"}
-                  className="h-full w-full object-cover"
-                />
-              </div>
-              <div className="absolute bottom-0 right-1 h-5 w-5 rounded-full border-2 border-background bg-green-500" />
+    <div className="flex h-full flex-col bg-white">
+      {/* Profile header */}
+      <div className="px-4 pt-8 pb-5">
+        <div className="flex flex-col items-center text-center gap-3">
+          <div className="relative">
+            <div className="h-20 w-20 overflow-hidden rounded-full border-2 border-accent/50 bg-background">
+              <img
+                src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(session?.user.fullName ?? "CityPulse")}`}
+                alt={session?.user.fullName ?? "CityPulse Citizen"}
+                className="h-full w-full object-cover"
+              />
             </div>
-            <div className="flex flex-col">
-              <h1 className="text-xl font-bold text-foreground">
-                {session?.user.fullName ?? "CityPulse Citizen"}
-              </h1>
-              <p className="mt-1 text-sm text-muted-foreground">
-                {session?.user.email ?? "citizen@citypulse.ng"}
-              </p>
-              <p className="mt-1 flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-muted-foreground">
-                <HugeiconsIcon
-                  icon={CheckmarkBadge01Icon}
-                  className="h-5 w-5 text-accent"
-                />
-                {session?.user.rank ?? "Citizen"} Citizen
-              </p>
-              <p className="mt-2 text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
-                {session?.user.streetOrArea ?? "Lagos"} • {initials}
-              </p>
-            </div>
+            <div className="absolute bottom-0 right-1 h-4 w-4 rounded-full border-2 border-white bg-green-500" />
           </div>
-
-          <div className="mt-5 rounded-[1.5rem] border border-amber-200 bg-amber-50 p-4">
-            <div className="flex items-start justify-between gap-3">
-              <div className="flex items-center gap-2">
-                <HugeiconsIcon icon={Award01Icon} className="h-4 w-4 text-amber-700" />
-                <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-amber-700">
-                  Community standing
-                </p>
-              </div>
-              <button
-                onClick={() => navigate("/mobile/leaderboard")}
-                className="rounded-full border border-amber-200 bg-white/70 px-3 py-1 text-[9px] font-bold uppercase tracking-widest text-amber-700"
-              >
-                See More
-              </button>
-            </div>
-            <p className="mt-2 text-lg font-bold text-amber-950">
-              {leaderboard.spotlightRank ? `#${leaderboard.spotlightRank} in Lagos` : "Syncing leaderboard"}
-            </p>
-            <p className="mt-1 text-xs text-amber-900/70">
-              {leaderboard.spotlightEntry?.communityName ?? session?.user.streetOrArea}
+          <div>
+            <h1 className="text-lg font-bold text-foreground">
+              {session?.user.fullName ?? "CityPulse Citizen"}
+            </h1>
+            <p className="mt-0.5 flex items-center justify-center gap-1 text-xs text-muted-foreground">
+              <HugeiconsIcon icon={CheckmarkBadge01Icon} className="h-3.5 w-3.5 text-accent" />
+              <span className="text-[11px]">{session?.user.rank ?? "Citizen"}</span>
+              <span>·</span>
+              <span className="text-[11px]">{session?.user.streetOrArea ?? "Lagos"}</span>
             </p>
           </div>
         </div>
+
+        {/* Community standing */}
+        <div className="mt-5 flex items-center justify-between rounded-xl border border-amber-200 bg-amber-50 px-3 py-2.5">
+          <div className="flex items-center gap-2">
+            <HugeiconsIcon icon={Award01Icon} className="h-4 w-4 text-amber-700" />
+            <span className="text-sm font-bold text-amber-950">
+              {leaderboard.spotlightRank ? `#${leaderboard.spotlightRank} in Lagos` : "--"}
+            </span>
+            <span className="text-xs text-amber-800/70">
+              {leaderboard.spotlightEntry?.communityName ?? ""}
+            </span>
+          </div>
+          <button
+            onClick={() => navigate("/mobile/leaderboard")}
+            className="text-[10px] font-bold text-amber-700"
+          >
+            See More
+          </button>
+        </div>
       </div>
 
-      <div className="px-6">
-        <div className="grid grid-cols-3 gap-3">
+      {/* Stats row */}
+      <div className="px-4">
+        <div className="grid grid-cols-3 gap-2">
           {stats.map((stat) => (
             <div
               key={stat.label}
-              className="flex flex-col items-center rounded-3xl border border-border/50 bg-muted/20 p-4 transition-all hover:bg-muted/30"
+              className="flex flex-col items-center rounded-xl border border-border/40 bg-muted/15 py-4"
             >
-              <div className="mb-3 flex h-9 w-9 items-center justify-center">
-                <HugeiconsIcon icon={stat.icon} className="h-4.5 w-4.5" />
-              </div>
-              <span className="text-base font-bold text-foreground">{stat.value}</span>
-              <span className="mt-0.5 text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
-                {stat.label}
-              </span>
+              <HugeiconsIcon icon={stat.icon} className="h-4 w-4 text-muted-foreground mb-2" />
+              <span className="text-sm font-bold text-foreground text-center leading-tight">{stat.value}</span>
+              <span className="mt-0.5 text-[10px] text-muted-foreground text-center">{stat.label}</span>
             </div>
           ))}
         </div>
       </div>
 
-      <div className="mt-8 px-6">
-        <div className="h-px w-full bg-border/40" />
-      </div>
-
-      <div className="mt-8 space-y-2.5 px-6 pb-24">
-        <p className="mb-4 ml-1 text-[10px] font-bold uppercase tracking-[0.25em] text-muted-foreground">
+      {/* Account & Governance — separator lines */}
+      <div className="mt-6 px-4 pb-24">
+        <p className="mb-3 text-[10px] font-bold text-muted-foreground">
           Account & Governance
         </p>
-        {menuItems.map((item) => (
+        <div className="divide-y divide-border/50">
+          {menuItems.map((item) => (
+            <button
+              key={item.label}
+              onClick={() => setActiveSheet(item.label)}
+              className="flex w-full items-center gap-3 py-4 transition-all active:scale-[0.99]"
+            >
+              <HugeiconsIcon icon={item.icon} className="h-5 w-5 text-muted-foreground" />
+              <span className="flex-1 text-left text-sm font-semibold text-foreground">
+                {item.label}
+              </span>
+            </button>
+          ))}
           <button
-            key={item.label}
-            onClick={() => setActiveSheet(item.label)}
-            className="group flex w-full items-center gap-4 rounded-2xl border border-border/40 bg-background p-4.5 shadow-sm/0 transition-all active:scale-[0.98] hover:bg-muted/5"
+            onClick={() => {
+              logout();
+              navigate("/", { replace: true });
+            }}
+            className="flex w-full items-center gap-3 py-4 transition-all active:scale-[0.99]"
           >
-            <div className="flex h-11 w-11 items-center justify-center border border-transparent text-muted-foreground transition-colors">
-              <HugeiconsIcon icon={item.icon} className="h-5 w-5" />
-            </div>
-            <span className="flex-1 text-left text-[14px] font-bold text-foreground">
-              {item.label}
+            <HugeiconsIcon icon={Logout01Icon} className="h-5 w-5 text-red-600" />
+            <span className="flex-1 text-left text-sm font-semibold text-red-600">
+              Sign Out
             </span>
           </button>
-        ))}
-
-        <button
-          onClick={() => {
-            logout();
-            navigate("/", { replace: true });
-          }}
-          className="mt-4 flex w-full items-center gap-4 rounded-2xl border border-red-100 bg-red-50 p-4.5 transition-all active:scale-[0.98]"
-        >
-          <div className="flex h-11 w-11 items-center justify-center border border-transparent text-red-600 transition-colors">
-            <HugeiconsIcon icon={Logout01Icon} className="h-5 w-5" />
-          </div>
-          <span className="flex-1 text-left text-[14px] font-bold text-red-600">
-            Sign Out
-          </span>
-        </button>
+        </div>
       </div>
 
       <MobileProfileSheet

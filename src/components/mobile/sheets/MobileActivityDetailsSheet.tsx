@@ -30,7 +30,7 @@ export const MobileActivityDetailsSheet = ({ contribution, isOpen, onClose }: Mo
                 <DrawerHeader className="text-left pb-4 pt-8">
                     <div className="flex items-center justify-between mb-2">
                         <div className={cn(
-                            "px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest border",
+                            "px-3 py-1 rounded-full text-[10px] font-bold border",
                             contribution.status === 'resolved' ? "bg-green-50 text-green-600 border-green-200" :
                                 contribution.status === 'verified' ? "bg-blue-50 text-blue-600 border-blue-200" :
                                     "bg-amber-50 text-amber-600 border-amber-200"
@@ -44,7 +44,7 @@ export const MobileActivityDetailsSheet = ({ contribution, isOpen, onClose }: Mo
                             </div>
                         )}
                     </div>
-                    <DrawerTitle className="text-xl font-bold leading-tight tracking-tight">
+                    <DrawerTitle className="text-xl font-bold leading-tight">
                         {contribution.title}
                     </DrawerTitle>
                     <DrawerDescription className="text-sm mt-2 leading-relaxed">
@@ -57,7 +57,7 @@ export const MobileActivityDetailsSheet = ({ contribution, isOpen, onClose }: Mo
                         <div className="flex items-start gap-3 p-4 bg-muted/20 rounded-2xl border border-border/50">
                             <HugeiconsIcon icon={MapsLocation01Icon} className="w-5 h-5 text-muted-foreground mt-0.5" />
                             <div>
-                                <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest mb-0.5">Location</p>
+                                <p className="text-[10px] font-bold text-muted-foreground mb-0.5">Location</p>
                                 <p className="text-sm font-bold text-foreground">{contribution.location}</p>
                             </div>
                         </div>
@@ -65,7 +65,7 @@ export const MobileActivityDetailsSheet = ({ contribution, isOpen, onClose }: Mo
                         <div className="flex items-start gap-3 p-4 bg-muted/20 rounded-2xl border border-border/50">
                             <HugeiconsIcon icon={Calendar01Icon} className="w-5 h-5 text-muted-foreground mt-0.5" />
                             <div>
-                                <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest mb-0.5">Reported On</p>
+                                <p className="text-[10px] font-bold text-muted-foreground mb-0.5">Reported On</p>
                                 <p className="text-sm font-bold text-foreground">{contribution.fullDate}</p>
                             </div>
                         </div>
@@ -73,7 +73,7 @@ export const MobileActivityDetailsSheet = ({ contribution, isOpen, onClose }: Mo
                         <div className="flex items-start gap-3 p-4 bg-muted/20 rounded-2xl border border-border/50">
                             <HugeiconsIcon icon={Tag01Icon} className="w-5 h-5 text-muted-foreground mt-0.5" />
                             <div>
-                                <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest mb-0.5">Category</p>
+                                <p className="text-[10px] font-bold text-muted-foreground mb-0.5">Category</p>
                                 <p className="text-sm font-bold text-foreground">{contribution.category}</p>
                             </div>
                         </div>

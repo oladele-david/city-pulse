@@ -17,6 +17,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Skeleton } from "@/components/ui/skeleton";
 import {
   SearchIcon,
   FilterHorizontalIcon,
@@ -199,7 +200,7 @@ const Issues = () => {
         <div className="px-4 py-3 flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b bg-white">
           <div className="flex items-center gap-4">
             <div>
-              <h1 className="text-lg font-semibold tracking-tight text-foreground">Issues</h1>
+              <h1 className="text-lg font-semibold text-foreground">Issues</h1>
               <p className="text-xs text-muted-foreground mr-4">
                 Live issue reports from the backend
               </p>
@@ -300,23 +301,34 @@ const Issues = () => {
                     onCheckedChange={(checked) => handleSelectAll(checked as boolean)}
                   />
                 </th>
-                <th className="text-left py-3 px-4 text-xs font-semibold text-muted-foreground uppercase tracking-wider">Issue Type</th>
-                <th className="text-left py-3 px-4 text-xs font-semibold text-muted-foreground uppercase tracking-wider">Location</th>
-                <th className="text-center py-3 px-4 text-xs font-semibold text-muted-foreground uppercase tracking-wider">Signals</th>
-                <th className="text-left py-3 px-4 text-xs font-semibold text-muted-foreground uppercase tracking-wider">Severity</th>
-                <th className="text-left py-3 px-4 text-xs font-semibold text-muted-foreground uppercase tracking-wider">Status</th>
-                <th className="text-center py-3 px-4 text-xs font-semibold text-muted-foreground uppercase tracking-wider">Confidence</th>
-                <th className="text-left py-3 px-4 text-xs font-semibold text-muted-foreground uppercase tracking-wider">Last Updated</th>
+                <th className="text-left py-3 px-4 text-xs font-semibold text-muted-foreground">Issue Type</th>
+                <th className="text-left py-3 px-4 text-xs font-semibold text-muted-foreground">Location</th>
+                <th className="text-center py-3 px-4 text-xs font-semibold text-muted-foreground">Signals</th>
+                <th className="text-left py-3 px-4 text-xs font-semibold text-muted-foreground">Severity</th>
+                <th className="text-left py-3 px-4 text-xs font-semibold text-muted-foreground">Status</th>
+                <th className="text-center py-3 px-4 text-xs font-semibold text-muted-foreground">Confidence</th>
+                <th className="text-left py-3 px-4 text-xs font-semibold text-muted-foreground">Last Updated</th>
               </tr>
             </thead>
             <tbody>
-              {issuesQuery.isLoading && (
-                <tr>
-                  <td colSpan={8} className="px-4 py-12 text-center text-sm text-muted-foreground">
-                    Loading issues from the backend...
-                  </td>
-                </tr>
-              )}
+              {issuesQuery.isLoading &&
+                Array.from({ length: 5 }).map((_, i) => (
+                  <tr key={i} className="border-b last:border-0">
+                    <td className="py-3 px-4"><Skeleton className="h-4 w-4" /></td>
+                    <td className="py-3 px-4">
+                      <div className="space-y-1.5">
+                        <Skeleton className="h-4 w-28" />
+                        <Skeleton className="h-3 w-40" />
+                      </div>
+                    </td>
+                    <td className="py-3 px-4"><Skeleton className="h-4 w-32" /></td>
+                    <td className="py-3 px-4 text-center"><Skeleton className="h-4 w-8 mx-auto" /></td>
+                    <td className="py-3 px-4"><Skeleton className="h-5 w-16 rounded-full" /></td>
+                    <td className="py-3 px-4"><Skeleton className="h-5 w-20 rounded-full" /></td>
+                    <td className="py-3 px-4 text-center"><Skeleton className="h-4 w-10 mx-auto" /></td>
+                    <td className="py-3 px-4"><Skeleton className="h-4 w-24" /></td>
+                  </tr>
+                ))}
 
               {issuesQuery.isError && (
                 <tr>

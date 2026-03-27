@@ -30,7 +30,7 @@ export const AiAnalysisSection = ({
             <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
                     <HugeiconsIcon icon={AiBrain01Icon} className="w-4 h-4 text-muted-foreground" />
-                    <h4 className="text-sm font-medium text-foreground uppercase tracking-tight">AI Insights</h4>
+                    <h4 className="text-sm font-medium text-foreground">AI Insights</h4>
                 </div>
                 <Button
                     size="sm"
@@ -76,7 +76,7 @@ export const AiAnalysisSection = ({
                         size="sm"
                         variant="link"
                         onClick={onViewFull}
-                        className="h-auto p-0 text-[10px] text-primary font-semibold uppercase tracking-widest hover:no-underline flex items-center gap-1 group"
+                        className="h-auto p-0 text-[10px] text-primary font-semibold hover:no-underline flex items-center gap-1 group"
                     >
                         Read Strategic Report
                         <svg className="w-3 h-3 transition-transform group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">

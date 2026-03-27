@@ -56,7 +56,7 @@ export const LocationStep = ({
   return (
     <div className="animate-in fade-in slide-in-from-right-4 flex flex-col px-6 duration-500">
       <div className="mb-4 pt-4">
-        <h2 className="text-2xl font-bold tracking-tight text-foreground">
+        <h2 className="text-2xl font-bold text-foreground">
           Where is it?
         </h2>
         <p className="text-sm font-medium text-muted-foreground">
@@ -76,13 +76,13 @@ export const LocationStep = ({
           <div className="mt-3 flex gap-2">
             <button
               onClick={onRequestLocation}
-              className="rounded-full bg-primary px-4 py-2 text-[11px] font-bold uppercase tracking-[0.16em] text-white"
+              className="rounded-full bg-primary px-4 py-2 text-[11px] font-bold text-white"
             >
               Use My Location
             </button>
             <button
               onClick={onDismissLocationPrompt}
-              className="rounded-full border border-border/60 px-4 py-2 text-[11px] font-bold uppercase tracking-[0.16em] text-foreground"
+              className="rounded-full border border-border/60 px-4 py-2 text-[11px] font-bold text-foreground"
             >
               Not Now
             </button>

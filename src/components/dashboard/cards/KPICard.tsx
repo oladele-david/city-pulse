@@ -28,7 +28,7 @@ export const KPICard = ({
 
             <div className="p-5 pt-6">
                 <h3 className="text-sm font-medium text-muted-foreground mb-2">{title}</h3>
-                <div className="text-2xl font-semibold tracking-tight text-foreground mb-3">{value}</div>
+                <div className="text-2xl font-semibold text-foreground mb-3">{value}</div>
 
                 <div className="flex items-center justify-between">
                     <span className="text-xs text-muted-foreground">{description}</span>
