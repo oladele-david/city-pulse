@@ -3,13 +3,12 @@
 import { OrbitControls } from "@react-three/drei";
 import { Canvas, useThree } from "@react-three/fiber";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { Color, Fog, Group, PerspectiveCamera, Scene, Vector3 } from "three";
+import { Color, Fog, Group, Scene, Vector3 } from "three";
 import ThreeGlobe from "three-globe";
 
 import countries from "@/data/globe.json";
 
 const RING_PROPAGATION_SPEED = 3;
-const aspect = 1.2;
 const cameraZ = 300;
 
 type Position = {
@@ -219,7 +218,7 @@ function WebGLRendererConfig() {
   const { gl, size } = useThree();
 
   useEffect(() => {
-    gl.setPixelRatio(window.devicePixelRatio);
+    gl.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     gl.setSize(size.width, size.height);
     gl.setClearColor(0xffaaff, 0);
   }, [gl, size.height, size.width]);
@@ -238,7 +237,9 @@ export function World(props: WorldProps) {
   return (
     <Canvas
       scene={scene}
-      camera={new PerspectiveCamera(50, aspect, 180, 1800)}
+      gl={{ alpha: true, antialias: true }}
+      dpr={[1, 2]}
+      camera={{ fov: 50, near: 180, far: 1800, position: [0, 0, cameraZ] }}
     >
       <WebGLRendererConfig />
       <ambientLight color={globeConfig.ambientLight} intensity={0.6} />
@@ -261,6 +262,7 @@ export function World(props: WorldProps) {
         enableZoom={false}
         minDistance={cameraZ}
         maxDistance={cameraZ}
+        target={new Vector3(0, 0, 0)}
         autoRotate={globeConfig.autoRotate ?? true}
         autoRotateSpeed={globeConfig.autoRotateSpeed ?? 1}
         minPolarAngle={Math.PI / 3.5}

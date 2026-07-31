@@ -398,10 +398,10 @@ export default function GlobeDemo() {
   };
 
   return (
-    <div className="relative h-[24rem] w-full sm:h-[30rem] md:h-[36rem]">
+    <div className="relative h-[24rem] w-full overflow-visible sm:h-[30rem] md:h-[36rem]">
       <div className="pointer-events-none absolute inset-x-0 bottom-0 z-40 h-32 w-full select-none bg-gradient-to-b from-transparent to-white/90" />
 
-      <div className="absolute inset-x-0 -bottom-20 z-10 h-full">
+      <div className="absolute inset-x-0 -bottom-16 z-10 h-[115%]">
         <Suspense fallback={<div className="h-full w-full" />}>
           <World data={sampleArcs} globeConfig={globeConfig} />
         </Suspense>
