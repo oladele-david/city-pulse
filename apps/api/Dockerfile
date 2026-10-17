@@ -21,6 +21,6 @@ COPY --from=build /app/node_modules ./node_modules
 COPY --from=build /app/prisma ./prisma
 COPY --from=build /app/dist ./dist
 
-EXPOSE 3001
+EXPOSE 3008
 
 CMD ["sh", "-c", "npm run prisma:migrate:deploy && npm run start"]
